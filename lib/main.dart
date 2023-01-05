@@ -13,14 +13,14 @@ void main() => runApp(new MyApp());
 //   'match': (context) => Match(),
 //   'pit': (context) => Pit(),
 //   'history': (context) => History(),
-//   'field': (context) => Field(),
+//   'field': (context) => Field(),\
 // };
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new MainScreen(),
+    return  MaterialApp(
+      home:  MainScreen(),
       // routes: routes,
     );
   }
@@ -35,7 +35,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  PageController pageController = new PageController();
+  PageController pageController = PageController();
   String teamNumber = "";
   String matchNumber = "";
   Map<String, int> scoreChanges = {
@@ -71,7 +71,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String test;
     List<Widget> _widgetOptions = [
       HomePage(
         changeIndex: pageController.jumpToPage,

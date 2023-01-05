@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:image_painter/image_painter.dart';
+
 
 void main() => runApp(const Field());
 
@@ -13,6 +15,13 @@ class Field extends StatefulWidget {
 }
 
 class _FieldState extends State<Field> {
+  
+  final _imageKey = GlobalKey<ImagePainterState>();
+
+  GlobalKey tapKey = GlobalKey();
+  Offset? tapPosition;
+
+
   @override
   void initState() {
     super.initState();
@@ -22,14 +31,32 @@ class _FieldState extends State<Field> {
   dispose() {
     super.dispose();
   }
-
+  
+    
   @override
   Widget build(BuildContext context) {
+    
+    List<ImagePainter > images = [
+      ImagePainter.asset(
+          "assets/Emo_Venom.jpg",
+          key: _imageKey,
+          scalable: true,
+          initialStrokeWidth: 2,
+          initialColor: Colors.green,
+          initialPaintMode: PaintMode.line,
+        ),
+    ];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text('FIELD'),
+        
+        
       ),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: images[0],      
+        ),
     );
   }
 }
