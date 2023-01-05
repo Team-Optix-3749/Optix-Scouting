@@ -242,7 +242,7 @@ class _MatchState extends State<Match> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.70,
+              height: MediaQuery.of(context).size.height * 0.65,
               child: AspectRatio(
                 aspectRatio: 1 / 2,
                 child: GestureDetector(
