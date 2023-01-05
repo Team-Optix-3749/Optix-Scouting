@@ -248,9 +248,9 @@ class _MatchState extends State<Match> {
                 child: GestureDetector(
                     key: _tapKey,
                     // child: images[0],
-                    child: Container(
-                      color: Colors.green,
-                    ),
+                    child: RotatedBox(quarterTurns:1,child:Container(
+                      child: images[0],
+                    ),),
                     onTapUp: (details) =>
                         getTapPosition(details, currentSelected)),
               ),
@@ -271,7 +271,7 @@ class _MatchState extends State<Match> {
                               currentSelected = k;
                             }
                             if (scoreChanges[k] == -3749) {
-                              // currentSelected = "";
+                              currentSelected = "";
                               // writeData;
                               // Todo: write data to sqflite database
                             }

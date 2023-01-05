@@ -46,6 +46,8 @@ dependencies:
   intl: 0.17.0-nullsafety.2
   sqflite: ^2.2.2
   path: ^1.8.2
+  image_painter: ^0.4.6
+  open_file: ^3.2.1
 
 
 
