@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +6,6 @@ import 'package:optix_scouting/util.dart';
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Match extends StatefulWidget {
   final Function getScoreChanges;
@@ -36,6 +34,7 @@ class _MatchState extends State<Match> {
     "y_pos",
   ];
   List<List<String>> data = [];
+
   String directory = "";
 
   String currentSelected = "";
@@ -50,6 +49,8 @@ class _MatchState extends State<Match> {
       fit: BoxFit.fitWidth,
     ),
   ];
+
+
 
   Widget getPlusMinus(int val, String label) {
     Color color = Colors.black;
@@ -166,11 +167,13 @@ class _MatchState extends State<Match> {
 
   @override
   void initState() {
+    data=[header];
     super.initState();
   }
 
   @override
   dispose() {
+    saveFile();
     super.dispose();
   }
 
@@ -215,18 +218,27 @@ class _MatchState extends State<Match> {
   //   return file;
   // }
 
-  // Future<File> writeData() async {
-  //   final file = await _localFile;
 
-  //   String csv = ListToCsvConverter().convert(data);
+  Future<String> getFilePath(String fileName) async {
+    io.Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String filePath = '$appDocumentsPath/$fileName'; // 3
+    return filePath;
+  }
+  void saveFile() async {
+    
+    if (data.length > 1) {
 
-  //   return file.writeAsString(csv);
-  // }
+      String fileName = '${DateFormat('EEEE, d MMM, yyyy').format(DateTime.now())}_${widget.getLabels()[0]}_${widget.getLabels()[1]}.csv';
+      io.File file = io.File(await getFilePath(fileName)); // 1
+      data.clear();//hi
+      data.add(header);
+    }
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    data.add(header);
     Map<String, int> scoreChanges = widget.getScoreChanges();
     scoreChanges["Penalty"] = 0;
     scoreChanges["Save"] = -3749;
@@ -272,6 +284,8 @@ class _MatchState extends State<Match> {
                             }
                             if (scoreChanges[k] == -3749) {
                               currentSelected = "";
+                              saveFile();
+                              
                               // writeData;
                               // Todo: write data to sqflite database
                             }
