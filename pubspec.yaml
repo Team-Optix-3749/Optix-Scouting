@@ -48,6 +48,7 @@ dependencies:
   path: ^1.8.2
   image_painter: ^0.4.6
   open_file: ^3.2.1
+  uuid: ^3.0.7
 
   
 

@@ -1,7 +1,7 @@
 import 'dart:io' as io;
 
-
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() => runApp(const History());
@@ -18,28 +18,46 @@ class History extends StatefulWidget {
 class _HistoryState extends State<History> {
   String _contentOfFile = "";
   List<io.FileSystemEntity> files = [];
-
-
+  List<String> fileNames = [];
 
   Future<String> getFilePath() async {
-    io.Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+    io.Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
-    String filePath = '$appDocumentsPath/Friday, 6 Jan, 2023.csv'; // 3
+    String filePath =
+        '$appDocumentsPath/MATCH_Saturday, 7 Jan, 2023_3749_42_7dfa6f10-8e6c-11ed-9e9b-e57557456788.csv'; // 3
     setState(() {
-    files = io.Directory('$appDocumentsPath/').listSync();  
+      getFiles();
     });
     return filePath;
   }
 
+  void getFiles() async {
+    files.clear();
+    fileNames.clear();
+    io.Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory(); //
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    setState(() {
+      List<io.FileSystemEntity> tempFiles =
+          io.Directory('$appDocumentsPath/').listSync();
+      for (io.FileSystemEntity file in tempFiles) {
+        if (basename(file.path.split("/").last).split("_").first == "MATCH") {
+          files.add(file);
+          fileNames.add(basename(file.path.split("/").last));
+        }
+      }
+    });
+  }
+
   void saveFile(String text) async {
     io.File file = io.File(await getFilePath()); // 1
-    // file.writeAsString(text); // 2
+    file.writeAsString(text); // 2
   }
 
   void readFile() async {
     io.File file = io.File(await getFilePath()); // 1
     String fileContent = await file.readAsString(); // 2
-
 
     print('File Content: $fileContent');
   }
@@ -68,15 +86,17 @@ class _HistoryState extends State<History> {
               child: Text("Read File"),
             ),
             Expanded(
-                    child: ListView.builder(
-                        itemCount: files.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Text(files[index].toString());
-                        }),
-                  )
-
+              child: ListView.builder(
+                  itemCount: fileNames.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(children: [
+                      Text(fileNames[index].split("_")[])
+                    ],);
+                  }),
+            )
           ],
-        ),),
+        ),
+      ),
     );
   }
 }

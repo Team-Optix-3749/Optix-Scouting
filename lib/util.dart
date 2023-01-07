@@ -24,7 +24,3 @@ mixin Util on StatefulWidget {
     );
   }
 }
-
-class DatabaseHelper {
-  //Todo: Set up sqflite database
-}

@@ -6,6 +6,7 @@ import 'package:optix_scouting/util.dart';
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class Match extends StatefulWidget {
   final Function getScoreChanges;
@@ -35,6 +36,8 @@ class _MatchState extends State<Match> {
   ];
   List<List<String>> data = [];
 
+  var uuid = Uuid();
+
   String directory = "";
 
   String currentSelected = "";
@@ -49,8 +52,6 @@ class _MatchState extends State<Match> {
       fit: BoxFit.fitWidth,
     ),
   ];
-
-
 
   Widget getPlusMinus(int val, String label) {
     Color color = Colors.black;
@@ -167,7 +168,7 @@ class _MatchState extends State<Match> {
 
   @override
   void initState() {
-    data=[header];
+    data = [header];
     super.initState();
   }
 
@@ -218,24 +219,26 @@ class _MatchState extends State<Match> {
   //   return file;
   // }
 
-
   Future<String> getFilePath(String fileName) async {
-    io.Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+    io.Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
     String filePath = '$appDocumentsPath/$fileName'; // 3
     return filePath;
   }
-  void saveFile() async {
-    
-    if (data.length > 1) {
 
-      String fileName = '${DateFormat('EEEE, d MMM, yyyy').format(DateTime.now())}_${widget.getLabels()[0]}_${widget.getLabels()[1]}.csv';
+  void saveFile() async {
+    if (data.length > 1) {
+      String id = uuid.v1();
+      String fileName =
+          'MATCH_${DateFormat('EEEE, d MMM, yyyy').format(DateTime.now())}_${widget.getLabels()[0]}_${widget.getLabels()[1]}_${id}.csv';
       io.File file = io.File(await getFilePath(fileName)); // 1
-      data.clear();//hi
+      String csv = ListToCsvConverter().convert(data);
+      file.writeAsString(csv);
+      data.clear(); //hi
       data.add(header);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -253,16 +256,19 @@ class _MatchState extends State<Match> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.65,
+            Flexible(
+              // height: MediaQuery.of(context).size.height * 0.65,
               child: AspectRatio(
                 aspectRatio: 1 / 2,
                 child: GestureDetector(
                     key: _tapKey,
                     // child: images[0],
-                    child: RotatedBox(quarterTurns:1,child:Container(
-                      child: images[0],
-                    ),),
+                    child: RotatedBox(
+                      quarterTurns: 1,
+                      child: Container(
+                        child: images[0],
+                      ),
+                    ),
                     onTapUp: (details) =>
                         getTapPosition(details, currentSelected)),
               ),
@@ -284,8 +290,9 @@ class _MatchState extends State<Match> {
                             }
                             if (scoreChanges[k] == -3749) {
                               currentSelected = "";
+                              print("${data.length}");
                               saveFile();
-                              
+
                               // writeData;
                               // Todo: write data to sqflite database
                             }
