@@ -83,6 +83,7 @@ flutter:
     - assets/RoboticsCompDay2-11.jpg
     - assets/Venom-12.jpg
     - assets/Solid_red.svg
+    - assets/database.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
