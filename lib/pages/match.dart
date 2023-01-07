@@ -230,8 +230,9 @@ class _MatchState extends State<Match> {
   void saveFile() async {
     if (data.length > 1) {
       String id = uuid.v1();
+      print(widget.getLabels()[2]);
       String fileName =
-          'MATCH_${DateFormat('EEEE, d MMM, yyyy').format(DateTime.now())}_${widget.getLabels()[0]}_${widget.getLabels()[1]}_${id}.csv';
+          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getLabels()[0]}_${widget.getLabels()[1]}_${widget.getLabels()[2]}_${widget.getLabels()[3]}_${id}.csv';
       io.File file = io.File(await getFilePath(fileName)); // 1
       String csv = ListToCsvConverter().convert(data);
       file.writeAsString(csv);

@@ -7,7 +7,6 @@ import 'pages/history.dart';
 import 'pages/match.dart';
 import 'pages/pit.dart';
 
-
 void main() => runApp(new MyApp());
 // Map<String, WidgetBuilder> routes = {
 //   'home': (context) => HomePage(),
@@ -20,8 +19,8 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      home:  MainScreen(),
+    return MaterialApp(
+      home: MainScreen(),
       // routes: routes,
     );
   }
@@ -39,6 +38,8 @@ class _MainScreenState extends State<MainScreen> {
   PageController pageController = PageController();
   String teamNumber = "";
   String matchNumber = "";
+  String teamName = "";
+  String comp = "";
   Map<String, int> scoreChanges = {
     "Lower": 1,
     "Upper": 2,
@@ -54,15 +55,17 @@ class _MainScreenState extends State<MainScreen> {
     return scoreChanges;
   }
 
-  void setLabels(String _teamNumber, String _matchNumber) {
+  void setLabels(
+      String _teamNumber, String _matchNumber, String _teamName, String _comp) {
     teamNumber = _teamNumber;
     matchNumber = _matchNumber;
+    teamName = _teamName;
+    comp = _comp;
   }
 
   List<String> getLabels() {
-    return [teamNumber, matchNumber];
+    return [teamNumber, matchNumber, teamName, comp];
   }
-
 
   @override
   void initState() {
@@ -166,15 +169,14 @@ class _MainScreenState extends State<MainScreen> {
         //   child: _widgetOptions.elementAt(_currentIndex),
         // ),
         body: PageView(
-          children: _widgetOptions,
-          controller: pageController,
-          onPageChanged: (value) {
-            setState(() {
-              _currentIndex = value;
-            });
-          },
-          physics: NeverScrollableScrollPhysics()
-        ),
+            children: _widgetOptions,
+            controller: pageController,
+            onPageChanged: (value) {
+              setState(() {
+                _currentIndex = value;
+              });
+            },
+            physics: NeverScrollableScrollPhysics()),
         bottomNavigationBar: bottomNavBar,
       ),
     );

@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage>
     "Default ": 1,
     // "Add preset": 2,
   };
-  String? match;
+  String match = "San Diego";
   Map<String, int> matches = {
     "San Diego": 0,
     "Aerospace Valley": 1,
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage>
 
   String _teamNumber = '3749';
   String _matchNumber = '42';
-  String _teamName = "";
+  String _teamName = "Team Optix";
   bool _isEditingTeamNumber = false;
   bool _isEditingMatchNumber = false;
   late TextEditingController _TeamNumberController;
@@ -98,12 +98,7 @@ class _HomePageState extends State<HomePage>
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   List<String> getLabels() {
-    return [_teamNumber, _matchNumber];
-  }
-
-  void setLabels(String team, String match) {
-    _teamNumber = team;
-    _matchNumber = match;
+    return [_teamNumber, _matchNumber, _teamName];
   }
 
   void setTeamName(String number) async {
@@ -124,7 +119,8 @@ class _HomePageState extends State<HomePage>
                 _teamNumber = value;
                 //setTeamName(_teamNumber);
                 _isEditingTeamNumber = false;
-                widget.getTeamNumber(_teamNumber, _matchNumber);
+                widget.getTeamNumber(
+                    _teamNumber, _matchNumber, _teamName, match);
               },
             );
           },
@@ -202,7 +198,7 @@ class _HomePageState extends State<HomePage>
     _isEditingTeamNumber = false;
     _isEditingMatchNumber = false;
     setState(() {
-      widget.getTeamNumber(_teamNumber, _matchNumber);
+      widget.getTeamNumber(_teamNumber, _matchNumber, _teamName, match);
     });
     super.initState();
   }

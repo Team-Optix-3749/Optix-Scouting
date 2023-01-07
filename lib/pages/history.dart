@@ -25,7 +25,7 @@ class _HistoryState extends State<History> {
         await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
     String filePath =
-        '$appDocumentsPath/MATCH_Saturday, 7 Jan, 2023_3749_42_7dfa6f10-8e6c-11ed-9e9b-e57557456788.csv'; // 3
+        '$appDocumentsPath/MATCH_Saturday, 7 Jan, 2023_3749_42_Team Optix_b135cdf0-8e73-11ed-9609-31ceb44044e5.csv'; // 3
     setState(() {
       getFiles();
     });
@@ -38,15 +38,24 @@ class _HistoryState extends State<History> {
     io.Directory appDocumentsDirectory =
         await getApplicationDocumentsDirectory(); //
     String appDocumentsPath = appDocumentsDirectory.path; // 2
-    setState(() {
-      List<io.FileSystemEntity> tempFiles =
-          io.Directory('$appDocumentsPath/').listSync();
-      for (io.FileSystemEntity file in tempFiles) {
-        if (basename(file.path.split("/").last).split("_").first == "MATCH") {
-          files.add(file);
-          fileNames.add(basename(file.path.split("/").last));
-        }
+
+    List<io.FileSystemEntity> tempFiles =
+        io.Directory('$appDocumentsPath/').listSync();
+    for (io.FileSystemEntity file in tempFiles) {
+      if (basename(file.path.split("/").last).split("_").first == "MATCH") {
+        files.add(file);
+        fileNames.add(basename(file.path.split("/").last));
       }
+    }
+    setState(() {
+      // List<io.FileSystemEntity> tempFiles =
+      //     io.Directory('$appDocumentsPath/').listSync();
+      // for (io.FileSystemEntity file in tempFiles) {
+      //   if (basename(file.path.split("/").last).split("_").first == "MATCH") {
+      //     files.add(file);
+      //     fileNames.add(basename(file.path.split("/").last));
+      //   }
+      // }
     });
   }
 
@@ -60,6 +69,12 @@ class _HistoryState extends State<History> {
     String fileContent = await file.readAsString(); // 2
 
     print('File Content: $fileContent');
+  }
+
+  @override
+  void initState() {
+    getFiles();
+    super.initState();
   }
 
   @override
@@ -77,22 +92,94 @@ class _HistoryState extends State<History> {
               _contentOfFile,
               textAlign: TextAlign.center,
             ),
-            TextButton(
-              onPressed: () => {saveFile("hehehehawhawhaw")},
-              child: Text("Save File"),
-            ),
-            TextButton(
-              onPressed: () => {readFile()},
-              child: Text("Read File"),
-            ),
             Expanded(
               child: ListView.builder(
-                  itemCount: fileNames.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(children: [
-                      Text(fileNames[index].split("_")[])
-                    ],);
-                  }),
+                itemCount: fileNames.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: Column(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            print("HeHeHeHaww");
+                          },
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(right: 16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          fileNames[index].split("_")[2],
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        Text(
+                                          fileNames[index].split("_")[4],
+                                          style: TextStyle(
+                                            color: Colors.grey[500],
+                                            fontSize: 14.5,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Match: " +
+                                            fileNames[index].split("_")[3],
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      Text(
+                                        "FIRST ENERGIZED: " +
+                                            fileNames[index].split("_")[5],
+                                        style: TextStyle(
+                                          color: Colors.grey[500],
+                                          fontSize: 14.5,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(top: 4),
+                                child: Text(
+                                  fileNames[index].split("_")[1] +
+                                      " : " +
+                                      fileNames[index]
+                                          .split("_")[6]
+                                          .split(".")
+                                          .first,
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 8, top: 4),
+                          child: Divider(
+                            thickness: 2,
+                            color: Color.fromARGB(64, 0, 0, 0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             )
           ],
         ),
