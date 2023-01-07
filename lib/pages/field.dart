@@ -41,9 +41,9 @@ class _FieldState extends State<Field> {
           "assets/Emo_Venom.jpg",
           key: _imageKey,
           scalable: true,
-          initialStrokeWidth: 2,
+          initialStrokeWidth: 6.5,
           initialColor: Colors.green,
-          initialPaintMode: PaintMode.line,
+          initialPaintMode: PaintMode.freeStyle,
         ),
     ];
     return Scaffold(
