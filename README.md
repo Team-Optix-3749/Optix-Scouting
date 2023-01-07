@@ -1,6 +1,6 @@
 # optix_scouting
 
-A new Flutter project.
+A project oriented toward creating an app to better help scout teams in competition for the FIRST Robotics Competition.
 
 ## Getting Started
 
