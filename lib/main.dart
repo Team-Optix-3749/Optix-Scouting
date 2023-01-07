@@ -172,6 +172,7 @@ class _MainScreenState extends State<MainScreen> {
               _currentIndex = value;
             });
           },
+          physics: NeverScrollableScrollPhysics()
         ),
         bottomNavigationBar: bottomNavBar,
       ),
