@@ -171,6 +171,9 @@ class _HomePageState extends State<HomePage>
     _PresetController = TextEditingController();
     _isEditingTeamNumber = false;
     _isEditingMatchNumber = false;
+    setState(() {
+      widget.getTeamNumber(_teamNumber, _matchNumber);
+    });
     super.initState();
   }
 
