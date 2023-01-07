@@ -3,6 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../util.dart';
+import '../funcs.dart' as funcs;
 
 class HomePage extends StatefulWidget with Util {
   final Function changeIndex;
@@ -88,6 +89,7 @@ class _HomePageState extends State<HomePage>
 
   String _teamNumber = '3749';
   String _matchNumber = '42';
+  String _teamName = "";
   bool _isEditingTeamNumber = false;
   bool _isEditingMatchNumber = false;
   late TextEditingController _TeamNumberController;
@@ -104,6 +106,10 @@ class _HomePageState extends State<HomePage>
     _matchNumber = match;
   }
 
+  void setTeamName(String number) async {
+    _teamName = await funcs.getNameFromDB(_teamNumber);
+  }
+
   Widget _editTeamNumber() {
     if (_isEditingTeamNumber) {
       return SizedBox(
@@ -116,6 +122,7 @@ class _HomePageState extends State<HomePage>
             setState(
               () {
                 _teamNumber = value;
+                //setTeamName(_teamNumber);
                 _isEditingTeamNumber = false;
                 widget.getTeamNumber(_teamNumber, _matchNumber);
               },
@@ -221,7 +228,7 @@ class _HomePageState extends State<HomePage>
                   child: _editTeamNumber(),
                 ),
                 Text(
-                  'Team Optix',
+                  _teamName,
                   style: TextStyle(
                     color: Colors.grey[500],
                     fontSize: 14.5,
