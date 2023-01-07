@@ -308,7 +308,7 @@ class _HomePageState extends State<HomePage>
               value: match,
               onChanged: (value) {
                 setState(() {
-                  match = value!;
+                  match = value! as String;
                   switch (matches[match]) {
                     case -1:
                       matchIndex = 0;
@@ -406,7 +406,7 @@ class _HomePageState extends State<HomePage>
                   value: preset,
                   onChanged: (value) {
                     setState(() {
-                      preset = value!;
+                      preset = value! as String;
                       switch (presets[preset]) {
                         case -1:
                           gotoIndex = 0;
