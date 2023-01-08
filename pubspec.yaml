@@ -85,7 +85,7 @@ flutter:
     - assets/RoboticsCompDay2-11.jpg
     - assets/Venom-12.jpg
     - assets/Solid_red.svg
-    - assets/database.json
+    - databases/database.json
     - assets/field.svg
     - assets/red.png
     - assets/blue.png
