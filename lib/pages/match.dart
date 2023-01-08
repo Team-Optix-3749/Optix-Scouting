@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:optix_scouting/util.dart';
@@ -238,6 +239,19 @@ class _MatchState extends State<Match> {
       file.writeAsString(csv);
       data.clear(); //hi
       data.add(header);
+
+      // QR Code (newline is translated to ---)
+      showDialog(
+        context: context,
+        builder: ((context) =>
+            Util.buildPopupDialog(context, "QR Code", <Widget>[
+              Container(
+                height: 300,
+                width: 300,
+                child: QrImage(data: csv.replaceAll("\n", "---"), version: QrVersions.auto, size: 300),
+              )
+            ])),
+      );
     }
   }
 
