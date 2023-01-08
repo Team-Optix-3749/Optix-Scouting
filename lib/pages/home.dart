@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void setTeamName(String number) async {
-    _teamName = await funcs.getNameFromDB(_teamNumber);
+    _teamName = await funcs.getTeamName(_teamNumber);
   }
 
   Widget _editTeamNumber() {
