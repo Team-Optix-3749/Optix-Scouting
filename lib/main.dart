@@ -41,8 +41,9 @@ class _MainScreenState extends State<MainScreen> {
   String teamName = "";
   String comp = "";
   Map<String, int> scoreChanges = {
-    "Lower": 1,
-    "Upper": 2,
+    "Lower": 2,
+    "Middle": 3,
+    "Upper": 5,
   };
 
   void _onBottomTapped(int index) {

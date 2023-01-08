@@ -48,59 +48,20 @@ class _MatchState extends State<Match> {
 
   final List<SvgPicture> images = [
     SvgPicture.asset(
-      'assets/Solid_red.svg',
+      'assets/field.svg',
       fit: BoxFit.fitWidth,
     ),
   ];
-
-  Widget getPlusMinus(int val, String label) {
+  Widget getDefaults(int val, String label){
     Color color = Colors.black;
     if (label == currentSelected) {
       color = Color.fromARGB(255, 78, 118, 247);
       print(label);
     }
-    if (val > 0) {
+    if (val == 0) {
       return Container(
-        width: 60,
-        height: 60,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                Positioned.fill(
-                  top: -40,
-                  child: Align(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      label,
-                      style: TextStyle(fontSize: 15, color: color),
-                    ),
-                  ),
-                ),
-                Container(
-                  child:
-                      new Icon(Icons.expand_less_sharp, size: 60, color: color),
-                ),
-                Positioned.fill(
-                  top: 30,
-                  child: Align(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      "${val.toString()} Pts.",
-                      style: TextStyle(fontSize: 10, color: color),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    } else if (val == 0) {
-      return Container(
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -109,7 +70,7 @@ class _MatchState extends State<Match> {
                 child: Text(
                   textAlign: TextAlign.center,
                   label,
-                  style: TextStyle(fontSize: 15, color: color),
+                  style: TextStyle(fontSize: 13, color: color),
                 ),
               ),
             ),
@@ -124,16 +85,16 @@ class _MatchState extends State<Match> {
               child: Text(
                 textAlign: TextAlign.center,
                 "",
-                style: TextStyle(fontSize: 10, color: color),
+                style: TextStyle(fontSize: 5, color: color),
               ),
             ),
           ],
         ),
       );
-    } else {
+    } else if (val == -3128) {
       return Container(
-        width: 60,
-        height: 60,
+        width: 57,
+        height: 50,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -142,7 +103,40 @@ class _MatchState extends State<Match> {
                 child: Text(
                   textAlign: TextAlign.center,
                   label,
-                  style: TextStyle(fontSize: 15, color: color),
+                  style: TextStyle(fontSize: 13, color: color),
+                ),
+              ),
+            ),
+            Container(
+              child: new Icon(
+                Icons.play_arrow,
+                color: color,
+                size: 25,
+              ),
+            ),
+            Align(
+              child: Text(
+                textAlign: TextAlign.center,
+                "",
+                style: TextStyle(fontSize: 5, color: color),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        width: 50,
+        height: 50,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child: Align(
+                child: Text(
+                  textAlign: TextAlign.center,
+                  label,
+                  style: TextStyle(fontSize: 13, color: color),
                 ),
               ),
             ),
@@ -157,13 +151,58 @@ class _MatchState extends State<Match> {
               child: Text(
                 textAlign: TextAlign.center,
                 "",
-                style: TextStyle(fontSize: 10, color: color),
+                style: TextStyle(fontSize: 5, color: color),
               ),
             ),
           ],
         ),
       );
     }
+  }
+  Widget getPlusMinus(int val, String label) {
+    Color color = Colors.black;
+    if (label == currentSelected) {
+      color = Color.fromARGB(255, 78, 118, 247);
+      print(label);
+    }
+    
+      return Container(
+        width: 50,
+        height: 50,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                Positioned.fill(
+                  top: -30,
+                  child: Align(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      label,
+                      style: TextStyle(fontSize: 13, color: color),
+                    ),
+                  ),
+                ),
+                Container(
+                  child:
+                      new Icon(Icons.expand_less_sharp, size: 40, color: color),
+                ),
+                Positioned.fill(
+                  top: 30,
+                  child: Align(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      "${val.toString()} Pts.",
+                      style: TextStyle(fontSize: 8, color: color),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
   }
 
   @override
@@ -244,16 +283,18 @@ class _MatchState extends State<Match> {
   @override
   Widget build(BuildContext context) {
     Map<String, int> scoreChanges = widget.getScoreChanges();
-    scoreChanges["Penalty"] = 0;
-    scoreChanges["Save"] = -3749;
-
+    Map<String, int> defaults = {
+      "Penalty":0,
+      "Tele Start":-3128,
+      "Save":-3749
+    };
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Match Scouting'),
       ),
       body: Container(
-        margin: EdgeInsets.all(16),
+        margin: EdgeInsets.only(top:16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -275,7 +316,6 @@ class _MatchState extends State<Match> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: scoreChanges.keys
@@ -292,10 +332,7 @@ class _MatchState extends State<Match> {
                             if (scoreChanges[k] == -3749) {
                               currentSelected = "";
                               print("${data.length}");
-                              saveFile();
-
-                              // writeData;
-                              // Todo: write data to sqflite database
+                              saveFile();                              // Todo: write data to sqflite database
                             }
                           });
                         },
@@ -304,9 +341,34 @@ class _MatchState extends State<Match> {
                     .toList(),
               ),
             ),
-          ],
-        ),
+            Container(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: defaults.keys
+                    .map(
+                      (k) => TextButton(
+                        child: getDefaults(defaults[k]!, k),
+                        onPressed: () {
+                          setState(() {
+                            if (currentSelected == k) {
+                              currentSelected = "";
+                            } else {
+                              currentSelected = k;
+                            }
+                            if (defaults[k] == -3749) {
+                              currentSelected = "";
+                              print("${data.length}");
+                              saveFile();                              // Todo: write data to sqflite database
+                            }
+                          },);
+                        },
+                      ),
+                    ) 
+                    .toList(),),
+          
+        ),],
       ),
-    );
+    ),);
   }
 }
