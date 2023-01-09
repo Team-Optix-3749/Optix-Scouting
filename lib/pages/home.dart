@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage>
     // "Add preset": 2,
   };
   String match = "Rocket City Regional"; // weird err msg here
-  Map<String, int> matches = funcs.initCompMap();
+  Map<String, int> matches = {};
   Map<int, Icon> presetIcons = {
     0: Icon(
       Icons.sports_esports,
@@ -175,6 +175,13 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  setCompMap() async {
+    var matches = await funcs.initCompMap();
+    setState(() {
+      this.matches = matches;
+    });
+  }
+
   @override
   bool get wantKeepAlive => true;
   @override
@@ -196,6 +203,7 @@ class _HomePageState extends State<HomePage>
       widget.getMatchInfo().teamName = _teamName;
       widget.getMatchInfo().comp = match;
     });
+    setCompMap();
     super.initState();
   }
 
@@ -265,100 +273,103 @@ class _HomePageState extends State<HomePage>
         ],
       ),
     );
+    print(matches);
     Widget competitionSelect = Container(
       padding: EdgeInsets.only(top: 16, bottom: 16, left: 32),
       child: Align(
         alignment: Alignment.centerLeft,
         child: SizedBox(
           width: 250,
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton2(
-              hint: const Text(
-                'Select Comp',
-                style: TextStyle(
-                  fontSize: 15,
-                ),
-              ),
-              items: matches.keys
-                  .map(
-                    (p) => DropdownMenuItem<String>(
-                      value: p,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            p.trim(),
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Container(
-                            child: matchIcons[matches[p]],
-                          ),
-                        ],
+          child: matches.keys.isEmpty
+              ? Text("loading")
+              : DropdownButtonHideUnderline(
+                  child: DropdownButton2(
+                    hint: const Text(
+                      'Select Comp',
+                      style: TextStyle(
+                        fontSize: 15,
                       ),
                     ),
-                  )
-                  .toList(),
-              value: match,
-              onChanged: (value) {
-                setState(() {
-                  match = value! as String;
-                  switch (matches[match]) {
-                    case -1:
-                      matchIndex = 0;
-                      break;
-                    case 0:
-                      matchIndex = 1;
-                      break;
-                    case 1:
-                      matchIndex = 2;
-                      break;
-                    default:
-                      break;
-                  }
-                  print(matchIndex);
-                });
-              },
-              buttonHeight: 40,
-              dropdownWidth: 179,
-              itemHeight: 40,
-              dropdownMaxHeight: 160,
-              searchController: _MatchController,
-              searchInnerWidget: Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 4,
-                  top: 8,
-                  left: 8,
-                  right: 8,
-                ),
-                child: TextFormField(
-                  controller: _MatchController,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 8,
+                    items: matches.keys
+                        .map(
+                          (p) => DropdownMenuItem<String>(
+                            value: p,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  p.trim(),
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Container(
+                                  child: matchIcons[matches[p]],
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    value: match,
+                    onChanged: (value) {
+                      setState(() {
+                        match = value! as String;
+                        switch (matches[match]) {
+                          case -1:
+                            matchIndex = 0;
+                            break;
+                          case 0:
+                            matchIndex = 1;
+                            break;
+                          case 1:
+                            matchIndex = 2;
+                            break;
+                          default:
+                            break;
+                        }
+                        print(matchIndex);
+                      });
+                    },
+                    buttonHeight: 40,
+                    dropdownWidth: 179,
+                    itemHeight: 40,
+                    dropdownMaxHeight: 160,
+                    searchController: _MatchController,
+                    searchInnerWidget: Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 4,
+                        top: 8,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: TextFormField(
+                        controller: _MatchController,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                          hintText: 'Search for an match...',
+                          hintStyle: const TextStyle(fontSize: 14),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
                     ),
-                    hintText: 'Search for an match...',
-                    hintStyle: const TextStyle(fontSize: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    searchMatchFn: ((item, searchValue) {
+                      return (item.value.toString().contains(searchValue));
+                    }),
+                    onMenuStateChange: (isOpen) {
+                      if (!isOpen) {
+                        _MatchController.clear();
+                      }
+                    },
                   ),
                 ),
-              ),
-              searchMatchFn: ((item, searchValue) {
-                return (item.value.toString().contains(searchValue));
-              }),
-              onMenuStateChange: (isOpen) {
-                if (!isOpen) {
-                  _MatchController.clear();
-                }
-              },
-            ),
-          ),
         ),
       ),
     );

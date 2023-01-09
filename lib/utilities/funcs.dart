@@ -33,15 +33,15 @@ Future<List> getCompetitionNames() async {
     final String response =
         await rootBundle.loadString('databases/teamEvents.json'); // Issue here
     final data = await json.decode(response);
-    print(data.keys);
-    return data.keys;
-  } catch (Exception) {
+
+    return data.keys.toList();
+  } catch (e) {
     return ["Competition Name Error"];
   }
 }
 
-Map<String, int> initCompMap() {
-  List names = getCompetitionNames() as List;
+Future<Map<String, int>> initCompMap() async {
+  List names = await getCompetitionNames();
   List nums = [for (var a = 0; a < names.length; a += 1) a];
   return {for (var pair in zip(names, nums)) pair[0]: pair[1]};
 }
