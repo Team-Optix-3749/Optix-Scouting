@@ -300,18 +300,11 @@ class _HomePageState extends State<HomePage>
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: RichText(
+                                  Expanded(
+                                    child: Text(
                                       overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: p.trim(),
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      strutStyle: StrutStyle(fontSize: 15.0),
-                                      textDirection: TextDirection.ltr,
+                                      p.trim(),
+                                      style: TextStyle(fontSize: 15.0),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -391,7 +384,7 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.only(left: 32, right: 0),
           child: Center(
             child: SizedBox(
-              width: 200,
+              width: 164,
               child: DropdownButtonHideUnderline(
                 child: DropdownButton2(
                   hint: const Text(
@@ -405,20 +398,15 @@ class _HomePageState extends State<HomePage>
                         (p) => DropdownMenuItem<String>(
                           value: p,
                           child: Container(
-                            width: 200,
+                            width: 140,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(
-                                  width: 160,
-                                  child: RichText(
+                                Expanded(
+                                  child: Text(
                                     overflow: TextOverflow.ellipsis,
-                                    text: TextSpan(
-                                      text: p.trim(),
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
+                                    p.trim(),
+                                    
                                     strutStyle: StrutStyle(fontSize: 15.0),
                                     textDirection: TextDirection.ltr,
                                     textAlign: TextAlign.left,

@@ -27,8 +27,7 @@ class _HistoryState extends State<History> {
     io.Directory appDocumentsDirectory =
         await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
-    String filePath =
-        '$appDocumentsPath/$fileName'; // 3
+    String filePath = '$appDocumentsPath/$fileName'; // 3
     return filePath;
   }
 
@@ -74,9 +73,12 @@ class _HistoryState extends State<History> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              _contentOfFile,
-              textAlign: TextAlign.center,
+            Container(
+              child: Text(
+                overflow: TextOverflow.ellipsis,
+                _contentOfFile,
+                textAlign: TextAlign.center,
+              ),
             ),
             Expanded(
               child: ListView.builder(
@@ -91,41 +93,47 @@ class _HistoryState extends State<History> {
                             var content = await readFile(fileNames[index]);
                             showDialog(
                               context: context,
-                              builder: ((context) =>
-                                  Util.buildPopupDialog(context, "QR Code", <Widget>[
+                              builder: ((context) => Util.buildPopupDialog(
+                                      context, "QR Code", <Widget>[
                                     Container(
                                       height: 300,
                                       width: 300,
-                                      child: QrImage(data: content.replaceAll("\n", "---"), version: QrVersions.auto, size: 300),
+                                      child: QrImage(
+                                          data: content.replaceAll("\n", "---"),
+                                          version: QrVersions.auto,
+                                          size: 300),
                                     )
                                   ])),
                             );
-    
                           },
                           child: Column(
                             children: [
                               Row(
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.only(right: 16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          fileNames[index].split("_")[2],
-                                          style: TextStyle(
-                                            fontSize: 15,
+                                  Expanded(
+                                    child: Container(
+                                      padding: EdgeInsets.only(right: 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            fileNames[index].split("_")[2],
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          fileNames[index].split("_")[4],
-                                          style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontSize: 14.5,
-                                          ),
-                                        )
-                                      ],
+                                          Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            fileNames[index].split("_")[4],
+                                            style: TextStyle(
+                                              color: Colors.grey[500],
+                                              fontSize: 14.5,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Column(
@@ -133,6 +141,7 @@ class _HistoryState extends State<History> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
+                                        overflow: TextOverflow.ellipsis,
                                         "Match: " +
                                             fileNames[index].split("_")[3],
                                         style: TextStyle(
@@ -140,6 +149,7 @@ class _HistoryState extends State<History> {
                                         ),
                                       ),
                                       Text(
+                                        overflow: TextOverflow.ellipsis,
                                         "FIRST ENERGIZED: " +
                                             fileNames[index].split("_")[5],
                                         style: TextStyle(
@@ -154,6 +164,7 @@ class _HistoryState extends State<History> {
                               Container(
                                 padding: EdgeInsets.only(top: 4),
                                 child: Text(
+                                  overflow: TextOverflow.ellipsis,
                                   fileNames[index].split("_")[1] +
                                       " : " +
                                       fileNames[index]

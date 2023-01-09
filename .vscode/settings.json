@@ -1,5 +1,7 @@
 {
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": false,
     "java.configuration.updateBuildConfiguration": "interactive"
 }
