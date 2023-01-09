@@ -275,11 +275,11 @@ class _HomePageState extends State<HomePage>
     );
     print(matches);
     Widget competitionSelect = Container(
-      padding: EdgeInsets.only(top: 16, bottom: 16, left: 32),
+      padding: EdgeInsets.only(top: 16, bottom: 16, left: 16),
       child: Align(
         alignment: Alignment.centerLeft,
         child: SizedBox(
-          width: 250,
+          width: 200,
           child: matches.keys.isEmpty
               ? Text("loading")
               : DropdownButtonHideUnderline(
@@ -294,20 +294,32 @@ class _HomePageState extends State<HomePage>
                         .map(
                           (p) => DropdownMenuItem<String>(
                             value: p,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  p.trim(),
-                                  style: const TextStyle(
-                                    fontSize: 15,
+                            child: Container(
+                              width: 176,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: p.trim(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      strutStyle: StrutStyle(fontSize: 15.0),
+                                      textDirection: TextDirection.ltr,
+                                      textAlign: TextAlign.left,
+                                    ),
                                   ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Container(
-                                  child: matchIcons[matches[p]],
-                                ),
-                              ],
+                                  Container(
+                                    child: matchIcons[matches[p]],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -379,7 +391,7 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.only(left: 32, right: 0),
           child: Center(
             child: SizedBox(
-              width: 150,
+              width: 200,
               child: DropdownButtonHideUnderline(
                 child: DropdownButton2(
                   hint: const Text(
@@ -392,20 +404,31 @@ class _HomePageState extends State<HomePage>
                       .map(
                         (p) => DropdownMenuItem<String>(
                           value: p,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                p.trim(),
-                                style: const TextStyle(
-                                  fontSize: 15,
+                          child: Container(
+                            width: 200,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 160,
+                                  child: RichText(
+                                    overflow: TextOverflow.ellipsis,
+                                    text: TextSpan(
+                                      text: p.trim(),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    strutStyle: StrutStyle(fontSize: 15.0),
+                                    textDirection: TextDirection.ltr,
+                                    textAlign: TextAlign.left,
+                                  ),
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Container(
-                                child: presetIcons[presets[p]],
-                              ),
-                            ],
+                                Container(
+                                  child: presetIcons[presets[p]],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )
