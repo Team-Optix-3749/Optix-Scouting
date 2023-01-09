@@ -3,6 +3,9 @@ import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
+import '../util.dart';
 
 void main() => runApp(const History());
 
@@ -20,15 +23,12 @@ class _HistoryState extends State<History> {
   List<io.FileSystemEntity> files = [];
   List<String> fileNames = [];
 
-  Future<String> getFilePath() async {
+  Future<String> getFilePath(String fileName) async {
     io.Directory appDocumentsDirectory =
         await getApplicationDocumentsDirectory(); // 1
     String appDocumentsPath = appDocumentsDirectory.path; // 2
     String filePath =
-        '$appDocumentsPath/MATCH_Saturday, 7 Jan, 2023_3749_42_Team Optix_b135cdf0-8e73-11ed-9609-31ceb44044e5.csv'; // 3
-    setState(() {
-      getFiles();
-    });
+        '$appDocumentsPath/$fileName'; // 3
     return filePath;
   }
 
@@ -47,28 +47,14 @@ class _HistoryState extends State<History> {
         fileNames.add(basename(file.path.split("/").last));
       }
     }
-    setState(() {
-      // List<io.FileSystemEntity> tempFiles =
-      //     io.Directory('$appDocumentsPath/').listSync();
-      // for (io.FileSystemEntity file in tempFiles) {
-      //   if (basename(file.path.split("/").last).split("_").first == "MATCH") {
-      //     files.add(file);
-      //     fileNames.add(basename(file.path.split("/").last));
-      //   }
-      // }
-    });
+    setState(() {});
   }
 
-  void saveFile(String text) async {
-    io.File file = io.File(await getFilePath()); // 1
-    file.writeAsString(text); // 2
-  }
-
-  void readFile() async {
-    io.File file = io.File(await getFilePath()); // 1
+  readFile(String fileName) async {
+    io.File file = io.File(await getFilePath(fileName)); // 1
     String fileContent = await file.readAsString(); // 2
 
-    print('File Content: $fileContent');
+    return fileContent;
   }
 
   @override
@@ -101,8 +87,20 @@ class _HistoryState extends State<History> {
                     child: Column(
                       children: [
                         TextButton(
-                          onPressed: () {
-                            print("HeHeHeHaww");
+                          onPressed: () async {
+                            var content = await readFile(fileNames[index]);
+                            showDialog(
+                              context: context,
+                              builder: ((context) =>
+                                  Util.buildPopupDialog(context, "QR Code", <Widget>[
+                                    Container(
+                                      height: 300,
+                                      width: 300,
+                                      child: QrImage(data: content.replaceAll("\n", "---"), version: QrVersions.auto, size: 300),
+                                    )
+                                  ])),
+                            );
+    
                           },
                           child: Column(
                             children: [
