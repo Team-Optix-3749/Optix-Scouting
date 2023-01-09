@@ -24,12 +24,8 @@ class _HomePageState extends State<HomePage>
     "Default ": 1,
     // "Add preset": 2,
   };
-  String match = "San Diego";
-  Map<String, int> matches = {
-    "San Diego": 0,
-    "Aerospace Valley": 1,
-    "Worlds": 2,
-  };
+  String match = "Rocket City Regional"; // weird err msg here
+  Map<String, int> matches = funcs.initCompMap();
   Map<int, Icon> presetIcons = {
     0: Icon(
       Icons.sports_esports,
@@ -274,7 +270,7 @@ class _HomePageState extends State<HomePage>
       child: Align(
         alignment: Alignment.centerLeft,
         child: SizedBox(
-          width: 169,
+          width: 250,
           child: DropdownButtonHideUnderline(
             child: DropdownButton2(
               hint: const Text(
