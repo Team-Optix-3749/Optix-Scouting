@@ -3,12 +3,13 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../util.dart';
-import '../funcs.dart' as funcs;
+import '../utilities/funcs.dart' as funcs;
+import '../utilities/match_info.dart';
 
 class HomePage extends StatefulWidget with Util {
   final Function changeIndex;
-  final Function getTeamNumber;
-  HomePage({Key? key, required this.changeIndex, required this.getTeamNumber})
+  final MatchInfo Function() getMatchInfo;
+  HomePage({Key? key, required this.changeIndex, required this.getMatchInfo})
       : super(key: key);
 
   static const String routeName = "/HomePage";
@@ -97,12 +98,8 @@ class _HomePageState extends State<HomePage>
 
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  List<String> getLabels() {
-    return [_teamNumber, _matchNumber, _teamName];
-  }
-
-  void setTeamName(String number) async {
-    _teamName = await funcs.getTeamName(_teamNumber);
+  getTeamName(String teamNumber) async {
+    return await funcs.getTeamName(teamNumber);
   }
 
   Widget _editTeamNumber() {
@@ -113,14 +110,14 @@ class _HomePageState extends State<HomePage>
         child: TextField(
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onSubmitted: (value) {
+          onSubmitted: (value) async {
+            var teamName = await getTeamName(value);
             setState(
               () {
                 _teamNumber = value;
-                setTeamName(_teamNumber);
-                _isEditingTeamNumber = false;
-                widget.getTeamNumber(
-                    _teamNumber, _matchNumber, _teamName, match);
+                _teamName = teamName;
+                widget.getMatchInfo().teamName = teamName;
+                widget.getMatchInfo().teamNumber = value;
               },
             );
           },
@@ -156,7 +153,7 @@ class _HomePageState extends State<HomePage>
             setState(
               () {
                 _matchNumber = value;
-                widget.getTeamNumber(_teamNumber, _matchNumber);
+                widget.getMatchInfo().matchNumber = value;
 
                 _isEditingMatchNumber = false;
               },
@@ -198,7 +195,10 @@ class _HomePageState extends State<HomePage>
     _isEditingTeamNumber = false;
     _isEditingMatchNumber = false;
     setState(() {
-      widget.getTeamNumber(_teamNumber, _matchNumber, _teamName, match);
+      widget.getMatchInfo().teamNumber = _teamNumber;
+      widget.getMatchInfo().matchNumber = _matchNumber;
+      widget.getMatchInfo().teamName = _teamName;
+      widget.getMatchInfo().comp = match;
     });
     super.initState();
   }

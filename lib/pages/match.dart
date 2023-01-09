@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 
+import 'package:optix_scouting/utilities/match_info.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,14 +12,10 @@ import 'package:uuid/uuid.dart';
 
 class Match extends StatefulWidget {
   final Function getScoreChanges;
-  final Function getLabels;
-  final Function setLabels;
+  final MatchInfo Function() getMatchInfo;
 
   const Match(
-      {Key? key,
-      required this.getScoreChanges,
-      required this.getLabels,
-      required this.setLabels})
+      {Key? key, required this.getScoreChanges, required this.getMatchInfo})
       : super(key: key);
 
   static const String routeName = "/MatchPage";
@@ -53,7 +50,7 @@ class _MatchState extends State<Match> {
       fit: BoxFit.fitWidth,
     ),
   ];
-  Widget getDefaults(int val, String label){
+  Widget getDefaults(int val, String label) {
     Color color = Colors.black;
     if (label == currentSelected) {
       color = Color.fromARGB(255, 78, 118, 247);
@@ -160,50 +157,51 @@ class _MatchState extends State<Match> {
       );
     }
   }
+
   Widget getPlusMinus(int val, String label) {
     Color color = Colors.black;
     if (label == currentSelected) {
       color = Color.fromARGB(255, 78, 118, 247);
       print(label);
     }
-    
-      return Container(
-        width: 50,
-        height: 50,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                Positioned.fill(
-                  top: -30,
-                  child: Align(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      label,
-                      style: TextStyle(fontSize: 13, color: color),
-                    ),
+
+    return Container(
+      width: 50,
+      height: 50,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
+            children: [
+              Positioned.fill(
+                top: -30,
+                child: Align(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    label,
+                    style: TextStyle(fontSize: 13, color: color),
                   ),
                 ),
-                Container(
-                  child:
-                      new Icon(Icons.expand_less_sharp, size: 40, color: color),
-                ),
-                Positioned.fill(
-                  top: 30,
-                  child: Align(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      "${val.toString()} Pts.",
-                      style: TextStyle(fontSize: 8, color: color),
-                    ),
+              ),
+              Container(
+                child:
+                    new Icon(Icons.expand_less_sharp, size: 40, color: color),
+              ),
+              Positioned.fill(
+                top: 30,
+                child: Align(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "${val.toString()} Pts.",
+                    style: TextStyle(fontSize: 8, color: color),
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
-      );
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -233,8 +231,8 @@ class _MatchState extends State<Match> {
       );
     } else {
       data.add([
-        widget.getLabels()[0],
-        widget.getLabels()[1],
+        widget.getMatchInfo().teamNumber,
+        widget.getMatchInfo().matchNumber,
         type,
         _tapPosition!.dx.toStringAsFixed(2),
         _tapPosition!.dy.toStringAsFixed(2),
@@ -270,9 +268,8 @@ class _MatchState extends State<Match> {
   void saveFile() async {
     if (data.length > 1) {
       String id = uuid.v1();
-      print(widget.getLabels()[2]);
       String fileName =
-          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getLabels()[0]}_${widget.getLabels()[1]}_${widget.getLabels()[2]}_${widget.getLabels()[3]}_${id}.csv';
+          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.csv';
       io.File file = io.File(await getFilePath(fileName)); // 1
       String csv = ListToCsvConverter().convert(data);
       file.writeAsString(csv);
@@ -287,7 +284,10 @@ class _MatchState extends State<Match> {
               Container(
                 height: 300,
                 width: 300,
-                child: QrImage(data: csv.replaceAll("\n", "---"), version: QrVersions.auto, size: 300),
+                child: QrImage(
+                    data: csv.replaceAll("\n", "---"),
+                    version: QrVersions.auto,
+                    size: 300),
               )
             ])),
       );
@@ -298,9 +298,9 @@ class _MatchState extends State<Match> {
   Widget build(BuildContext context) {
     Map<String, int> scoreChanges = widget.getScoreChanges();
     Map<String, int> defaults = {
-      "Penalty":0,
-      "Tele Start":-3128,
-      "Save":-3749
+      "Penalty": 0,
+      "Tele Start": -3128,
+      "Save": -3749
     };
     return Scaffold(
       appBar: AppBar(
@@ -308,7 +308,7 @@ class _MatchState extends State<Match> {
         title: const Text('Match Scouting'),
       ),
       body: Container(
-        margin: EdgeInsets.only(top:16),
+        margin: EdgeInsets.only(top: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -346,7 +346,7 @@ class _MatchState extends State<Match> {
                             if (scoreChanges[k] == -3749) {
                               currentSelected = "";
                               print("${data.length}");
-                              saveFile();                              // Todo: write data to sqflite database
+                              saveFile(); // Todo: write data to sqflite database
                             }
                           });
                         },
@@ -364,25 +364,29 @@ class _MatchState extends State<Match> {
                       (k) => TextButton(
                         child: getDefaults(defaults[k]!, k),
                         onPressed: () {
-                          setState(() {
-                            if (currentSelected == k) {
-                              currentSelected = "";
-                            } else {
-                              currentSelected = k;
-                            }
-                            if (defaults[k] == -3749) {
-                              currentSelected = "";
-                              print("${data.length}");
-                              saveFile();                              // Todo: write data to sqflite database
-                            }
-                          },);
+                          setState(
+                            () {
+                              if (currentSelected == k) {
+                                currentSelected = "";
+                              } else {
+                                currentSelected = k;
+                              }
+                              if (defaults[k] == -3749) {
+                                currentSelected = "";
+                                print("${data.length}");
+                                saveFile(); // Todo: write data to sqflite database
+                              }
+                            },
+                          );
                         },
                       ),
-                    ) 
-                    .toList(),),
-          
-        ),],
+                    )
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),);
+    );
   }
 }

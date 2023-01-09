@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:optix_scouting/utilities/match_info.dart';
 import 'pages/home.dart';
 import 'pages/field.dart';
 import 'pages/history.dart';
@@ -36,10 +37,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   PageController pageController = PageController();
-  String teamNumber = "";
-  String matchNumber = "";
-  String teamName = "";
-  String comp = "";
+  MatchInfo matchInfo = MatchInfo();
   Map<String, int> scoreChanges = {
     "Lower": 2,
     "Middle": 3,
@@ -56,16 +54,8 @@ class _MainScreenState extends State<MainScreen> {
     return scoreChanges;
   }
 
-  void setLabels(
-      String _teamNumber, String _matchNumber, String _teamName, String _comp) {
-    teamNumber = _teamNumber;
-    matchNumber = _matchNumber;
-    teamName = _teamName;
-    comp = _comp;
-  }
-
-  List<String> getLabels() {
-    return [teamNumber, matchNumber, teamName, comp];
+  MatchInfo getMatchInfo() {
+    return matchInfo;
   }
 
   @override
@@ -79,12 +69,11 @@ class _MainScreenState extends State<MainScreen> {
     List<Widget> _widgetOptions = [
       HomePage(
         changeIndex: pageController.jumpToPage,
-        getTeamNumber: setLabels,
+        getMatchInfo: getMatchInfo,
       ),
       Match(
         getScoreChanges: getScoreChanges,
-        getLabels: getLabels,
-        setLabels: setLabels,
+        getMatchInfo: getMatchInfo,
       ),
       Pit(),
       History(),
