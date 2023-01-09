@@ -17,6 +17,8 @@ class Field extends StatefulWidget {
 class _FieldState extends State<Field> {
   
   final _imageKey = GlobalKey<ImagePainterState>();
+  List<String> alliances = ["assets/blue.png", "assets/red.png"];
+  String? alliance;
 
   GlobalKey tapKey = GlobalKey();
   Offset? tapPosition;
@@ -35,10 +37,10 @@ class _FieldState extends State<Field> {
     
   @override
   Widget build(BuildContext context) {
-    
+    alliance = alliances[0];
     List<ImagePainter > images = [
       ImagePainter.asset(
-          "assets/Emo_Venom.jpg",
+          alliance!,
           key: _imageKey,
           scalable: true,
           initialStrokeWidth: 6.5,

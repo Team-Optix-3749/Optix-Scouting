@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void setTeamName(String number) async {
-    _teamName = await funcs.getNameFromDB(_teamNumber);
+    _teamName = await funcs.getTeamName(_teamNumber);
   }
 
   Widget _editTeamNumber() {
@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage>
             setState(
               () {
                 _teamNumber = value;
-                //setTeamName(_teamNumber);
+                setTeamName(_teamNumber);
                 _isEditingTeamNumber = false;
                 widget.getTeamNumber(
                     _teamNumber, _matchNumber, _teamName, match);
@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage>
       child: Align(
         alignment: Alignment.centerLeft,
         child: SizedBox(
-          width: 163,
+          width: 169,
           child: DropdownButtonHideUnderline(
             child: DropdownButton2(
               hint: const Text(
@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage>
                 });
               },
               buttonHeight: 40,
-              dropdownWidth: 175,
+              dropdownWidth: 179,
               itemHeight: 40,
               dropdownMaxHeight: 160,
               searchController: _MatchController,
