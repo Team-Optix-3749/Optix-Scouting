@@ -46,6 +46,7 @@ class _MatchState extends State<Match> {
 
   String currentSelected = "";
   int index = 0;
+  bool teleOp = false;
 
   GlobalKey _tapKey = GlobalKey();
   Offset? _tapPosition;
@@ -237,7 +238,7 @@ class _MatchState extends State<Match> {
       );
     } else {
       data.events
-          .add(Event(name: type, x: _tapPosition!.dx, y: _tapPosition!.dy));
+          .add(Event(name: type, x: _tapPosition!.dx, y: _tapPosition!.dy, isAuto: !teleOp));
       currentSelected = "";
     }
   }
@@ -284,10 +285,7 @@ class _MatchState extends State<Match> {
               Container(
                 height: 300,
                 width: 300,
-                child: QrImage(
-                    data: json,
-                    version: QrVersions.auto,
-                    size: 300),
+                child: QrImage(data: json, version: QrVersions.auto, size: 300),
               )
             ])),
       );
@@ -373,8 +371,10 @@ class _MatchState extends State<Match> {
                               }
                               if (defaults[k] == -3749) {
                                 currentSelected = "";
-                                print("${data.events.length}");
                                 saveFile(); // Todo: write data to sqflite database
+                              }
+                              if (defaults[k] == -3128) {
+                                teleOp = true;
                               }
                             },
                           );

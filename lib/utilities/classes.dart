@@ -30,10 +30,15 @@ class Event {
   String name = "";
   double x = 0;
   double y = 0;
+  bool isAuto;
 
-  Event({required this.name, required this.x, required this.y});
+  Event(
+      {required this.name,
+      required this.x,
+      required this.y,
+      required this.isAuto});
 
   toJSON() {
-    return '{"name": "$name", "x": ${x.toStringAsFixed(1)}, "y": ${y.toStringAsFixed(1)}';
+    return '{"name": "$name", "x": ${x.toStringAsFixed(1)}, "y": ${y.toStringAsFixed(1)}, "isAuto": $isAuto}';
   }
 }
