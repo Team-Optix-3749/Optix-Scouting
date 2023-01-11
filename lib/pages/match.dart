@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 
-import 'package:optix_scouting/utilities/match_info.dart';
+import 'package:optix_scouting/utilities/classes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,7 +32,13 @@ class _MatchState extends State<Match> {
     "x_pos",
     "y_pos",
   ];
-  List<List<String>> data = [];
+  ScoutData data = ScoutData(
+      matchInfo: MatchInfo(
+          teamNumber: "3749",
+          teamName: "Team Optix",
+          matchNumber: 42,
+          comp: "San Diego Regional"),
+      events: []);
 
   var uuid = Uuid();
 
@@ -206,7 +212,7 @@ class _MatchState extends State<Match> {
 
   @override
   void initState() {
-    data = [header];
+    data.matchInfo = widget.getMatchInfo();
     super.initState();
   }
 
@@ -230,13 +236,8 @@ class _MatchState extends State<Match> {
             context, "No type", <Widget>[Text("Select a point type")])),
       );
     } else {
-      data.add([
-        widget.getMatchInfo().teamNumber,
-        widget.getMatchInfo().matchNumber,
-        type,
-        _tapPosition!.dx.toStringAsFixed(2),
-        _tapPosition!.dy.toStringAsFixed(2),
-      ]);
+      data.events
+          .add(Event(name: type, x: _tapPosition!.dx, y: _tapPosition!.dy));
       currentSelected = "";
     }
   }
@@ -266,15 +267,14 @@ class _MatchState extends State<Match> {
   }
 
   void saveFile() async {
-    if (data.length > 1) {
+    if (data.events.isNotEmpty) {
       String id = uuid.v1();
       String fileName =
-          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.csv';
+          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
       io.File file = io.File(await getFilePath(fileName)); // 1
-      String csv = ListToCsvConverter().convert(data);
-      file.writeAsString(csv);
-      data.clear(); //hi
-      data.add(header);
+      String json = data.toJSON();
+      file.writeAsString(json);
+      data.events = [];
 
       // QR Code (newline is translated to ---)
       showDialog(
@@ -285,7 +285,7 @@ class _MatchState extends State<Match> {
                 height: 300,
                 width: 300,
                 child: QrImage(
-                    data: csv.replaceAll("\n", "---"),
+                    data: json,
                     version: QrVersions.auto,
                     size: 300),
               )
@@ -345,7 +345,7 @@ class _MatchState extends State<Match> {
                             }
                             if (scoreChanges[k] == -3749) {
                               currentSelected = "";
-                              print("${data.length}");
+                              print("${data.events.length}");
                               saveFile(); // Todo: write data to sqflite database
                             }
                           });
@@ -373,7 +373,7 @@ class _MatchState extends State<Match> {
                               }
                               if (defaults[k] == -3749) {
                                 currentSelected = "";
-                                print("${data.length}");
+                                print("${data.events.length}");
                                 saveFile(); // Todo: write data to sqflite database
                               }
                             },

@@ -41,7 +41,7 @@ class _HistoryState extends State<History> {
     List<io.FileSystemEntity> tempFiles =
         io.Directory('$appDocumentsPath/').listSync();
     for (io.FileSystemEntity file in tempFiles) {
-      if (basename(file.path.split("/").last).split("_").first == "MATCH") {
+      if (basename(file.path.split("/").last).split("_").first == "MATCH" && file.path.contains("json")) {
         files.add(file);
         fileNames.add(basename(file.path.split("/").last));
       }
