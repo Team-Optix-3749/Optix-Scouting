@@ -22,7 +22,7 @@ class ScoutData {
   ScoutData({required this.matchInfo, required this.events});
 
   toJSON() {
-    return "";
+    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", matchNumber: ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": [${events.map((e) => e.toJSON()).join(", ")}] }';
   }
 }
 
@@ -34,6 +34,6 @@ class Event {
   Event({required this.name, required this.x, required this.y});
 
   toJSON() {
-    return "";
+    return '{"name": "$name", "x": ${x.toStringAsFixed(1)}, "y": ${y.toStringAsFixed(1)}';
   }
 }
