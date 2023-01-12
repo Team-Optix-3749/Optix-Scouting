@@ -8,7 +8,10 @@ import 'pages/history.dart';
 import 'pages/match.dart';
 import 'pages/pit.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(new MyApp());
+}
 // Map<String, WidgetBuilder> routes = {
 //   'home': (context) => HomePage(),
 //   'match': (context) => Match(),
