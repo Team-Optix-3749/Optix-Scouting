@@ -355,7 +355,7 @@ class _MatchState extends State<Match> {
       for (int i = 0; i < initialData.length; i++) {
         data.add([
           widget.getMatchInfo().teamNumber,
-          widget.getMatchInfo().matchNumber,
+          widget.getMatchInfo().matchNumber.toString(),
           initialDataTypes[i],
           i.remainder(9).toString(),
           (i % 3).toString(),
