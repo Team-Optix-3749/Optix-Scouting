@@ -53,3 +53,7 @@ List zip(List lsta, List lstb) {
   }
   return nlst;
 }
+
+List<int> intTo2d(int val, int width) {
+  return [val.remainder(width), val % width];
+}

@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 
+import 'package:flutter_grid_button/flutter_grid_button.dart';
 import 'package:optix_scouting/utilities/match_info.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,11 @@ class _MatchState extends State<Match> {
     "type",
     "x_pos",
     "y_pos",
+    "val",
   ];
   List<List<String>> data = [];
+  List<int> initialData = [];
+  List<String> initialDataTypes = [];
 
   var uuid = Uuid();
 
@@ -50,6 +54,47 @@ class _MatchState extends State<Match> {
       fit: BoxFit.fitWidth,
     ),
   ];
+  Widget getStaticDefaults(int val, String label) {
+    Color color = Color.fromARGB(255, 78, 118, 247);
+    return Container(
+      width: 50,
+      height: 50,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
+            children: [
+              Positioned.fill(
+                top: -30,
+                child: Align(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    label,
+                    style: TextStyle(fontSize: 13, color: color),
+                  ),
+                ),
+              ),
+              Container(
+                child:
+                    new Icon(Icons.expand_less_sharp, size: 40, color: color),
+              ),
+              Positioned.fill(
+                top: 30,
+                child: Align(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "${val.toString()} Pts.",
+                    style: TextStyle(fontSize: 8, color: color),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget getDefaults(int val, String label) {
     Color color = Colors.black;
     if (label == currentSelected) {
@@ -207,6 +252,40 @@ class _MatchState extends State<Match> {
   @override
   void initState() {
     data = [header];
+    initialData = [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ];
+
+    Map<String, int> scoreChanges = widget.getScoreChanges();
+    for (int i = 0; i < initialData.length; i++) {
+      initialDataTypes.add((scoreChanges).keys.toList()[i % 3].toString());
+    }
     super.initState();
   }
 
@@ -216,30 +295,30 @@ class _MatchState extends State<Match> {
     super.dispose();
   }
 
-  void getTapPosition(TapUpDetails details, String type) async {
-    final RenderBox reference =
-        _tapKey.currentContext!.findRenderObject() as RenderBox;
-    final tapPos = reference.globalToLocal(details.globalPosition);
-    setState(() {
-      _tapPosition = tapPos;
-    });
-    if (type == "") {
-      showDialog(
-        context: context,
-        builder: ((context) => Util.buildPopupDialog(
-            context, "No type", <Widget>[Text("Select a point type")])),
-      );
-    } else {
-      data.add([
-        widget.getMatchInfo().teamNumber,
-        widget.getMatchInfo().matchNumber,
-        type,
-        _tapPosition!.dx.toStringAsFixed(2),
-        _tapPosition!.dy.toStringAsFixed(2),
-      ]);
-      currentSelected = "";
-    }
-  }
+  // void getTapPosition(TapUpDetails details, String type) async {
+  //   final RenderBox reference =
+  //       _tapKey.currentContext!.findRenderObject() as RenderBox;
+  //   final tapPos = reference.globalToLocal(details.globalPosition);
+  //   setState(() {
+  //     _tapPosition = tapPos;
+  //   });
+  //   if (type == "") {
+  //     showDialog(
+  //       context: context,
+  //       builder: ((context) => Util.buildPopupDialog(
+  //           context, "No type", <Widget>[Text("Select a point type")])),
+  //     );
+  //   } else {
+  //     data.add([
+  //       widget.getMatchInfo().teamNumber,
+  //       widget.getMatchInfo().matchNumber,
+  //       type,
+  //       _tapPosition!.dx.toStringAsFixed(2),
+  //       _tapPosition!.dy.toStringAsFixed(2),
+  //     ]);
+  //     currentSelected = "";
+  //   }
+  // }
 
   // Future<String> get _localPath async {
   //   final directory = await getApplicationDocumentsDirectory();
@@ -266,15 +345,34 @@ class _MatchState extends State<Match> {
   }
 
   void saveFile() async {
-    if (data.length > 1) {
+    if (data.length > 1 || initialData.length > 0) {
+      data = [header];
+
       String id = uuid.v1();
       String fileName =
           'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.csv';
       io.File file = io.File(await getFilePath(fileName)); // 1
+      for (int i = 0; i < initialData.length; i++) {
+        data.add([
+          widget.getMatchInfo().teamNumber,
+          widget.getMatchInfo().matchNumber,
+          initialDataTypes[i],
+          i.remainder(9).toString(),
+          (i % 3).toString(),
+          initialData[i].toString(),
+        ]);
+      }
+      print(data);
+      //     List<String> header = [
+      //   "team",
+      //   "match",
+      //   "type",
+      //   "x_pos",
+      //   "y_pos",
+      // ];
+
       String csv = ListToCsvConverter().convert(data);
       file.writeAsString(csv);
-      data.clear(); //hi
-      data.add(header);
 
       // QR Code (newline is translated to ---)
       showDialog(
@@ -302,54 +400,78 @@ class _MatchState extends State<Match> {
       "Tele Start": -3128,
       "Save": -3749
     };
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Match Scouting'),
       ),
       body: Container(
-        margin: EdgeInsets.only(top: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Flexible(
+            Expanded(
+              flex: 0,
               // height: MediaQuery.of(context).size.height * 0.65,
-              child: AspectRatio(
-                aspectRatio: 1 / 2,
-                child: GestureDetector(
-                    key: _tapKey,
-                    // child: images[0],
-                    child: RotatedBox(
-                      quarterTurns: 1,
-                      child: Container(
-                        child: images[0],
-                      ),
+              // child: AspectRatio(
+              //   aspectRatio: 1 / 2,
+              //   child: GestureDetector(
+              //       key: _tapKey,
+              //       // child: images[0],
+              //       child: RotatedBox(
+              //         quarterTurns: 1,
+              //         child: Container(
+              //           child: images[0],
+              //         ),
+              //       ),
+              //       onTapUp: (details) =>
+              //           getTapPosition(details, currentSelected)),
+              // ),
+              child: Container(
+                padding: EdgeInsets.only(top: 32),
+                child: Center(
+                  child: GridView.builder(
+                    itemCount: 27,
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 2.5,
                     ),
-                    onTapUp: (details) =>
-                        getTapPosition(details, currentSelected)),
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        // decoration: BoxDecoration(
+                        //   border: Border.all(width: 0.5),
+                        // ),
+                        child: Center(
+                          // child: Text('$index'),
+                          child: TextButton(
+                            child:
+                                Container(child: Text("${initialData[index]}")),
+                            onPressed: () {
+                              setState(() {
+                                initialData[index] = initialData[index] + 1;
+                                print(initialData[index]);
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
             Container(
+              padding: EdgeInsets.only(top: 8, bottom: 32),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: scoreChanges.keys
                     .map(
-                      (k) => TextButton(
-                        child: getPlusMinus(scoreChanges[k]!, k),
-                        onPressed: () {
-                          setState(() {
-                            if (currentSelected == k) {
-                              currentSelected = "";
-                            } else {
-                              currentSelected = k;
-                            }
-                            if (scoreChanges[k] == -3749) {
-                              currentSelected = "";
-                              print("${data.length}");
-                              saveFile(); // Todo: write data to sqflite database
-                            }
-                          });
-                        },
+                      (k) => Container(
+                        child: getStaticDefaults(scoreChanges[k]!, k),
                       ),
                     )
                     .toList(),
@@ -375,6 +497,7 @@ class _MatchState extends State<Match> {
                                 currentSelected = "";
                                 print("${data.length}");
                                 saveFile(); // Todo: write data to sqflite database
+                                print('$data');
                               }
                             },
                           );
