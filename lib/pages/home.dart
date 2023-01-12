@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../util.dart';
 import '../utilities/funcs.dart' as funcs;
-import '../utilities/match_info.dart';
+import '../utilities/classes.dart';
 
 class HomePage extends StatefulWidget with Util {
   final Function changeIndex;
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage>
   ];
 
   String _teamNumber = '3749';
-  String _matchNumber = '42';
+  int _matchNumber = 42;
   String _teamName = "Team Optix";
   bool _isEditingTeamNumber = false;
   bool _isEditingMatchNumber = false;
@@ -148,8 +148,8 @@ class _HomePageState extends State<HomePage>
           onSubmitted: (value) {
             setState(
               () {
-                _matchNumber = value;
-                widget.getMatchInfo().matchNumber = value;
+                _matchNumber = int.parse(value);
+                widget.getMatchInfo().matchNumber = int.parse(value);
 
                 _isEditingMatchNumber = false;
               },
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage>
         });
       },
       child: Text(
-        _matchNumber,
+        _matchNumber.toString(),
         textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.normal,
@@ -192,7 +192,7 @@ class _HomePageState extends State<HomePage>
       });
     });
     _TeamNumberController = TextEditingController(text: _teamNumber);
-    _MatchNumberController = TextEditingController(text: _matchNumber);
+    _MatchNumberController = TextEditingController(text: _matchNumber.toString());
     _PresetController = TextEditingController();
     _MatchController = TextEditingController();
     _isEditingTeamNumber = false;

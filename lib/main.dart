@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:optix_scouting/utilities/match_info.dart';
+import 'package:optix_scouting/utilities/classes.dart';
 import 'pages/home.dart';
 import 'pages/field.dart';
 import 'pages/history.dart';
@@ -37,7 +37,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   PageController pageController = PageController();
-  MatchInfo matchInfo = MatchInfo();
+  MatchInfo matchInfo = MatchInfo(
+      teamNumber: "3749",
+      teamName: "Team Optix",
+      matchNumber: 42,
+      comp: "San Diego Regional");
   Map<String, int> scoreChanges = {
     "Lower": 2,
     "Middle": 3,

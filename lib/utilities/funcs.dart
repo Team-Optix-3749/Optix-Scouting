@@ -18,9 +18,9 @@ Future<String> getTeamName(String number) async {
 Future<List> getCompetitonList(String compName) async {
   try {
     final String response =
-        await rootBundle.loadString('databases/teamEvents.json'); // Issue here
+        await rootBundle.loadString('databases/Events.json'); // Issue here
     final data = await json.decode(response);
-    print(data[compName]);
+    
     return data[compName];
   } catch (Exception) {
     print("err");
@@ -33,7 +33,7 @@ Future<List> getCompetitionNames() async {
     final String response =
         await rootBundle.loadString('databases/teamEvents.json'); // Issue here
     final data = await json.decode(response);
-
+    List<String> names = [for (var comp in data) comp["name"]];
     return data.keys.toList();
   } catch (e) {
     return ["Competition Name Error"];
