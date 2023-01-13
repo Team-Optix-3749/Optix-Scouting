@@ -34,8 +34,12 @@ class _MatchState extends State<Match> {
     "y_pos",
     "val",
   ];
-  List<List<String>> data = [];
-  List<int> initialData = [];
+  Map<String, int> defaults = {
+    "Penalty": 0,
+    "Tele Start": -3128,
+    "Save": -3749
+  };
+  List<bool> initialData = [];
   List<String> initialDataTypes = [];
 
   var uuid = Uuid();
@@ -251,35 +255,34 @@ class _MatchState extends State<Match> {
 
   @override
   void initState() {
-    data = [header];
     initialData = [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
     ];
 
     Map<String, int> scoreChanges = widget.getScoreChanges();
@@ -345,61 +348,63 @@ class _MatchState extends State<Match> {
   }
 
   void saveFile() async {
-    if (data.length > 1 || initialData.length > 0) {
-      data = [header];
-
+    if (initialData.length > 0) {
       String id = uuid.v1();
       String fileName =
           'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.csv';
       io.File file = io.File(await getFilePath(fileName)); // 1
+      // for (int i = 0; i < initialData.length; i++) {
+      //   data.add([
+      //     widget.getMatchInfo().teamNumber,
+      //     widget.getMatchInfo().matchNumber.toString(),
+      //     initialDataTypes[i],
+      //     i.remainder(9).toString(),
+      //     (i % 3).toString(),
+      //     initialData[i].toString(),
+      //   ]);
+      // }
+      List<Event> events = [];
       for (int i = 0; i < initialData.length; i++) {
-        data.add([
-          widget.getMatchInfo().teamNumber,
-          widget.getMatchInfo().matchNumber.toString(),
-          initialDataTypes[i],
-          i.remainder(9).toString(),
-          (i % 3).toString(),
-          initialData[i].toString(),
-        ]);
+        events.add(
+          Event(
+            name: initialDataTypes[i],
+            x: (i % 3),
+            y: i.remainder(9),
+            isAuto: defaults[currentSelected] == -3128,
+          ),
+        );
       }
-      print(data);
-      //     List<String> header = [
-      //   "team",
-      //   "match",
-      //   "type",
-      //   "x_pos",
-      //   "y_pos",
-      // ];
+      ScoutData data =
+          ScoutData(matchInfo: widget.getMatchInfo(), events: events);
 
-      String csv = ListToCsvConverter().convert(data);
-      file.writeAsString(csv);
+      file.writeAsString(data.toJSON());
 
       // QR Code (newline is translated to ---)
-      showDialog(
-        context: context,
-        builder: ((context) =>
-            Util.buildPopupDialog(context, "QR Code", <Widget>[
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => Util.buildPopupDialog(
+            context,
+            "QR Code",
+            <Widget>[
               Container(
                 height: 300,
                 width: 300,
                 child: QrImage(
-                    data: csv.replaceAll("\n", "---"),
+                    data: data.toJSON().replaceAll("\n", "---"),
                     version: QrVersions.auto,
                     size: 300),
-              )
-            ])),
-      );
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Map<String, int> scoreChanges = widget.getScoreChanges();
-    Map<String, int> defaults = {
-      "Penalty": 0,
-      "Tele Start": -3128,
-      "Save": -3749
-    };
 
     return Scaffold(
       appBar: AppBar(
@@ -441,24 +446,44 @@ class _MatchState extends State<Match> {
                       childAspectRatio: 2.5,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        // decoration: BoxDecoration(
-                        //   border: Border.all(width: 0.5),
-                        // ),
-                        child: Center(
-                          // child: Text('$index'),
-                          child: TextButton(
-                            child:
-                                Container(child: Text("${initialData[index]}")),
-                            onPressed: () {
-                              setState(() {
-                                initialData[index] = initialData[index] + 1;
-                                print(initialData[index]);
-                              });
-                            },
+                      if (initialData[index]) {
+                        return Container(
+                          padding: EdgeInsets.all(4),
+                          child: Center(
+                            // child: Text('$index'),
+
+                            child: ElevatedButton(
+                              child: Container(
+                                  // child: Text("${initialData[index]}"),
+                                  ),
+                              onPressed: () {
+                                setState(() {
+                                  initialData[index] = !initialData[index];
+                                  print(initialData[index]);
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        return Container(
+                          padding: EdgeInsets.all(4),
+                          child: Center(
+                            // child: Text('$index'),
+                            child: OutlinedButton(
+                              child: Container(
+                                  // child: Text("${initialData[index]}"),
+                                  ),
+                              onPressed: () {
+                                setState(() {
+                                  initialData[index] = !initialData[index];
+                                  print(initialData[index]);
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -495,9 +520,7 @@ class _MatchState extends State<Match> {
                               }
                               if (defaults[k] == -3749) {
                                 currentSelected = "";
-                                print("${data.length}");
-                                saveFile(); // Todo: write data to sqflite database
-                                print('$data');
+                                saveFile();
                               }
                             },
                           );
