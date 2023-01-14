@@ -11,6 +11,19 @@ class MatchInfo {
       required this.comp});
 }
 
+class MatchTeam {
+  final String teamName;
+  final int teamNumber;
+  const MatchTeam({
+    required this.teamName,
+    required this.teamNumber,
+  });
+  @override
+  String toString() {
+    return '$teamNumber';
+  }
+}
+
 class ScoutData {
   MatchInfo matchInfo = MatchInfo(
       teamNumber: "3749",

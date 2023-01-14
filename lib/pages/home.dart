@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage>
     "Default ": 1,
     // "Add preset": 2,
   };
+  List<String> teams = [];
   String match = "Rocket City Regional"; // weird err msg here
   Map<String, int> matches = {};
   Map<int, Icon> presetIcons = {
@@ -98,31 +99,123 @@ class _HomePageState extends State<HomePage>
     return await funcs.getTeamName(teamNumber);
   }
 
+  static getCompetitionTeams(String name) async {
+    return await funcs.getCompetitionTeams(name);
+  }
+
   Widget _editTeamNumber() {
+    print('$_isEditingTeamNumber');
+
     if (_isEditingTeamNumber) {
-      return SizedBox(
-        width: 200.0,
-        height: 20,
-        child: TextField(
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onSubmitted: (value) async {
-            var teamName = await getTeamName(value);
-            setState(
-              () {
-                _teamNumber = value;
-                _teamName = teamName;
-                widget.getMatchInfo().teamName = teamName;
-                widget.getMatchInfo().teamNumber = value;
+      return Container(
+        height: 30,
+        // child: AutofillGroup(
+        //   child: TextField(
+        //     keyboardType: TextInputType.number,
+        //     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        //     autofillHints: ["1234"],
+        //     onSubmitted: (value) async {
+        //       var teamName = await getTeamName(value);
+        //       setState(
+        //         () {
+        //           _teamNumber = value;
+        //           _teamName = teamName;
+        //           widget.getMatchInfo().teamName = teamName;
+        //           widget.getMatchInfo().teamNumber = value;
+        //           _isEditingTeamNumber = false;
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ),
+        child: Autocomplete<String>(
+          optionsBuilder: ((TextEditingValue textEditingValue) async {
+            print('asdfasdf');
+            teams = await getCompetitionTeams(match);
+
+            return (teams.where(
+                    (String team) => team.startsWith(textEditingValue.text)))
+                .toList();
+          }),
+          // displayStringForOption: (String team) => team,
+          fieldViewBuilder:
+              ((context, textEditingController, focusNode, onFieldSubmitted) {
+            return TextField(
+              controller: textEditingController,
+              focusNode: focusNode,
+              keyboardType: TextInputType.number,
+              // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onSubmitted: (value) async {
+                var teamName = await getTeamName(value);
+                setState(
+                  () {
+                    _teamNumber = value;
+                    _teamName = teamName;
+                    widget.getMatchInfo().teamName = teamName;
+                    widget.getMatchInfo().teamNumber = value;
+                  },
+                );
               },
             );
+          }),
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                  width: 150,
+                  height: 120,
+                  child: ListView.builder(
+                    itemCount: options.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final String option = options.elementAt(index);
+                      print('$option');
+
+                      return Container(
+                        height: 30,
+                        child: GestureDetector(
+                          onTap: () {
+                            onSelected(option);
+                          },
+                          child: ListTile(title: Text(option)),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            );
           },
+          // onSelected: (String selection) async {
+          //   var teamName = await getTeamName(selection);
+          //   print('$selection');
+          //   setState(
+          //     () {
+          //       _teamNumber = selection;
+          //       _teamName = teamName;
+          //       widget.getMatchInfo().teamName = teamName;
+          //       widget.getMatchInfo().teamNumber = selection;
+          //     },
+          //   );
+          // },
         ),
       );
     }
 
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        print('$match');
+        teams = await getCompetitionTeams(match);
+
         setState(() {
           _isEditingTeamNumber = true;
         });
@@ -145,7 +238,9 @@ class _HomePageState extends State<HomePage>
         child: TextField(
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onSubmitted: (value) {
+          onSubmitted: (value) async {
+            teams = await getCompetitionTeams(match);
+
             setState(
               () {
                 _matchNumber = int.parse(value);
@@ -319,8 +414,12 @@ class _HomePageState extends State<HomePage>
                         )
                         .toList(),
                     value: match,
-                    onChanged: (value) {
+                    onChanged: (value) async {
+                      teams = await getCompetitionTeams(match);
+
                       setState(() {
+                        print('$teams');
+
                         match = value! as String;
                         switch (matches[match]) {
                           case -1:
@@ -513,6 +612,7 @@ class _HomePageState extends State<HomePage>
         )
       ],
     );
+    ;
 
     return MaterialApp(
       title: 'Optix Scouting',
