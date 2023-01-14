@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:optix_scouting/utilities/classes.dart';
 
 Future<String> getTeamName(String number) async {
   //Todo: Set up the API tag
@@ -41,18 +42,45 @@ Future<List> getCompetitionNames() async {
   }
 }
 
-Future<List> getCompetitionTeams() async {
+Future<List<String>> getCompetitionTeams(String teamName) async {
+  List<String> names = [];
+  String curKey = "HW";
   try {
     final String response =
         await rootBundle.loadString('databases/Events.json'); // Issue here
     Map<String, dynamic> data = await json.decode(response);
-    List<List<int>> names = [];
-    data.forEach((key, value) => {names.add(value["teams"])});
+    data.forEach((key, value) {
+      if (value['name'] == teamName) {
+        curKey = key;
+      }
+    });
+    for (int name in data[curKey]["teams"]) {
+      names.add(name.toString());
+    }
     return names; //data.keys.toL\ist();
   } catch (e) {
-    return ["Competition Team Error", e];
+    return [
+      "Competition Name Error",
+      e.toString(),
+      teamName,
+      names.toString(),
+      curKey
+    ];
   }
 }
+
+// Future<List<String>> getCompetitionTeams() async {
+//   try {
+//     final String response =
+//         await rootBundle.loadString('databases/database.json'); // Issue here
+//     Map<String, dynamic> data = await json.decode(response);
+//     List<String> teamNameNumber = [];
+//     data.forEach((key, value) => {teamNameNumber.add(value.toString())});
+//     return teamNameNumber; //data.keys.toL\ist();
+//   } catch (e) {
+//     return ["Competition Team Error", e.toString()];
+//   }
+// }
 
 Future<Map<String, int>> initCompMap() async {
   List names = await getCompetitionNames();
