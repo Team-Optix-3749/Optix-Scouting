@@ -238,7 +238,7 @@ class _MatchState extends State<Match> {
       );
     } else {
       data.events
-          .add(Event(name: type, x: _tapPosition!.dx, y: _tapPosition!.dy, isAuto: !teleOp));
+          .add(Event(x: _tapPosition!.dx, y: _tapPosition!.dy, isAuto: !teleOp));
       currentSelected = "";
     }
   }
