@@ -22,7 +22,7 @@ class ScoutData {
   ScoutData({required this.matchInfo, required this.events});
 
   toJSON() {
-    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", matchNumber: ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": [${events.map((e) => e.toJSON()).join(", ")}] }';
+    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)} }';
   }
 }
 
@@ -31,12 +31,29 @@ class Event {
   double y = 0;
   bool isAuto;
 
-  Event(
-      {required this.x,
-      required this.y,
-      required this.isAuto});
+  Event({required this.x, required this.y, required this.isAuto});
 
-  toJSON() {
-    return '{"x": ${x.toStringAsFixed(1)}, "y": ${y.toStringAsFixed(1)}, "isAuto": $isAuto}';
+  static eventsToJSON(List<Event> events) {
+    List<List<int>> list = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ];
+    for (Event event in events) {
+      if (event.isAuto) {
+        list[event.x.toInt()][event.y.toInt()] = 2;
+      } else {
+        list[event.x.toInt()][event.y.toInt()] = 1;
+      }
+    }
+
+    return "[${list.map((l) => '[${l.join(',')}]').join(',')}]";
   }
+}
+
+class Point {
+  bool clicked;
+  bool isAuto;
+
+  Point({required this.clicked, required this.isAuto});
 }

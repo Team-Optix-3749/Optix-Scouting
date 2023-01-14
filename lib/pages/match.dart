@@ -39,7 +39,7 @@ class _MatchState extends State<Match> {
     "Tele Start": -3128,
     "Save": -3749
   };
-  List<bool> initialData = [];
+  List<Point> initialData = [];
   List<String> initialDataTypes = [];
 
   var uuid = Uuid();
@@ -48,6 +48,7 @@ class _MatchState extends State<Match> {
 
   String currentSelected = "";
   int index = 0;
+  bool isAuto = true;
 
   GlobalKey _tapKey = GlobalKey();
   Offset? _tapPosition;
@@ -256,33 +257,33 @@ class _MatchState extends State<Match> {
   @override
   void initState() {
     initialData = [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
     ];
 
     Map<String, int> scoreChanges = widget.getScoreChanges();
@@ -365,20 +366,22 @@ class _MatchState extends State<Match> {
       // }
       List<Event> events = [];
       for (int i = 0; i < initialData.length; i++) {
-        events.add(
-          Event(
-            x: (i % 3),
-            y: i.remainder(9),
-            isAuto: defaults[currentSelected] == -3128,
-          ),
-        );
+        if (initialData[i].clicked) {
+          events.add(
+            Event(
+              x: (i % 3),
+              y: (i.toDouble() / 3).floor().toDouble(),
+              isAuto: initialData[i].isAuto,
+            ),
+          );
+        }
       }
       ScoutData data =
           ScoutData(matchInfo: widget.getMatchInfo(), events: events);
 
       file.writeAsString(data.toJSON());
 
-      // QR Code (newline is translated to ---)
+      // QR Code
       if (mounted) {
         showDialog(
           context: context,
@@ -390,7 +393,7 @@ class _MatchState extends State<Match> {
                 height: 300,
                 width: 300,
                 child: QrImage(
-                    data: data.toJSON().replaceAll("\n", "---"),
+                    data: data.toJSON(),
                     version: QrVersions.auto,
                     size: 300),
               ),
@@ -445,7 +448,7 @@ class _MatchState extends State<Match> {
                       childAspectRatio: 2.5,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      if (initialData[index]) {
+                      if (initialData[index].clicked) {
                         return Container(
                           padding: EdgeInsets.all(4),
                           child: Center(
@@ -457,8 +460,10 @@ class _MatchState extends State<Match> {
                                   ),
                               onPressed: () {
                                 setState(() {
-                                  initialData[index] = !initialData[index];
-                                  print(initialData[index]);
+                                  initialData[index].clicked =
+                                      !initialData[index].clicked;
+                                  initialData[index].isAuto = isAuto;
+                                  print(initialData[index].clicked.toString() + " " + index.toString());
                                 });
                               },
                             ),
@@ -475,8 +480,9 @@ class _MatchState extends State<Match> {
                                   ),
                               onPressed: () {
                                 setState(() {
-                                  initialData[index] = !initialData[index];
-                                  print(initialData[index]);
+                                  initialData[index].clicked = !initialData[index].clicked;
+                                  initialData[index].isAuto = isAuto;
+                                  print(initialData[index].clicked.toString() + " " + index.toString());
                                 });
                               },
                             ),
@@ -520,6 +526,11 @@ class _MatchState extends State<Match> {
                               if (defaults[k] == -3749) {
                                 currentSelected = "";
                                 saveFile();
+                              }
+                              if (defaults[k] == -3128) {
+                                setState(() {
+                                  isAuto = false;
+                                });
                               }
                             },
                           );
