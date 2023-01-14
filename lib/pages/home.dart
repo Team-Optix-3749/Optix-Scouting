@@ -41,16 +41,16 @@ class _HomePageState extends State<HomePage>
       color: Colors.black54,
     )
   };
-  Map<int, Icon> matchIcons = {
-    0: Icon(
+  Map<String, Icon> matchIcons = {
+    "San Diego Regional presented by Qualcomm": Icon(
       Icons.sunny,
       color: Colors.black54,
     ),
-    1: Icon(
+    "Aerospace Valley Regional": Icon(
       Icons.flight_takeoff,
       color: Colors.black54,
     ),
-    2: Icon(
+    "Houston Worlds": Icon(
       Icons.public,
       color: Colors.black54,
     )
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage>
   }
 
   setCompMap() async {
-    var matches = await funcs.initCompMap();
+    Map<String, int> matches = await funcs.initCompMap();
     setState(() {
       this.matches = matches;
     });
@@ -192,7 +192,8 @@ class _HomePageState extends State<HomePage>
       });
     });
     _TeamNumberController = TextEditingController(text: _teamNumber);
-    _MatchNumberController = TextEditingController(text: _matchNumber.toString());
+    _MatchNumberController =
+        TextEditingController(text: _matchNumber.toString());
     _PresetController = TextEditingController();
     _MatchController = TextEditingController();
     _isEditingTeamNumber = false;
@@ -309,7 +310,7 @@ class _HomePageState extends State<HomePage>
                                     ),
                                   ),
                                   Container(
-                                    child: matchIcons[matches[p]],
+                                    child: matchIcons[p],
                                   ),
                                 ],
                               ),
@@ -406,7 +407,6 @@ class _HomePageState extends State<HomePage>
                                   child: Text(
                                     overflow: TextOverflow.ellipsis,
                                     p.trim(),
-                                    
                                     strutStyle: StrutStyle(fontSize: 15.0),
                                     textDirection: TextDirection.ltr,
                                     textAlign: TextAlign.left,

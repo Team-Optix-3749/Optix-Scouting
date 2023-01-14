@@ -18,32 +18,51 @@ Future<String> getTeamName(String number) async {
 Future<List> getCompetitonList(String compName) async {
   try {
     final String response =
-        await rootBundle.loadString('databases/teamEvents.json'); // Issue here
+        await rootBundle.loadString('databases/Events.json'); // Issue here
     final data = await json.decode(response);
-    print(data[compName]);
+
     return data[compName];
   } catch (Exception) {
     print("err");
-    return ["Competition Name Error"];
+    return ["Competition List Error"];
   }
 }
 
 Future<List> getCompetitionNames() async {
   try {
     final String response =
-        await rootBundle.loadString('databases/teamEvents.json'); // Issue here
-    final data = await json.decode(response);
-
-    return data.keys.toList();
+        await rootBundle.loadString('databases/Events.json'); // Issue here
+    Map<String, dynamic> data = await json.decode(response);
+    List<String> names = [];
+    data.forEach((key, value) => {names.add(value["name"].toString())});
+    return names; //data.keys.toL\ist();
   } catch (e) {
-    return ["Competition Name Error"];
+    return ["Competition Name Error", e];
+  }
+}
+
+Future<List> getCompetitionTeams() async {
+  try {
+    final String response =
+        await rootBundle.loadString('databases/Events.json'); // Issue here
+    Map<String, dynamic> data = await json.decode(response);
+    List<List<int>> names = [];
+    data.forEach((key, value) => {names.add(value["teams"])});
+    return names; //data.keys.toL\ist();
+  } catch (e) {
+    return ["Competition Team Error", e];
   }
 }
 
 Future<Map<String, int>> initCompMap() async {
   List names = await getCompetitionNames();
-  List nums = [for (var a = 0; a < names.length; a += 1) a];
-  return {for (var pair in zip(names, nums)) pair[0]: pair[1]};
+  Map<String, int> map = {};
+
+  for (int i = 0; i < names.length; i++) {
+    map[names[i].toString()] = i;
+  }
+  // for (String name in names) {}
+  return map;
 }
 
 List zip(List lsta, List lstb) {
