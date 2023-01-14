@@ -46,9 +46,9 @@ class _MainScreenState extends State<MainScreen> {
       matchNumber: 42,
       comp: "San Diego Regional");
   Map<String, int> scoreChanges = {
-    "Lower": 2,
-    "Middle": 3,
     "Upper": 5,
+    "Middle": 3,
+    "Lower": 2,
   };
 
   void _onBottomTapped(int index) {
