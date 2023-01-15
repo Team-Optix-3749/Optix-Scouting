@@ -41,7 +41,8 @@ class _HistoryState extends State<History> {
     List<io.FileSystemEntity> tempFiles =
         io.Directory('$appDocumentsPath/').listSync();
     for (io.FileSystemEntity file in tempFiles) {
-      if (basename(file.path.split("/").last).split("_").first == "MATCH" && file.path.contains("json")) {
+      if (basename(file.path.split("/").last).split("_").first == "MATCH" &&
+          file.path.contains("json")) {
         files.add(file);
         fileNames.add(basename(file.path.split("/").last));
       }
@@ -64,6 +65,7 @@ class _HistoryState extends State<History> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -112,7 +114,7 @@ class _HistoryState extends State<History> {
                                 children: [
                                   Expanded(
                                     child: Container(
-                                      padding: EdgeInsets.only(right: 16),
+                                      padding: EdgeInsets.only(right: 8),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

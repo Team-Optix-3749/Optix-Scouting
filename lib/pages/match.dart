@@ -352,7 +352,7 @@ class _MatchState extends State<Match> {
     if (initialData.length > 0) {
       String id = uuid.v1();
       String fileName =
-          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.csv';
+          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
       io.File file = io.File(await getFilePath(fileName)); // 1
       // for (int i = 0; i < initialData.length; i++) {
       //   data.add([
@@ -393,9 +393,7 @@ class _MatchState extends State<Match> {
                 height: 300,
                 width: 300,
                 child: QrImage(
-                    data: data.toJSON(),
-                    version: QrVersions.auto,
-                    size: 300),
+                    data: data.toJSON(), version: QrVersions.auto, size: 300),
               ),
             ],
           ),
@@ -463,7 +461,9 @@ class _MatchState extends State<Match> {
                                   initialData[index].clicked =
                                       !initialData[index].clicked;
                                   initialData[index].isAuto = isAuto;
-                                  print(initialData[index].clicked.toString() + " " + index.toString());
+                                  print(initialData[index].clicked.toString() +
+                                      " " +
+                                      index.toString());
                                 });
                               },
                             ),
@@ -480,9 +480,12 @@ class _MatchState extends State<Match> {
                                   ),
                               onPressed: () {
                                 setState(() {
-                                  initialData[index].clicked = !initialData[index].clicked;
+                                  initialData[index].clicked =
+                                      !initialData[index].clicked;
                                   initialData[index].isAuto = isAuto;
-                                  print(initialData[index].clicked.toString() + " " + index.toString());
+                                  print(initialData[index].clicked.toString() +
+                                      " " +
+                                      index.toString());
                                 });
                               },
                             ),
