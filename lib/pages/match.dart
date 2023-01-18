@@ -34,10 +34,11 @@ class _MatchState extends State<Match> {
     "y_pos",
     "val",
   ];
-  Map<String, int> defaults = {
-    "Penalty": 0,
-    "Tele Start": -3128,
-    "Save": -3749
+  // name : isSelected
+  Map<String, BtnState> defaults = {
+    "Balance": BtnState.ONE,
+    "Tele Start": BtnState.FALSE,
+    "Save": BtnState.FALSE
   };
   List<Point> initialData = [];
   List<String> initialDataTypes = [];
@@ -49,6 +50,8 @@ class _MatchState extends State<Match> {
   String currentSelected = "";
   int index = 0;
   bool isAuto = true;
+  int balancedAuto = 0;
+  int balancedTele = 0;
 
   GlobalKey _tapKey = GlobalKey();
   Offset? _tapPosition;
@@ -100,13 +103,16 @@ class _MatchState extends State<Match> {
     );
   }
 
-  Widget getDefaults(int val, String label) {
+  Widget getDefaults(String label) {
     Color color = Colors.black;
-    if (label == currentSelected) {
+    if (defaults[label]! == BtnState.TRUE || defaults[label]! == BtnState.TWO) {
       color = Color.fromARGB(255, 78, 118, 247);
       print(label);
     }
-    if (val == 0) {
+    if (defaults[label]! == BtnState.THREE) {
+      color = Color.fromARGB(255, 243, 57, 82);
+    }
+    if (label == "Balance") {
       return Container(
         width: 50,
         height: 50,
@@ -124,7 +130,7 @@ class _MatchState extends State<Match> {
             ),
             Container(
               child: new Icon(
-                Icons.warning,
+                Icons.check_box,
                 color: color,
                 size: 25,
               ),
@@ -139,7 +145,7 @@ class _MatchState extends State<Match> {
           ],
         ),
       );
-    } else if (val == -3128) {
+    } else if (label == "Tele Start") {
       return Container(
         width: 57,
         height: 50,
@@ -376,8 +382,11 @@ class _MatchState extends State<Match> {
           );
         }
       }
-      ScoutData data =
-          ScoutData(matchInfo: widget.getMatchInfo(), events: events);
+      ScoutData data = ScoutData(
+          matchInfo: widget.getMatchInfo(),
+          events: events,
+          teleBalanced: balancedTele,
+          autoBalanced: balancedAuto);
 
       file.writeAsString(data.toJSON());
 
@@ -517,21 +526,27 @@ class _MatchState extends State<Match> {
                 children: defaults.keys
                     .map(
                       (k) => TextButton(
-                        child: getDefaults(defaults[k]!, k),
+                        child: getDefaults(k),
                         onPressed: () {
                           setState(
                             () {
-                              if (currentSelected == k) {
-                                currentSelected = "";
-                              } else {
-                                currentSelected = k;
+                              if (k == "Balance") {
+                                setState(() {
+                                  defaults[k] = defaults[k]!.not();
+                                });
+                                if (isAuto) {
+                                  balancedAuto = defaults[k]!.toNum();
+                                } else {
+                                  balancedTele = defaults[k]!.toNum();
+                                }
                               }
-                              if (defaults[k] == -3749) {
-                                currentSelected = "";
+                              if (k == "Save") {
                                 saveFile();
                               }
-                              if (defaults[k] == -3128) {
+                              if (k == "Tele Start") {
                                 setState(() {
+                                  defaults[k] = BtnState.TRUE;
+                                  defaults["Balance"] = BtnState.ONE;
                                   isAuto = false;
                                 });
                               }

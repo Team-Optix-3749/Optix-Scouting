@@ -31,11 +31,19 @@ class ScoutData {
       matchNumber: 42,
       comp: "San Diego Regional");
   List<Event> events = [];
+  int autoBalanced; // 0 = none, 1 = docked, 2 = engaged
+  int teleBalanced; // 0 = none, 1 = docked, 2 = engaged
 
-  ScoutData({required this.matchInfo, required this.events});
+  ScoutData(
+      {required this.matchInfo,
+      required this.events,
+      required this.autoBalanced,
+      required this.teleBalanced});
 
   toJSON() {
-    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)} }';
+    print(autoBalanced.toString() + " " + teleBalanced.toString());
+    int balanced = autoBalanced * 10 + teleBalanced;
+    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced }';
   }
 }
 
@@ -69,4 +77,53 @@ class Point {
   bool isAuto;
 
   Point({required this.clicked, required this.isAuto});
+}
+
+class BtnState {
+  String name;
+  BtnState({required this.name});
+
+  not() {
+    if (name == "true") {
+      return FALSE;
+    }
+    if (name == "false") {
+      return TRUE;
+    }
+
+    if (name == "one") {
+      return TWO;
+    }
+    if (name == "two") {
+      return THREE;
+    }
+    if (name == "three") {
+      return ONE;
+    }
+  }
+
+  toNum () {
+    if (name == "true") {
+      return 1;
+    }
+    if (name == "false") {
+      return 0;
+    }
+    if (name == "one") {
+      return 0;
+    }
+    if (name == "two") {
+      return 1;
+    }
+    if (name == "three") {
+      return 2;
+    }
+  }
+
+  static BtnState TRUE = BtnState(name: "true");
+  static BtnState FALSE = BtnState(name: "false");
+
+  static BtnState ONE = BtnState(name: "one");
+  static BtnState TWO = BtnState(name: "two");
+  static BtnState THREE = BtnState(name: "three");
 }
