@@ -438,10 +438,13 @@ class _MatchState extends State<Match> {
       }
     }
     ScoutData data = ScoutData(
-        matchInfo: widget.getMatchInfo(),
-        events: events,
-        teleBalanced: balancedTele,
-        autoBalanced: balancedAuto);
+      matchInfo: widget.getMatchInfo(),
+      events: events,
+      teleBalanced: balancedTele,
+      autoBalanced: balancedAuto,
+      notes: comments,
+      didBreak: broken,
+    );
 
     file.writeAsString(data.toJSON());
 
