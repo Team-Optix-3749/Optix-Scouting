@@ -397,63 +397,121 @@ class _MatchState extends State<Match> {
     return filePath;
   }
 
-  void saveFile() async {
-    if (initialData.length > 0) {
-      String id = uuid.v1();
-      String fileName =
-          'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
-      io.File file = io.File(await getFilePath(fileName)); // 1
-      // for (int i = 0; i < initialData.length; i++) {
-      //   data.add([
-      //     widget.getMatchInfo().teamNumber,
-      //     widget.getMatchInfo().matchNumber.toString(),
-      //     initialDataTypes[i],
-      //     i.remainder(9).toString(),
-      //     (i % 3).toString(),
-      //     initialData[i].toString(),
-      //   ]);
-      // }
-      List<Event> events = [];
-      for (int i = 0; i < initialData.length; i++) {
-        if (initialData[i].clicked) {
-          events.add(
-            Event(
-              x: (i % 3),
-              y: (i.toDouble() / 3).floor().toDouble(),
-              isAuto: initialData[i].isAuto,
+  void enterFinalInfo() {
+    if (mounted) {
+      TextEditingController commentsController = TextEditingController();
+      bool checkedValue = false;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Final Data"),
+          content: StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter Comments',
+                    ),
+                    controller: commentsController,
+                    maxLines: 3,
+                  ),
+                  CheckboxListTile(
+                    title: const Text("Robot broke?"),
+                    value: checkedValue,
+                    onChanged: (newValue) {
+                      setState(() {
+                        checkedValue = newValue!;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  )
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
             ),
-          );
-        }
-      }
-      ScoutData data = ScoutData(
-          matchInfo: widget.getMatchInfo(),
-          events: events,
-          teleBalanced: balancedTele,
-          autoBalanced: balancedAuto);
+            TextButton(
+              onPressed: () {
+                if (commentsController.value.text.isNotEmpty) {
+                  Navigator.pop(context);
+                  saveFile(commentsController.value.text, checkedValue);
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
-      file.writeAsString(data.toJSON());
-
-      // QR Code
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => Util.buildPopupDialog(
-            context,
-            "QR Code",
-            <Widget>[
-              Container(
-                height: 300,
-                width: 300,
-                child: QrImage(
-                    data: data.toJSON(), version: QrVersions.auto, size: 300),
-              ),
-            ],
+  void saveFile(String comments, bool broken) async {
+    String id = uuid.v1();
+    String fileName =
+        'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
+    io.File file = io.File(await getFilePath(fileName)); // 1
+    // for (int i = 0; i < initialData.length; i++) {
+    //   data.add([
+    //     widget.getMatchInfo().teamNumber,
+    //     widget.getMatchInfo().matchNumber.toString(),
+    //     initialDataTypes[i],
+    //     i.remainder(9).toString(),
+    //     (i % 3).toString(),
+    //     initialData[i].toString(),
+    //   ]);
+    // }
+    List<Event> events = [];
+    for (int i = 0; i < initialData.length; i++) {
+      if (initialData[i].clicked) {
+        events.add(
+          Event(
+            x: (i % 3),
+            y: (i.toDouble() / 3).floor().toDouble(),
+            isAuto: initialData[i].isAuto,
           ),
         );
       }
+    }
+    ScoutData data = ScoutData(
+      matchInfo: widget.getMatchInfo(),
+      events: events,
+      teleBalanced: balancedTele,
+      autoBalanced: balancedAuto,
+      notes: comments,
+      didBreak: broken,
+    );
+
+    file.writeAsString(data.toJSON());
+
+    // QR Code
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => Util.buildPopupDialog(
+          context,
+          "QR Code",
+          <Widget>[
+            Container(
+              height: 300,
+              width: 300,
+              child: QrImage(
+                  data: data.toJSON(), version: QrVersions.auto, size: 300),
+            ),
+          ],
+        ),
+      );
+    }
 
       reset();
-    }
   }
 
   @override
@@ -586,7 +644,7 @@ class _MatchState extends State<Match> {
                                 }
                               }
                               if (k == "Save") {
-                                saveFile();
+                                enterFinalInfo();
                               }
                               if (k == "Tele Start") {
                                 setState(() {

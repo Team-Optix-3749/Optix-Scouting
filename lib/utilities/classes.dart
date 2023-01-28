@@ -33,17 +33,20 @@ class ScoutData {
   List<Event> events = [];
   int autoBalanced; // 0 = none, 1 = docked, 2 = engaged
   int teleBalanced; // 0 = none, 1 = docked, 2 = engaged
+  String notes;
+  bool didBreak;
 
   ScoutData(
       {required this.matchInfo,
       required this.events,
       required this.autoBalanced,
-      required this.teleBalanced});
+      required this.teleBalanced,
+      required this.notes,
+      required this.didBreak});
 
   toJSON() {
-    print(autoBalanced.toString() + " " + teleBalanced.toString());
     int balanced = autoBalanced * 10 + teleBalanced;
-    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced }';
+    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced, "notes": "$notes", "break": $didBreak}';
   }
 }
 
@@ -102,7 +105,7 @@ class BtnState {
     }
   }
 
-  toNum () {
+  toNum() {
     if (name == "true") {
       return 1;
     }
