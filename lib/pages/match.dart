@@ -53,15 +53,58 @@ class _MatchState extends State<Match> {
   int balancedAuto = 0;
   int balancedTele = 0;
 
-  GlobalKey _tapKey = GlobalKey();
-  Offset? _tapPosition;
-
   final List<SvgPicture> images = [
     SvgPicture.asset(
       'assets/field.svg',
       fit: BoxFit.fitWidth,
     ),
   ];
+  void reset() {
+    initialDataTypes = [];
+    directory = "";
+    currentSelected = "";
+    index = 0;
+    isAuto = true;
+    balancedAuto = 0;
+    balancedTele = 0;
+    initialData = [
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+    ];
+
+    Map<String, int> scoreChanges = widget.getScoreChanges();
+    for (int i = 0; i < initialData.length; i++) {
+      initialDataTypes.add((scoreChanges).keys.toList()[i % 3].toString());
+    }
+
+    setState(() {});
+  }
+
   Widget getStaticDefaults(int val, String label) {
     Color color = Color.fromARGB(255, 78, 118, 247);
     return Container(
@@ -162,7 +205,7 @@ class _MatchState extends State<Match> {
               ),
             ),
             Container(
-              child: new Icon(
+              child: Icon(
                 Icons.play_arrow,
                 color: color,
                 size: 25,
@@ -301,7 +344,7 @@ class _MatchState extends State<Match> {
 
   @override
   dispose() {
-    saveFile();
+    // saveFile();
     super.dispose();
   }
 
@@ -408,6 +451,8 @@ class _MatchState extends State<Match> {
           ),
         );
       }
+
+      reset();
     }
   }
 
