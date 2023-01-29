@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:flutter_grid_button/flutter_grid_button.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:optix_scouting/utilities/classes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
@@ -501,17 +502,17 @@ class _MatchState extends State<Match> {
           "QR Code",
           <Widget>[
             Container(
-              height: 300,
-              width: 300,
+              height: 295,
+              width: 295,
               child: QrImage(
-                  data: data.toJSON(), version: QrVersions.auto, size: 300),
+                  data: data.toJSON(), version: QrVersions.auto, size: 295),
             ),
           ],
         ),
       );
     }
 
-      reset();
+    reset();
   }
 
   @override

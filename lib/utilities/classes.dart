@@ -130,3 +130,15 @@ class BtnState {
   static BtnState TWO = BtnState(name: "two");
   static BtnState THREE = BtnState(name: "three");
 }
+
+class HistoryEntry {
+  const HistoryEntry(this.teamName, this.teamNumber, this.matchNumber, this.id,
+      this.index, this.compName, this.date);
+  final String teamName;
+  final int teamNumber;
+  final int matchNumber;
+  final String id;
+  final int index;
+  final String date;
+  final String compName;
+}
