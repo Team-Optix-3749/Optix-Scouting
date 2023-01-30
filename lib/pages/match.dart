@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter_grid_button/flutter_grid_button.dart';
@@ -406,32 +407,28 @@ class _MatchState extends State<Match> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text("Final Data"),
-          content: StatefulBuilder(
-            builder: (BuildContext context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter Comments',
-                    ),
-                    controller: commentsController,
-                    maxLines: 3,
-                  ),
-                  CheckboxListTile(
-                    title: const Text("Robot broke?"),
-                    value: checkedValue,
-                    onChanged: (newValue) {
-                      setState(() {
-                        checkedValue = newValue!;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
-                  )
-                ],
-              );
-            },
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter Comments',
+                ),
+                controller: commentsController,
+                maxLines: 3,
+              ),
+              CheckboxListTile(
+                title: const Text("Robot broke?"),
+                value: checkedValue,
+                onChanged: (newValue) {
+                  setState(() {
+                    checkedValue = newValue!;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              )
+            ],
           ),
           actions: [
             TextButton(
@@ -491,7 +488,7 @@ class _MatchState extends State<Match> {
       didBreak: broken,
     );
 
-    file.writeAsString(data.toJSON());
+    file.writeAsString(jsonEncode(data.toJSON()));
 
     // QR Code
     if (mounted) {
@@ -505,7 +502,10 @@ class _MatchState extends State<Match> {
               height: 295,
               width: 295,
               child: QrImage(
-                  data: data.toJSON(), version: QrVersions.auto, size: 295),
+                data: jsonEncode(data.toJSON()),
+                version: QrVersions.auto,
+                size: 295,
+              ),
             ),
           ],
         ),
@@ -520,11 +520,12 @@ class _MatchState extends State<Match> {
     Map<String, int> scoreChanges = widget.getScoreChanges();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Match Scouting'),
       ),
-      body: Container(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

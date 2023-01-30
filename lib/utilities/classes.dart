@@ -44,9 +44,19 @@ class ScoutData {
       required this.notes,
       required this.didBreak});
 
-  toJSON() {
+  Map<String, dynamic> toJSON() {
     int balanced = autoBalanced * 10 + teleBalanced;
-    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced, "notes": "$notes", "break": $didBreak}';
+    Map<String, dynamic> map = {
+      "teamNumber": matchInfo.teamNumber,
+      "teamName": "${matchInfo.teamName}",
+      "matchNumber": matchInfo.matchNumber,
+      "comp": "${matchInfo.comp}",
+      "events": Event.eventsToJSON(events),
+      "balanced": balanced,
+      "notes": notes,
+      "break": didBreak
+    };
+    return map;
   }
 }
 
@@ -57,7 +67,7 @@ class Event {
 
   Event({required this.x, required this.y, required this.isAuto});
 
-  static eventsToJSON(List<Event> events) {
+  static String eventsToJSON(List<Event> events) {
     List<List<int>> list = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0],

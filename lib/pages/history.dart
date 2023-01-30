@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
@@ -106,22 +107,41 @@ class _HistoryState extends State<History> {
             icon: Icons.delete,
             label: 'Delete',
           ),
-          SlidableAction(
-            onPressed: (BuildContext) {
-              setState(() {});
-            },
-            backgroundColor: Color(0xFF0bbcd2),
-            foregroundColor: Colors.white,
-            icon: Icons.archive,
-            label: 'Archive',
-          ),
+          // SlidableAction(
+          //   onPressed: (BuildContext) {
+          //     setState(() {});
+          //   },
+          //   backgroundColor: Color(0xFF0bbcd2),
+          //   foregroundColor: Colors.white,
+          //   icon: Icons.archive,
+          //   label: 'Archive',
+          // ),
         ],
       ),
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [
           SlidableAction(
-            onPressed: (BuildContext) {
+            onPressed: (BuildContext) async {
+              String data = await readFile(fileNames[index]);
+              showDialog(
+                context: context,
+                builder: (context) => Util.buildPopupDialog(
+                  context,
+                  "QR Code",
+                  <Widget>[
+                    Container(
+                      height: 295,
+                      width: 295,
+                      child: QrImage(
+                        data: data,
+                        version: QrVersions.auto,
+                        size: 295,
+                      ),
+                    ),
+                  ],
+                ),
+              );
               setState(() {});
             },
             backgroundColor: Color(0xFF0b2262),
@@ -130,7 +150,147 @@ class _HistoryState extends State<History> {
             label: 'Qr Code',
           ),
           SlidableAction(
-            onPressed: (BuildContext) {
+            onPressed: (BuildContext) async {
+              String data = await readFile(fileNames[index]);
+              JsonCodec codec = new JsonCodec();
+              Map<String, dynamic> parsed = codec.decode(data);
+              dynamic values = parsed["events"];
+              List<dynamic> lst = (json.decode(values).toList());
+              Color color = Colors.black;
+              if (parsed["balanced"] == 1) {
+                color = Color.fromARGB(255, 78, 118, 247);
+              }
+              if (parsed["balanced"] == 2) {
+                color = Color.fromARGB(255, 243, 57, 82);
+              }
+              showDialog(
+                context: context,
+                builder: (context) => Util.buildPopupDialog(
+                  context,
+                  parsed["comp"],
+                  <Widget>[
+                    Row(
+                      children: [
+                        Text(
+                          "Match " + parsed["matchNumber"].toString(),
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                        Spacer(),
+                        Container(
+                          width: 50,
+                          height: 50,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Align(
+                                  child: Text(
+                                    textAlign: TextAlign.center,
+                                    "Balance",
+                                    style:
+                                        TextStyle(fontSize: 13, color: color),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: new Icon(
+                                  Icons.check_box,
+                                  color: color,
+                                  size: 25,
+                                ),
+                              ),
+                              Align(
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  "",
+                                  style: TextStyle(fontSize: 5, color: color),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      flex: 0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        height: MediaQuery.of(context).size.height * 0.417,
+                        padding: EdgeInsets.only(top: 16),
+                        child: Center(
+                          child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                childAspectRatio: 2.5,
+                              ),
+                              itemCount: 27, // <-- required
+                              itemBuilder: (_, i) {
+                                if (lst[i % 3][(i / 3).floor()] == 0) {
+                                  return Container(
+                                    padding: EdgeInsets.all(4),
+                                    child: Center(
+                                      // child: Text('$index'),
+
+                                      child: OutlinedButton(
+                                        child: Container(
+                                            // child: Text("${initialData[index]}"),
+                                            ),
+                                        onPressed: (() {}),
+                                      ),
+                                    ),
+                                  );
+                                } else if (lst[i % 3][(i / 3).floor()] == 1) {
+                                  return Container(
+                                    padding: EdgeInsets.all(4),
+                                    child: Center(
+                                      // child: Text('$index'),
+
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                        ),
+                                        child: Container(
+                                            // child: Text("${initialData[index]}"),
+                                            ),
+                                        onPressed: (() {}),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Container(
+                                    padding: EdgeInsets.all(4),
+                                    child: Center(
+                                      // child: Text('$index'),
+
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue.shade900,
+                                        ),
+                                        child: Container(
+                                            // child: Text("${initialData[index]}"),
+                                            ),
+                                        onPressed: (() {}),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }),
+                        ),
+                      ),
+                    ),
+
+                    // Container(
+                    //   height: 295,
+                    //   width: 295,
+                    //   child: QrImage(
+                    //       data: data, version: QrVersions.auto, size: 295),
+                    // ),
+                  ],
+                ),
+              );
               setState(() {});
             },
             backgroundColor: Color(0xFFb2F218),
@@ -259,7 +419,6 @@ class _HistoryState extends State<History> {
 
   @override
   Widget build(BuildContext context) {
-    print(items.length);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
