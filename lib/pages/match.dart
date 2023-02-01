@@ -426,7 +426,7 @@ class _MatchState extends State<Match> {
                 if (commentsController.value.text.isNotEmpty) {
                   Navigator.pop(context);
                   saveFile(commentsController.value.text, checkedValue,
-                      defense.toInt(), offense.toInt());
+                      offense.toInt(), defense.toInt());
                 }
               },
               child: const Text("Save"),
