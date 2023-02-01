@@ -48,9 +48,21 @@ class ScoutData {
       required this.offense,
       required this.defense});
 
-  toJSON() {
+  Map<String, dynamic> toJSON() {
     int balanced = autoBalanced * 10 + teleBalanced;
-    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced, "notes": "$notes", "break": $didBreak, "offense": $offense, "defense": $defense}';
+    Map<String, dynamic> map = {
+      "teamNumber": matchInfo.teamNumber,
+      "teamName": matchInfo.teamName,
+      "matchNumber": matchInfo.matchNumber,
+      "comp": matchInfo.comp,
+      "events": Event.eventsToJSON(events),
+      "balanced": balanced,
+      "notes": notes,
+      "break": didBreak,
+      "offense": offense,
+      "defense": defense
+    };
+    return map;
   }
 }
 
@@ -61,7 +73,7 @@ class Event {
 
   Event({required this.x, required this.y, required this.isAuto});
 
-  static eventsToJSON(List<Event> events) {
+  static String eventsToJSON(List<Event> events) {
     List<List<int>> list = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -133,4 +145,16 @@ class BtnState {
   static BtnState ONE = BtnState(name: "one");
   static BtnState TWO = BtnState(name: "two");
   static BtnState THREE = BtnState(name: "three");
+}
+
+class HistoryEntry {
+  const HistoryEntry(this.teamName, this.teamNumber, this.matchNumber, this.id,
+      this.index, this.compName, this.date);
+  final String teamName;
+  final int teamNumber;
+  final int matchNumber;
+  final String id;
+  final int index;
+  final String date;
+  final String compName;
 }

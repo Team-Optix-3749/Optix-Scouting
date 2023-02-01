@@ -50,6 +50,9 @@ dependencies:
   uuid: ^3.0.7
   qr_flutter: ^4.0.0
   flutter_grid_button: ^2.0.0
+  qr_code_scanner: ^1.0.1
+  permission_handler: ^10.2.0
+  flutter_slidable: ^2.0.0
 
 dev_dependencies:
   flutter_test:

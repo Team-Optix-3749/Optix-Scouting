@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter_grid_button/flutter_grid_button.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:optix_scouting/utilities/classes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
@@ -53,15 +55,58 @@ class _MatchState extends State<Match> {
   int balancedAuto = 0;
   int balancedTele = 0;
 
-  GlobalKey _tapKey = GlobalKey();
-  Offset? _tapPosition;
-
   final List<SvgPicture> images = [
     SvgPicture.asset(
       'assets/field.svg',
       fit: BoxFit.fitWidth,
     ),
   ];
+  void reset() {
+    initialDataTypes = [];
+    directory = "";
+    currentSelected = "";
+    index = 0;
+    isAuto = true;
+    balancedAuto = 0;
+    balancedTele = 0;
+    initialData = [
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+      Point(clicked: false, isAuto: false),
+    ];
+
+    Map<String, int> scoreChanges = widget.getScoreChanges();
+    for (int i = 0; i < initialData.length; i++) {
+      initialDataTypes.add((scoreChanges).keys.toList()[i % 3].toString());
+    }
+
+    setState(() {});
+  }
+
   Widget getStaticDefaults(int val, String label) {
     Color color = Color.fromARGB(255, 78, 118, 247);
     return Container(
@@ -162,7 +207,7 @@ class _MatchState extends State<Match> {
               ),
             ),
             Container(
-              child: new Icon(
+              child: Icon(
                 Icons.play_arrow,
                 color: color,
                 size: 25,
@@ -301,6 +346,7 @@ class _MatchState extends State<Match> {
 
   @override
   dispose() {
+    // saveFile();
     super.dispose();
   }
 
@@ -475,7 +521,7 @@ class _MatchState extends State<Match> {
       defense: defense
     );
 
-    file.writeAsString(data.toJSON());
+    file.writeAsString(jsonEncode(data.toJSON()));
 
     // QR Code
     if (mounted) {
@@ -486,15 +532,20 @@ class _MatchState extends State<Match> {
           "QR Code",
           <Widget>[
             Container(
-              height: 300,
-              width: 300,
+              height: 295,
+              width: 295,
               child: QrImage(
-                  data: data.toJSON(), version: QrVersions.auto, size: 300),
+                data: jsonEncode(data.toJSON()),
+                version: QrVersions.auto,
+                size: 295,
+              ),
             ),
           ],
         ),
       );
     }
+
+    reset();
   }
 
   @override
@@ -502,11 +553,12 @@ class _MatchState extends State<Match> {
     Map<String, int> scoreChanges = widget.getScoreChanges();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Match Scouting'),
       ),
-      body: Container(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

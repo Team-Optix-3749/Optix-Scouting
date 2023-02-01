@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:optix_scouting/utilities/classes.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<String> getTeamName(String number) async {
   //Todo: Set up the API tag
@@ -69,6 +69,15 @@ Future<List<String>> getCompetitionTeams(String teamName) async {
   }
 }
 
+Future<PermissionStatus> _getCameraPermission() async {
+  var status = await Permission.camera.status;
+  if (!status.isGranted) {
+    final result = await Permission.camera.request();
+    return result;
+  } else {
+    return status;
+  }
+}
 // Future<List<String>> getCompetitionTeams() async {
 //   try {
 //     final String response =
