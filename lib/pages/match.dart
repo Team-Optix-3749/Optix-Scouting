@@ -357,10 +357,12 @@ class _MatchState extends State<Match> {
     if (mounted) {
       TextEditingController commentsController = TextEditingController();
       bool checkedValue = false;
+      double defense = 0;
+      double offense = 0;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Final Data"),
+          title: const Text("Final Data"),
           content: StatefulBuilder(
             builder: (BuildContext context, setState) {
               return Column(
@@ -383,7 +385,31 @@ class _MatchState extends State<Match> {
                       });
                     },
                     controlAffinity: ListTileControlAffinity.leading,
-                  )
+                  ),
+                  const Text("Offense"),
+                  Slider(
+                    value: offense,
+                    max: 10,
+                    divisions: 10,
+                    label: offense.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        offense = value;
+                      });
+                    },
+                  ),
+                  const Text("Defense"),
+                  Slider(
+                    value: defense,
+                    max: 10,
+                    divisions: 10,
+                    label: defense.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        defense = value;
+                      });
+                    },
+                  ),
                 ],
               );
             },
@@ -399,7 +425,8 @@ class _MatchState extends State<Match> {
               onPressed: () {
                 if (commentsController.value.text.isNotEmpty) {
                   Navigator.pop(context);
-                  saveFile(commentsController.value.text, checkedValue);
+                  saveFile(commentsController.value.text, checkedValue,
+                      defense.toInt(), offense.toInt());
                 }
               },
               child: const Text("Save"),
@@ -410,7 +437,7 @@ class _MatchState extends State<Match> {
     }
   }
 
-  void saveFile(String comments, bool broken) async {
+  void saveFile(String comments, bool broken, int offense, int defense) async {
     String id = uuid.v1();
     String fileName =
         'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
@@ -444,6 +471,8 @@ class _MatchState extends State<Match> {
       autoBalanced: balancedAuto,
       notes: comments,
       didBreak: broken,
+      offense: offense,
+      defense: defense
     );
 
     file.writeAsString(data.toJSON());

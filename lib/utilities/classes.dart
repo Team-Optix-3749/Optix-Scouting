@@ -35,6 +35,8 @@ class ScoutData {
   int teleBalanced; // 0 = none, 1 = docked, 2 = engaged
   String notes;
   bool didBreak;
+  int offense;
+  int defense;
 
   ScoutData(
       {required this.matchInfo,
@@ -42,11 +44,13 @@ class ScoutData {
       required this.autoBalanced,
       required this.teleBalanced,
       required this.notes,
-      required this.didBreak});
+      required this.didBreak,
+      required this.offense,
+      required this.defense});
 
   toJSON() {
     int balanced = autoBalanced * 10 + teleBalanced;
-    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced, "notes": "$notes", "break": $didBreak}';
+    return '{"teamNumber": ${matchInfo.teamNumber}, "teamName": "${matchInfo.teamName}", "matchNumber": ${matchInfo.matchNumber}, "comp": "${matchInfo.comp}", "events": ${Event.eventsToJSON(events)}, "balanced": $balanced, "notes": "$notes", "break": $didBreak, "offense": $offense, "defense": $defense}';
   }
 }
 
