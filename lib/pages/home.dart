@@ -106,166 +106,111 @@ class _HomePageState extends State<HomePage>
   Widget _editTeamNumber() {
     print('$_isEditingTeamNumber');
 
-    if (_isEditingTeamNumber) {
-      return Container(
-        height: 30,
-        // child: AutofillGroup(
-        //   child: TextField(
-        //     keyboardType: TextInputType.number,
-        //     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        //     autofillHints: ["1234"],
-        //     onSubmitted: (value) async {
-        //       var teamName = await getTeamName(value);
-        //       setState(
-        //         () {
-        //           _teamNumber = value;
-        //           _teamName = teamName;
-        //           widget.getMatchInfo().teamName = teamName;
-        //           widget.getMatchInfo().teamNumber = value;
-        //           _isEditingTeamNumber = false;
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
-        child: Autocomplete<String>(
-          optionsBuilder: ((TextEditingValue textEditingValue) async {
-            print('asdfasdf');
-            teams = await getCompetitionTeams(match);
+    return Container(
+      height: 30,
+      child: Autocomplete<String>(
+        optionsBuilder: ((TextEditingValue textEditingValue) async {
+          print('asdfasdf');
+          teams = await getCompetitionTeams(match);
 
-            return (teams.where(
-                    (String team) => team.startsWith(textEditingValue.text)))
-                .toList();
-          }),
-          // displayStringForOption: (String team) => team,
-          fieldViewBuilder:
-              ((context, textEditingController, focusNode, onFieldSubmitted) {
-            return TextField(
-              controller: textEditingController,
-              focusNode: focusNode,
-              keyboardType: TextInputType.number,
-              // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onSubmitted: (value) async {
-                var teamName = await getTeamName(value);
-                setState(
-                  () {
-                    _teamNumber = value;
-                    _teamName = teamName;
-                    widget.getMatchInfo().teamName = teamName;
-                    widget.getMatchInfo().teamNumber = value;
-                  },
-                );
-              },
-            );
-          }),
-          optionsViewBuilder: (context, onSelected, options) {
-            return Align(
-              alignment: Alignment.topLeft,
-              child: Material(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        blurRadius: 5,
+          return (teams.where(
+                  (String team) => team.startsWith(textEditingValue.text)))
+              .toList();
+        }),
+        // displayStringForOption: (String team) => team,
+        fieldViewBuilder:
+            ((context, textEditingController, focusNode, onFieldSubmitted) {
+          return TextField(
+            controller: textEditingController,
+            focusNode: focusNode,
+            keyboardType: TextInputType.number,
+            // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onSubmitted: (value) async {
+              var teamName = await getTeamName(value);
+              setState(
+                () {
+                  _teamNumber = value;
+                  _teamName = teamName;
+                  widget.getMatchInfo().teamName = teamName;
+                  widget.getMatchInfo().teamNumber = value;
+                },
+              );
+            },
+          );
+        }),
+        optionsViewBuilder: (context, onSelected, options) {
+          return Align(
+            alignment: Alignment.topLeft,
+            child: Material(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                width: 150,
+                height: 120,
+                child: ListView.builder(
+                  itemCount: options.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final String option = options.elementAt(index);
+                    print('$option');
+
+                    return Container(
+                      height: 30,
+                      child: GestureDetector(
+                        onTap: () {
+                          onSelected(option);
+                        },
+                        child: ListTile(title: Text(option)),
                       ),
-                    ],
-                  ),
-                  width: 150,
-                  height: 120,
-                  child: ListView.builder(
-                    itemCount: options.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final String option = options.elementAt(index);
-                      print('$option');
-
-                      return Container(
-                        height: 30,
-                        child: GestureDetector(
-                          onTap: () {
-                            onSelected(option);
-                          },
-                          child: ListTile(title: Text(option)),
-                        ),
-                      );
-                    },
-                  ),
+                    );
+                  },
                 ),
               ),
-            );
-          },
-          // onSelected: (String selection) async {
-          //   var teamName = await getTeamName(selection);
-          //   print('$selection');
-          //   setState(
-          //     () {
-          //       _teamNumber = selection;
-          //       _teamName = teamName;
-          //       widget.getMatchInfo().teamName = teamName;
-          //       widget.getMatchInfo().teamNumber = selection;
-          //     },
-          //   );
-          // },
-        ),
-      );
-    }
-
-    return InkWell(
-      onTap: () async {
-        print('$match');
-        teams = await getCompetitionTeams(match);
-
-        setState(() {
-          _isEditingTeamNumber = true;
-        });
-      },
-      child: Text(
-        _teamNumber,
-        style: TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 16.5,
-        ),
+            ),
+          );
+        },
+        // onSelected: (String selection) async {
+        //   var teamName = await getTeamName(selection);
+        //   print('$selection');
+        //   setState(
+        //     () {
+        //       _teamNumber = selection;
+        //       _teamName = teamName;
+        //       widget.getMatchInfo().teamName = teamName;
+        //       widget.getMatchInfo().teamNumber = selection;
+        //     },
+        //   );
+        // },
       ),
     );
   }
 
   Widget _editMatchNumber() {
-    if (_isEditingMatchNumber) {
-      return SizedBox(
-        width: 21.0,
-        height: 22,
-        child: TextField(
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onSubmitted: (value) async {
-            teams = await getCompetitionTeams(match);
+    return SizedBox(
+      width: 31.0,
+      height: 22,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(3),
+        ],
+        onSubmitted: (value) async {
+          teams = await getCompetitionTeams(match);
 
-            setState(
-              () {
-                _matchNumber = int.parse(value);
-                widget.getMatchInfo().matchNumber = int.parse(value);
-
-                _isEditingMatchNumber = false;
-              },
-            );
-          },
-        ),
-      );
-    }
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _isEditingMatchNumber = true;
-        });
-      },
-      child: Text(
-        _matchNumber.toString(),
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 16.5,
-        ),
+          setState(
+            () {
+              _matchNumber = int.parse(value);
+              widget.getMatchInfo().matchNumber = int.parse(value);
+            },
+          );
+        },
       ),
     );
   }
@@ -347,21 +292,10 @@ class _HomePageState extends State<HomePage>
                       ),
                     ),
                     Container(
-                      constraints: BoxConstraints(minWidth: 25, maxWidth: 25),
+                      constraints: BoxConstraints(minWidth: 35, maxWidth: 35),
                       child: _editMatchNumber(),
                     ),
                   ],
-                ),
-                Container(
-                  constraints: BoxConstraints(minWidth: 500, maxWidth: 500),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'FIRST ENERGIZED',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
-                  ),
                 ),
               ],
             ),
