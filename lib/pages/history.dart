@@ -85,11 +85,11 @@ class _HistoryState extends State<History> {
 
     return Slidable(
       direction: direction,
-      key: Key(item.teamNumber.toString()),
+      key: UniqueKey(),
       startActionPane: ActionPane(
         motion: const DrawerMotion(),
         dismissible: DismissiblePane(
-            key: Key(items[index].id),
+            key: UniqueKey(),
             onDismissed: () {
               items.removeAt(index);
               files[index].delete();
