@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage>
             focusNode: focusNode,
             keyboardType: TextInputType.number,
             // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onSubmitted: (value) async {
+            onChanged: (value) async {
               var teamName = await getTeamName(value);
               setState(
                 () {
@@ -201,9 +201,7 @@ class _HomePageState extends State<HomePage>
           FilteringTextInputFormatter.digitsOnly,
           LengthLimitingTextInputFormatter(3),
         ],
-        onSubmitted: (value) async {
-          teams = await getCompetitionTeams(match);
-
+        onChanged: (value) async {
           setState(
             () {
               _matchNumber = int.parse(value);
