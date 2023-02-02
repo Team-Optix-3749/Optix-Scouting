@@ -73,7 +73,7 @@ class Event {
 
   Event({required this.x, required this.y, required this.isAuto});
 
-  static String eventsToJSON(List<Event> events) {
+  static List<List<int>> eventsToJSON(List<Event> events) {
     List<List<int>> list = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -86,8 +86,8 @@ class Event {
         list[event.x.toInt()][event.y.toInt()] = 1;
       }
     }
-
-    return "[${list.map((l) => '[${l.join(',')}]').join(',')}]";
+    
+    return list;
   }
 }
 
