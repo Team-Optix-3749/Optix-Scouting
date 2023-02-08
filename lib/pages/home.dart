@@ -21,8 +21,8 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin<HomePage> {
   String? preset;
   Map<String, int> presets = {
-    "Default": 0,
-    "Default ": 1,
+    "Red": 0,
+    "Blue": 1,
     // "Add preset": 2,
   };
   List<String> teams = [];
@@ -56,7 +56,6 @@ class _HomePageState extends State<HomePage>
       color: Colors.black54,
     )
   };
-  int gotoIndex = -1;
   int matchIndex = -1;
 
   late TextEditingController _PresetController;
@@ -455,21 +454,7 @@ class _HomePageState extends State<HomePage>
                   value: preset,
                   onChanged: (value) {
                     setState(() {
-                      preset = value! as String;
-                      switch (presets[preset]) {
-                        case -1:
-                          gotoIndex = 0;
-                          break;
-                        case 0:
-                          gotoIndex = 1;
-                          break;
-                        case 1:
-                          gotoIndex = 2;
-                          break;
-                        default:
-                          break;
-                      }
-                      print(gotoIndex);
+                      preset = value!;
                     });
                   },
                   buttonHeight: 40,
@@ -530,14 +515,15 @@ class _HomePageState extends State<HomePage>
               //     builder: (context) => Match(),
               //   ),
               // );
-              if (gotoIndex < 0) {
+              if (preset == null) {
                 showDialog(
                   context: context,
                   builder: ((context) => Util.buildPopupDialog(
                       context, "No preset", <Widget>[Text("Select a preset")])),
                 );
               } else {
-                widget.changeIndex(gotoIndex);
+                widget.getMatchInfo().alliance = preset!;
+                widget.changeIndex(1); // go to scout screen
               }
             },
           ),
