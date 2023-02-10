@@ -48,7 +48,8 @@ class _MainScreenState extends State<MainScreen> {
       teamNumber: "3749",
       teamName: "Team Optix",
       matchNumber: 42,
-      comp: "San Diego Regional");
+      comp: "San Diego Regional",
+      alliance: "Red");
   Map<String, int> scoreChanges = {
     "Upper": 5,
     "Middle": 3,

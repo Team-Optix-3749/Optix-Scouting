@@ -3,12 +3,14 @@ class MatchInfo {
   int matchNumber = 0;
   String teamName = "";
   String comp = "";
+  String alliance = "";
 
   MatchInfo(
       {required this.teamNumber,
       required this.matchNumber,
       required this.teamName,
-      required this.comp});
+      required this.comp,
+      required this.alliance});
 }
 
 class MatchTeam {
@@ -29,7 +31,8 @@ class ScoutData {
       teamNumber: "3749",
       teamName: "Team Optix",
       matchNumber: 42,
-      comp: "San Diego Regional");
+      comp: "San Diego Regional",
+      alliance: "Red");
   List<Event> events = [];
   int autoBalanced; // 0 = none, 1 = docked, 2 = engaged
   int teleBalanced; // 0 = none, 1 = docked, 2 = engaged
@@ -55,6 +58,7 @@ class ScoutData {
       "teamName": matchInfo.teamName,
       "matchNumber": matchInfo.matchNumber,
       "comp": matchInfo.comp,
+      "alliance":  matchInfo.alliance,
       "events": Event.eventsToJSON(events),
       "balanced": balanced,
       "notes": notes,
@@ -73,7 +77,7 @@ class Event {
 
   Event({required this.x, required this.y, required this.isAuto});
 
-  static String eventsToJSON(List<Event> events) {
+  static List<List<int>> eventsToJSON(List<Event> events) {
     List<List<int>> list = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -87,7 +91,7 @@ class Event {
       }
     }
 
-    return "[${list.map((l) => '[${l.join(',')}]').join(',')}]";
+    return list;
   }
 }
 
