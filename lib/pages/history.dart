@@ -26,8 +26,6 @@ class _HistoryState extends State<History> {
   List<HistoryEntry> items = [];
   List<Slidable> widgets = [];
 
-  String _contentOfFile = "";
-
   List<io.FileSystemEntity> files = [];
 
   int reset = 0;
@@ -99,7 +97,7 @@ class _HistoryState extends State<History> {
             }),
         children: [
           SlidableAction(
-            onPressed: (BuildContext) {
+            onPressed: (con) {
               setState(() {});
             },
             backgroundColor: Colors.red,
@@ -122,7 +120,7 @@ class _HistoryState extends State<History> {
         motion: const DrawerMotion(),
         children: [
           SlidableAction(
-            onPressed: (BuildContext) async {
+            onPressed: (con) async {
               String data = await readFile(fileNames[index]);
               showDialog(
                 context: context,
@@ -130,7 +128,7 @@ class _HistoryState extends State<History> {
                   context,
                   "QR Code",
                   <Widget>[
-                    Container(
+                    SizedBox(
                       height: 295,
                       width: 295,
                       child: QrImage(
@@ -144,24 +142,24 @@ class _HistoryState extends State<History> {
               );
               setState(() {});
             },
-            backgroundColor: Color(0xFF0b2262),
+            backgroundColor: const Color(0xFF0b2262),
             foregroundColor: Colors.white,
             icon: Icons.qr_code_2,
             label: 'Qr Code',
           ),
           SlidableAction(
-            onPressed: (BuildContext) async {
+            onPressed: (con) async {
               String data = await readFile(fileNames[index]);
-              JsonCodec codec = new JsonCodec();
+              JsonCodec codec = const JsonCodec();
               Map<String, dynamic> parsed = codec.decode(data);
-              dynamic values = parsed["events"];
+              dynamic values = parsed["events"]; 
               List<dynamic> lst = (json.decode(values).toList());
               Color color = Colors.black;
               if (parsed["balanced"] == 1) {
-                color = Color.fromARGB(255, 78, 118, 247);
+                color = const Color.fromARGB(255, 78, 118, 247);
               }
               if (parsed["balanced"] == 2) {
-                color = Color.fromARGB(255, 243, 57, 82);
+                color = const Color.fromARGB(255, 243, 57, 82);
               }
               showDialog(
                 context: context,
@@ -172,34 +170,29 @@ class _HistoryState extends State<History> {
                     Row(
                       children: [
                         Text(
-                          "Match " + parsed["matchNumber"].toString(),
-                          style: TextStyle(
+                          "Match ${parsed["matchNumber"]}",
+                          style: const TextStyle(
                             fontSize: 15,
                           ),
                         ),
-                        Spacer(),
-                        Container(
+                        const Spacer(),
+                        SizedBox(
                           width: 50,
                           height: 50,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                child: Align(
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    "Balance",
-                                    style:
-                                        TextStyle(fontSize: 13, color: color),
-                                  ),
+                              Align(
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  "Balance",
+                                  style: TextStyle(fontSize: 13, color: color),
                                 ),
                               ),
-                              Container(
-                                child: new Icon(
-                                  Icons.check_box,
-                                  color: color,
-                                  size: 25,
-                                ),
+                              Icon(
+                                Icons.check_box,
+                                color: color,
+                                size: 25,
                               ),
                               Align(
                                 child: Text(
@@ -218,7 +211,7 @@ class _HistoryState extends State<History> {
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.7,
                         height: MediaQuery.of(context).size.height * 0.417,
-                        padding: EdgeInsets.only(top: 16),
+                        padding: const EdgeInsets.only(top: 16),
                         child: Center(
                           child: GridView.builder(
                               gridDelegate:
@@ -230,21 +223,21 @@ class _HistoryState extends State<History> {
                               itemBuilder: (_, i) {
                                 if (lst[i % 3][(i / 3).floor()] == 0) {
                                   return Container(
-                                    padding: EdgeInsets.all(4),
+                                    padding: const EdgeInsets.all(4),
                                     child: Center(
                                       // child: Text('$index'),
 
                                       child: OutlinedButton(
+                                        onPressed: (() {}),
                                         child: Container(
                                             // child: Text("${initialData[index]}"),
                                             ),
-                                        onPressed: (() {}),
                                       ),
                                     ),
                                   );
                                 } else if (lst[i % 3][(i / 3).floor()] == 1) {
                                   return Container(
-                                    padding: EdgeInsets.all(4),
+                                    padding: const EdgeInsets.all(4),
                                     child: Center(
                                       // child: Text('$index'),
 
@@ -252,16 +245,16 @@ class _HistoryState extends State<History> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blue,
                                         ),
+                                        onPressed: (() {}),
                                         child: Container(
                                             // child: Text("${initialData[index]}"),
                                             ),
-                                        onPressed: (() {}),
                                       ),
                                     ),
                                   );
                                 } else {
                                   return Container(
-                                    padding: EdgeInsets.all(4),
+                                    padding: const EdgeInsets.all(4),
                                     child: Center(
                                       // child: Text('$index'),
 
@@ -269,10 +262,10 @@ class _HistoryState extends State<History> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.blue.shade900,
                                         ),
+                                        onPressed: (() {}),
                                         child: Container(
                                             // child: Text("${initialData[index]}"),
                                             ),
-                                        onPressed: (() {}),
                                       ),
                                     ),
                                   );
@@ -293,7 +286,7 @@ class _HistoryState extends State<History> {
               );
               setState(() {});
             },
-            backgroundColor: Color(0xFFb2F218),
+            backgroundColor: const Color(0xFFb2F218),
             foregroundColor: Colors.white,
             icon: Icons.calendar_view_month,
             label: 'View',
@@ -301,9 +294,9 @@ class _HistoryState extends State<History> {
         ],
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 16, right: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16),
         child: Container(
-          padding: EdgeInsets.only(bottom: 8, top: 4),
+          padding: const EdgeInsets.only(bottom: 8, top: 4),
           child: TextButton(
             onPressed: () async {
               var content = await readFile(fileNames[index]);
@@ -311,7 +304,7 @@ class _HistoryState extends State<History> {
                 context: context,
                 builder: ((context) =>
                     Util.buildPopupDialog(context, "QR Code", <Widget>[
-                      Container(
+                      SizedBox(
                         height: 300,
                         width: 300,
                         child: QrImage(
@@ -328,7 +321,7 @@ class _HistoryState extends State<History> {
                   children: [
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.only(right: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -336,7 +329,7 @@ class _HistoryState extends State<History> {
                               overflow: TextOverflow.ellipsis,
                               items[index].teamNumber.toString(),
                               // fileNames[index].split("_")[2],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 15,
                               ),
                             ),
@@ -357,14 +350,14 @@ class _HistoryState extends State<History> {
                       children: [
                         Text(
                           overflow: TextOverflow.ellipsis,
-                          "Match: " + items[index].matchNumber.toString(),
-                          style: TextStyle(
+                          "Match: ${items[index].matchNumber}",
+                          style: const TextStyle(
                             fontSize: 15,
                           ),
                         ),
                         Text(
                           overflow: TextOverflow.ellipsis,
-                          "FIRST ENERGIZED: " + items[index].compName,
+                          "FIRST ENERGIZED: ${items[index].compName}",
                           style: TextStyle(
                             color: Colors.grey[500],
                             fontSize: 14.5,
@@ -375,11 +368,11 @@ class _HistoryState extends State<History> {
                   ],
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.only(top: 4),
                   child: Text(
                     overflow: TextOverflow.ellipsis,
-                    items[index].date + " : " + items[index].id,
-                    style: TextStyle(fontSize: 10),
+                    "${items[index].date} : ${items[index].id}",
+                    style: const TextStyle(fontSize: 10),
                   ),
                 ),
               ],
@@ -389,17 +382,6 @@ class _HistoryState extends State<History> {
       ),
 
       //const ListTile(title: Text('Slide me')),
-    );
-  }
-
-  Widget _buildList(BuildContext context, Axis direction) {
-    return ListView.builder(
-      itemBuilder: ((context, index) {
-        final Axis slidableDirection =
-            direction == Axis.horizontal ? Axis.vertical : Axis.horizontal;
-        return _slidableWithLists(context, index, slidableDirection);
-      }),
-      itemCount: items.length,
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -8,8 +9,11 @@ import 'pages/history.dart';
 import 'pages/match.dart';
 import 'pages/pit.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // final cameras = await availableCameras(); // just had to input
+  // final mainCamera = cameras.first;
   runApp(new MyApp());
 }
 // Map<String, WidgetBuilder> routes = {
