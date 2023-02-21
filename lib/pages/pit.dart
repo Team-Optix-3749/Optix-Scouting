@@ -57,30 +57,7 @@ class _PitState extends State<Pit> {
     ),
     2: Stack(
       alignment: Alignment.bottomLeft,
-      children: const [
-        Icon(
-          Icons.shield,
-          color: Colors.black54,
-          size: 25,
-          shadows: <Shadow>[
-            Shadow(
-              color: Colors.black54,
-              blurRadius: 10,
-            )
-          ],
-        ),
-        Icon(
-          Icons.colorize_outlined,
-          color: Colors.white,
-          size: 27,
-          shadows: <Shadow>[
-            Shadow(
-              color: Colors.black54,
-              blurRadius: 10,
-            )
-          ],
-        ),
-      ],
+      children: const [],
     ),
   };
   String? drivePreset;
@@ -147,12 +124,6 @@ class _PitState extends State<Pit> {
           Icons.hide_source,
           color: Colors.black54,
           size: 25,
-          shadows: <Shadow>[
-            Shadow(
-              color: Colors.black54,
-              blurRadius: 10,
-            )
-          ],
         ),
       ],
     ),
@@ -353,108 +324,114 @@ class _PitState extends State<Pit> {
               ),
             ),
           ),
-          DropdownButtonHideUnderline(
-            child: DropdownButton2(
-              hint: const Text(
-                'Select Drive Train',
-                style: TextStyle(
-                  fontSize: 15,
+          Container(
+            padding: EdgeInsets.all(10),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                hint: const Text(
+                  'Select Drive Train',
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-              items: drivePresets.keys
-                  .map(
-                    (p) => DropdownMenuItem<String>(
-                      value: p,
-                      child: Container(
-                        width: 120,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                overflow: TextOverflow.ellipsis,
-                                p.trim(),
-                                strutStyle: StrutStyle(fontSize: 15.0),
-                                textDirection: TextDirection.ltr,
-                                textAlign: TextAlign.left,
+                items: drivePresets.keys
+                    .map(
+                      (p) => DropdownMenuItem<String>(
+                        value: p,
+                        child: Container(
+                          width: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  p.trim(),
+                                  strutStyle: StrutStyle(fontSize: 15.0),
+                                  textDirection: TextDirection.ltr,
+                                  textAlign: TextAlign.left,
+                                ),
                               ),
-                            ),
-                            Container(
-                              child: drivePresetIcons[drivePresets[p]],
-                            ),
-                          ],
+                              Container(
+                                child: drivePresetIcons[drivePresets[p]],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-              value: drivePreset,
-              onChanged: (value) {
-                setState(() {
-                  drivePreset = value!;
-                });
-              },
-              buttonHeight: 40,
-              dropdownWidth: 140,
-              itemHeight: 40,
-              dropdownMaxHeight: 160,
-              onMenuStateChange: (isOpen) {
-                // if (!isOpen) {
-                //   _PresetController.clear();
-                // }
-              },
+                    )
+                    .toList(),
+                value: drivePreset,
+                onChanged: (value) {
+                  setState(() {
+                    drivePreset = value!;
+                  });
+                },
+                buttonHeight: 40,
+                dropdownWidth: 140,
+                itemHeight: 40,
+                dropdownMaxHeight: 160,
+                onMenuStateChange: (isOpen) {
+                  // if (!isOpen) {
+                  //   _PresetController.clear();
+                  // }
+                },
+              ),
             ),
           ),
-          DropdownButtonHideUnderline(
-            child: DropdownButton2(
-              hint: const Text(
-                'Select Arm Type',
-                style: TextStyle(
-                  fontSize: 15,
+          Container(
+            padding: EdgeInsets.all(10),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                hint: const Text(
+                  'Select Arm Type',
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-              items: armPresets.keys
-                  .map(
-                    (p) => DropdownMenuItem<String>(
-                      value: p,
-                      child: Container(
-                        width: 120,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                overflow: TextOverflow.ellipsis,
-                                p.trim(),
-                                strutStyle: StrutStyle(fontSize: 15.0),
-                                textDirection: TextDirection.ltr,
-                                textAlign: TextAlign.left,
+                items: armPresets.keys
+                    .map(
+                      (p) => DropdownMenuItem<String>(
+                        value: p,
+                        child: Container(
+                          width: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  p.trim(),
+                                  strutStyle: StrutStyle(fontSize: 15.0),
+                                  textDirection: TextDirection.ltr,
+                                  textAlign: TextAlign.left,
+                                ),
                               ),
-                            ),
-                            Container(
-                              child: drivePresetIcons[drivePresets[p]],
-                            ),
-                          ],
+                              Container(
+                                child: armPresetIcons[armPresets[p]],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-              value: armPreset,
-              onChanged: (value) {
-                setState(() {
-                  armPreset = value!;
-                });
-              },
-              buttonHeight: 40,
-              dropdownWidth: 140,
-              itemHeight: 40,
-              dropdownMaxHeight: 160,
-              onMenuStateChange: (isOpen) {
-                // if (!isOpen) {
-                //   _PresetController.clear();
-                // }
-              },
+                    )
+                    .toList(),
+                value: armPreset,
+                onChanged: (value) {
+                  setState(() {
+                    armPreset = value!;
+                  });
+                },
+                buttonHeight: 40,
+                dropdownWidth: 140,
+                itemHeight: 40,
+                dropdownMaxHeight: 160,
+                onMenuStateChange: (isOpen) {
+                  // if (!isOpen) {
+                  //   _PresetController.clear();
+                  // }
+                },
+              ),
             ),
           ),
           TextButton(
