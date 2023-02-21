@@ -112,7 +112,13 @@ class _HomePageState extends State<HomePage>
 
   void getFiles(var teamName) async {
     found = false;
-    bottom = <Widget>[Container(), Container(), Container(), Container()];
+    bottom = <Widget>[
+      Container(),
+      Container(),
+      Container(),
+      Container(),
+      Container()
+    ];
     String firstFoundID = "";
     io.Directory appDocumentsDirectory =
         await getApplicationDocumentsDirectory(); //
@@ -123,12 +129,12 @@ class _HomePageState extends State<HomePage>
         print(entity.path);
         if (path.basename(entity.path).split("_")[0] == teamName) {
           if (firstFoundID == "") {
-            firstFoundID = path.basename(entity.path).split("_")[4];
+            firstFoundID = path.basename(entity.path).split("_")[5];
           }
           found = true;
-          if (path.basename(entity.path).split("_")[4] == firstFoundID) {
-            if (path.basename(entity.path).split("_")[5] == "auto.png") {
-              bottom[3] = Container(
+          if (path.basename(entity.path).split("_")[5] == firstFoundID) {
+            if (path.basename(entity.path).split("_")[6] == "auto.png") {
+              bottom[4] = Container(
                 padding: EdgeInsets.all(8),
                 child: Image.file(
                   File(entity.path),
@@ -152,6 +158,12 @@ class _HomePageState extends State<HomePage>
                 child: Text(
                   "Drivetrain Type: " +
                       path.basename(entity.path).split("_")[3],
+                ),
+              );
+              bottom[3] = Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "Arm Type: " + path.basename(entity.path).split("_")[4],
                 ),
               );
             }
@@ -192,6 +204,11 @@ class _HomePageState extends State<HomePage>
                     getFiles(teamName);
                   },
                 );
+              },
+              onSubmitted: (value) {
+                _isEditingTeamNumber = false;
+                _isEditingMatchNumber = false;
+                setState(() {});
               },
             );
           }),
@@ -285,6 +302,11 @@ class _HomePageState extends State<HomePage>
                 widget.getMatchInfo().matchNumber = int.parse(value);
               },
             );
+          },
+          onSubmitted: (value) {
+            _isEditingTeamNumber = false;
+            _isEditingMatchNumber = false;
+            setState(() {});
           },
         ),
       );

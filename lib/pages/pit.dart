@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_octicons/flutter_octicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:optix_scouting/util.dart';
@@ -115,6 +116,47 @@ class _PitState extends State<Pit> {
       children: const [],
     ),
   };
+  String? armPreset;
+  Map<String, int> armPresets = {
+    "Elevator": 0,
+    "Telescope": 1,
+    "None": 2,
+    // "Add preset": 2,
+  };
+  Map<int, Stack> armPresetIcons = {
+    0: Stack(
+      children: const [
+        Icon(
+          Icons.elevator,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    1: Stack(
+      children: const [
+        Icon(
+          OctIcons.telescope_fill_16,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    2: Stack(
+      alignment: Alignment.bottomLeft,
+      children: const [
+        Icon(
+          Icons.hide_source,
+          color: Colors.black54,
+          size: 25,
+          shadows: <Shadow>[
+            Shadow(
+              color: Colors.black54,
+              blurRadius: 10,
+            )
+          ],
+        ),
+      ],
+    ),
+  };
 
   void imagePopup(File image) {
     if (image != null) {
@@ -168,18 +210,19 @@ class _PitState extends State<Pit> {
     String id = uuid.v1();
 
     final fullPath =
-        '$directory/pits/${widget.teamName}_${widget.competition}_${typePreset!}_${drivePreset!}_${id}';
+        '$directory/pits/${widget.teamName}_${widget.competition}_${typePreset!}_${drivePreset!}_${armPreset!}_${id}';
     autoPath = fullPath;
     final imageFile = File(fullPath + '_auto.png');
     imageFile.writeAsBytesSync(image);
   }
 
-  void save(File robotFile, String robotType, String driveTrain) async {
+  void save(File robotFile, String robotType, String driveTrain,
+      String clawType) async {
     // print(path.basename(robotFile.path.split("/").last));
     GallerySaver.saveImage(
       robotFile.path,
       albumName:
-          '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}',
+          '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}-${clawType}',
     ).then((bool? success) {
       setState(() {
         print('Image is saved');
@@ -362,6 +405,58 @@ class _PitState extends State<Pit> {
               },
             ),
           ),
+          DropdownButtonHideUnderline(
+            child: DropdownButton2(
+              hint: const Text(
+                'Select Arm Type',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+              items: armPresets.keys
+                  .map(
+                    (p) => DropdownMenuItem<String>(
+                      value: p,
+                      child: Container(
+                        width: 120,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                overflow: TextOverflow.ellipsis,
+                                p.trim(),
+                                strutStyle: StrutStyle(fontSize: 15.0),
+                                textDirection: TextDirection.ltr,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Container(
+                              child: drivePresetIcons[drivePresets[p]],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              value: armPreset,
+              onChanged: (value) {
+                setState(() {
+                  armPreset = value!;
+                });
+              },
+              buttonHeight: 40,
+              dropdownWidth: 140,
+              itemHeight: 40,
+              dropdownMaxHeight: 160,
+              onMenuStateChange: (isOpen) {
+                // if (!isOpen) {
+                //   _PresetController.clear();
+                // }
+              },
+            ),
+          ),
           TextButton(
             onPressed: () {
               if (_image == null || typePreset == null || drivePreset == null) {
@@ -398,7 +493,7 @@ class _PitState extends State<Pit> {
                   ),
                 );
               } else {
-                save(_image, typePreset!, drivePreset!);
+                save(_image, typePreset!, drivePreset!, armPreset!);
               }
             },
             child: Container(

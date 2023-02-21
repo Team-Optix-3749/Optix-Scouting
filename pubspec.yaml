@@ -46,6 +46,7 @@ dependencies:
   flutter_svg: ^1.1.6
   image_picker: ^0.8.6+2
   gallery_saver: ^2.3.2
+  flutter_octicons: ^0.26.0
 
 
 dev_dependencies:
