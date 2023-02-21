@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,9 @@ import 'package:flutter/services.dart';
 import '../util.dart';
 import '../utilities/funcs.dart' as funcs;
 import '../utilities/classes.dart';
+import 'dart:io' as io;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class HomePage extends StatefulWidget with Util {
   final Function changeIndex;
@@ -19,7 +24,7 @@ class HomePage extends StatefulWidget with Util {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin<HomePage> {
-  String? preset;
+  String? preset = null;
   Map<String, int> presets = {
     "Red": 0,
     "Blue": 1,
@@ -91,6 +96,9 @@ class _HomePageState extends State<HomePage>
   bool _isEditingMatchNumber = false;
   late TextEditingController _TeamNumberController;
   late TextEditingController _MatchNumberController;
+  late List<io.FileSystemEntity> tempFiles;
+  bool found = false;
+  late List<Widget> bottom;
 
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -102,112 +110,201 @@ class _HomePageState extends State<HomePage>
     return await funcs.getCompetitionTeams(name);
   }
 
-  Widget _editTeamNumber() {
-    print('$_isEditingTeamNumber');
-
-    return Container(
-      height: 30,
-      child: Autocomplete<String>(
-        optionsBuilder: ((TextEditingValue textEditingValue) async {
-          print('asdfasdf');
-          teams = await getCompetitionTeams(match);
-
-          return (teams.where(
-                  (String team) => team.startsWith(textEditingValue.text)))
-              .toList();
-        }),
-        // displayStringForOption: (String team) => team,
-        fieldViewBuilder:
-            ((context, textEditingController, focusNode, onFieldSubmitted) {
-          return TextField(
-            controller: textEditingController,
-            focusNode: focusNode,
-            keyboardType: TextInputType.number,
-            // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (value) async {
-              var teamName = await getTeamName(value);
-              setState(
-                () {
-                  _teamNumber = value;
-                  _teamName = teamName;
-                  widget.getMatchInfo().teamName = teamName;
-                  widget.getMatchInfo().teamNumber = value;
-                },
+  void getFiles(var teamName) async {
+    found = false;
+    bottom = <Widget>[Container(), Container(), Container(), Container()];
+    String firstFoundID = "";
+    io.Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory(); //
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    tempFiles = io.Directory('$appDocumentsPath/pits/').listSync();
+    if (tempFiles != null) {
+      for (io.FileSystemEntity entity in tempFiles) {
+        print(entity.path);
+        if (path.basename(entity.path).split("_")[0] == teamName) {
+          if (firstFoundID == "") {
+            firstFoundID = path.basename(entity.path).split("_")[4];
+          }
+          found = true;
+          if (path.basename(entity.path).split("_")[4] == firstFoundID) {
+            if (path.basename(entity.path).split("_")[5] == "auto.png") {
+              bottom[3] = Container(
+                padding: EdgeInsets.all(8),
+                child: Image.file(
+                  File(entity.path),
+                ),
               );
-            },
-          );
-        }),
-        optionsViewBuilder: (context, onSelected, options) {
-          return Align(
-            alignment: Alignment.topLeft,
-            child: Material(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 5,
-                    ),
-                  ],
+            } else {
+              bottom[0] = Container(
+                padding: EdgeInsets.all(8),
+                child: Image.file(
+                  File(entity.path),
                 ),
-                width: 150,
-                height: 120,
-                child: ListView.builder(
-                  itemCount: options.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final String option = options.elementAt(index);
-                    print('$option');
+              );
+              bottom[1] = Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "Bot type: " + path.basename(entity.path).split("_")[2],
+                ),
+              );
+              bottom[2] = Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "Drivetrain Type: " +
+                      path.basename(entity.path).split("_")[3],
+                ),
+              );
+            }
+          }
+        }
+      }
+    }
+  }
 
-                    return Container(
-                      height: 30,
-                      child: GestureDetector(
-                        onTap: () {
-                          onSelected(option);
-                        },
-                        child: ListTile(title: Text(option)),
-                      ),
-                    );
+  Widget _editTeamNumber() {
+    if (_isEditingTeamNumber) {
+      return Container(
+        height: 30,
+        child: Autocomplete<String>(
+          optionsBuilder: ((TextEditingValue textEditingValue) async {
+            teams = await getCompetitionTeams(match);
+
+            return (teams.where(
+                    (String team) => team.startsWith(textEditingValue.text)))
+                .toList();
+          }),
+          // displayStringForOption: (String team) => team,
+          fieldViewBuilder:
+              ((context, textEditingController, focusNode, onFieldSubmitted) {
+            return TextField(
+              controller: textEditingController,
+              focusNode: focusNode,
+              keyboardType: TextInputType.number,
+              // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (value) async {
+                var teamName = await getTeamName(value);
+                setState(
+                  () {
+                    _teamNumber = value;
+                    _teamName = teamName;
+                    widget.getMatchInfo().teamName = teamName;
+                    widget.getMatchInfo().teamNumber = value;
+                    getFiles(teamName);
                   },
+                );
+              },
+            );
+          }),
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                  width: 150,
+                  height: 120,
+                  // child: Expanded(
+                  child: ListView.builder(
+                    // shrinkWrap: true,
+                    itemCount: options.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final String option = options.elementAt(index);
+
+                      return Container(
+                        height: 30,
+                        child: GestureDetector(
+                          onTap: () {
+                            onSelected(option);
+                          },
+                          child: ListTile(title: Text(option)),
+                        ),
+                      );
+                    },
+                  ),
                 ),
+                // ),
               ),
-            ),
-          );
-        },
-        // onSelected: (String selection) async {
-        //   var teamName = await getTeamName(selection);
-        //   print('$selection');
-        //   setState(
-        //     () {
-        //       _teamNumber = selection;
-        //       _teamName = teamName;
-        //       widget.getMatchInfo().teamName = teamName;
-        //       widget.getMatchInfo().teamNumber = selection;
-        //     },
-        //   );
-        // },
+            );
+          },
+
+          onSelected: (String selection) async {
+            var teamName = await getTeamName(selection);
+            setState(
+              () {
+                _teamNumber = selection;
+                _teamName = teamName;
+                widget.getMatchInfo().teamName = teamName;
+                widget.getMatchInfo().teamNumber = selection;
+              },
+            );
+          },
+        ),
+      );
+    }
+    return InkWell(
+      onTap: () async {
+        teams = await getCompetitionTeams(match);
+
+        setState(() {
+          _isEditingTeamNumber = true;
+        });
+      },
+      child: Text(
+        _teamNumber,
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          fontSize: 16.5,
+        ),
       ),
     );
   }
 
   Widget _editMatchNumber() {
-    return SizedBox(
-      width: 31.0,
-      height: 22,
-      child: TextField(
-        keyboardType: TextInputType.number,
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(3),
-        ],
-        onChanged: (value) async {
-          setState(
-            () {
-              _matchNumber = int.parse(value);
-              widget.getMatchInfo().matchNumber = int.parse(value);
-            },
-          );
-        },
+    if (_isEditingMatchNumber) {
+      return SizedBox(
+        width: 31.0,
+        height: 22,
+        child: TextField(
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(3),
+          ],
+          onChanged: (value) async {
+            setState(
+              () {
+                _matchNumber = int.parse(value);
+                widget.getMatchInfo().matchNumber = int.parse(value);
+              },
+            );
+          },
+        ),
+      );
+    }
+
+    return InkWell(
+      onTap: () async {
+        teams = await getCompetitionTeams(match);
+
+        setState(() {
+          _isEditingMatchNumber = true;
+        });
+      },
+      child: Text(
+        _matchNumber.toString(),
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          fontSize: 16.5,
+        ),
       ),
     );
   }
@@ -300,7 +397,6 @@ class _HomePageState extends State<HomePage>
         ],
       ),
     );
-    print(matches);
     Widget competitionSelect = Container(
       padding: EdgeInsets.only(top: 16, bottom: 16, left: 16),
       child: Align(
@@ -349,8 +445,6 @@ class _HomePageState extends State<HomePage>
                       teams = await getCompetitionTeams(match);
 
                       setState(() {
-                        print('$teams');
-
                         match = value! as String;
                         switch (matches[match]) {
                           case -1:
@@ -365,7 +459,6 @@ class _HomePageState extends State<HomePage>
                           default:
                             break;
                         }
-                        print(matchIndex);
                       });
                     },
                     buttonHeight: 40,
@@ -373,6 +466,7 @@ class _HomePageState extends State<HomePage>
                     itemHeight: 40,
                     dropdownMaxHeight: 160,
                     searchController: _MatchController,
+                    searchInnerWidgetHeight: 40,
                     searchInnerWidget: Padding(
                       padding: const EdgeInsets.only(
                         bottom: 4,
@@ -454,7 +548,7 @@ class _HomePageState extends State<HomePage>
                   value: preset,
                   onChanged: (value) {
                     setState(() {
-                      preset = value!;
+                      preset = value! as String;
                     });
                   },
                   buttonHeight: 40,
@@ -462,6 +556,7 @@ class _HomePageState extends State<HomePage>
                   itemHeight: 40,
                   dropdownMaxHeight: 160,
                   searchController: _PresetController,
+                  searchInnerWidgetHeight: 40,
                   searchInnerWidget: Padding(
                     padding: const EdgeInsets.only(
                       bottom: 4,
@@ -593,6 +688,7 @@ class _HomePageState extends State<HomePage>
                 color: Color.fromARGB(64, 0, 0, 0),
               ),
             ),
+            (found && bottom != null) ? Column(children: bottom) : Container(),
             Wrap(
               children: images
                   .map((item) => Container(

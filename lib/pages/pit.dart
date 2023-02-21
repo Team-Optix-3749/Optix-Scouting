@@ -1,54 +1,412 @@
-import 'package:flutter/material.dart';
-import 'package:optix_scouting/utilities/scanQR.dart';
-import 'package:permission_handler/permission_handler.dart';
-// camera dependencies
-import 'dart:async';
 import 'dart:io';
-
-import 'package:camera/camera.dart';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-
-void main() => runApp(const Pit());
+import 'package:image_picker/image_picker.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:optix_scouting/util.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_painter/image_painter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:uuid/uuid.dart';
+import 'dart:io' as io;
 
 class Pit extends StatefulWidget {
-  const Pit({Key? key, required this.camera}) : super(key: key);
-  /// testingg resomethin rq
-  /// Ill add itt gotchu
-  /// p good
-  /// my phone can run a server lol
-  /// how's everything going
-  /// w ne ed to add a require tag in the consturgot ok 
-  /// @nVarap wha is the thing for camera
-  final  camera;
+  const Pit({Key? key, required this.teamName, required this.competition})
+      : super(key: key);
+  final String teamName;
+  final String competition;
   static const String routeName = "/PitPage";
   @override
   _PitState createState() => _PitState();
 }
 
 class _PitState extends State<Pit> {
+  var uuid = Uuid();
+
+  final _imageKey = GlobalKey<ImagePainterState>();
+
+  late ImagePicker imagePicker;
+  late String autoPath;
+  var _image;
+  String? typePreset;
+  Map<String, int> typePresets = {
+    "Defense": 0,
+    "Offense": 1,
+    "All rounder": 2,
+    // "Add preset": 2,
+  };
+  Map<int, Stack> typePresetIcons = {
+    0: Stack(
+      children: const [
+        Icon(
+          Icons.shield,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    1: Stack(
+      children: const [
+        Icon(
+          Icons.colorize,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    2: Stack(
+      alignment: Alignment.bottomLeft,
+      children: const [
+        Icon(
+          Icons.shield,
+          color: Colors.black54,
+          size: 25,
+          shadows: <Shadow>[
+            Shadow(
+              color: Colors.black54,
+              blurRadius: 10,
+            )
+          ],
+        ),
+        Icon(
+          Icons.colorize_outlined,
+          color: Colors.white,
+          size: 27,
+          shadows: <Shadow>[
+            Shadow(
+              color: Colors.black54,
+              blurRadius: 10,
+            )
+          ],
+        ),
+      ],
+    ),
+  };
+  String? drivePreset;
+  Map<String, int> drivePresets = {
+    "West Coast": 0,
+    "Swerve": 1,
+    "Other": 2,
+    // "Add preset": 2,
+  };
+  Map<int, Stack> drivePresetIcons = {
+    0: Stack(
+      children: const [
+        Icon(
+          Icons.open_with,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    1: Stack(
+      children: const [
+        Icon(
+          Icons.south,
+          color: Colors.black54,
+        ),
+        Icon(
+          Icons.north,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    2: Stack(
+      alignment: Alignment.bottomLeft,
+      children: const [],
+    ),
+  };
+
+  void imagePopup(File image) {
+    if (image != null) {
+      print(image.path);
+      showDialog(
+        context: context,
+        builder: (context) => Util.buildPopupDialog(
+          context,
+          "Robot",
+          <Widget>[
+            Image.file(
+              _image,
+              width: 500.0,
+              height: 500.0,
+              fit: BoxFit.fitHeight,
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void painter() {
+    showDialog(
+      context: context,
+      builder: (context) => Util.buildPitPopupDialog(
+        context,
+        "Auto path",
+        <Widget>[
+          ImagePainter.asset(
+            "assets/blue.png",
+            height: 500.0,
+            key: _imageKey,
+            scalable: true,
+            initialStrokeWidth: 3.5,
+            initialColor: Colors.green,
+            initialPaintMode: PaintMode.freeStyle,
+            width: 331.0,
+            controlsAtTop: false,
+          ),
+        ],
+        savePainter,
+      ),
+    );
+  }
+
+  void savePainter() async {
+    Uint8List image = await _imageKey.currentState!.exportImage() as Uint8List;
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    await Directory('$directory/pits').create(recursive: true);
+    String id = uuid.v1();
+
+    final fullPath =
+        '$directory/pits/${widget.teamName}_${widget.competition}_${typePreset!}_${drivePreset!}_${id}';
+    autoPath = fullPath;
+    final imageFile = File(fullPath + '_auto.png');
+    imageFile.writeAsBytesSync(image);
+  }
+
+  void save(File robotFile, String robotType, String driveTrain) async {
+    // print(path.basename(robotFile.path.split("/").last));
+    GallerySaver.saveImage(
+      robotFile.path,
+      albumName:
+          '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}',
+    ).then((bool? success) {
+      setState(() {
+        print('Image is saved');
+      });
+    });
+    File other = await robotFile.copy(autoPath + '_robot.png');
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
-  } // alr
+    imagePicker = new ImagePicker();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('PIT SCOUTING'),
+        title: Text('PIT'),
       ),
-      body: ScanQrPage(),
-      // body: Container(),
+      body: Column(
+        children: <Widget>[
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 255),
+            child: Center(
+              child: Container(
+                child: Stack(
+                  children: [
+                    _image != null
+                        ? Stack(
+                            children: [
+                              Image.file(
+                                _image,
+                                width: double.infinity,
+                                fit: BoxFit.fitWidth,
+                              ),
+                              Positioned(
+                                right: 5.0,
+                                bottom: 5.0,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    if (_image != null) {
+                                      imagePopup(_image);
+                                    }
+                                  },
+                                  child: Icon(
+                                    Icons.fullscreen,
+                                    size: 40,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : GestureDetector(
+                            onTap: () async {
+                              var source = ImageSource.camera;
+                              XFile? image = await imagePicker.pickImage(
+                                  source: source,
+                                  preferredCameraDevice: CameraDevice.rear);
+                              setState(() {
+                                _image = File(image!.path);
+                              });
+                            },
+                            child: Container(
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                hint: const Text(
+                  'Select Robot Type',
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                items: typePresets.keys
+                    .map(
+                      (p) => DropdownMenuItem<String>(
+                        value: p,
+                        child: Container(
+                          width: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  p.trim(),
+                                  strutStyle: StrutStyle(fontSize: 15.0),
+                                  textDirection: TextDirection.ltr,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Container(
+                                child: typePresetIcons[typePresets[p]],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                value: typePreset,
+                onChanged: (value) {
+                  setState(() {
+                    typePreset = value!;
+                  });
+                },
+                buttonHeight: 40,
+                dropdownWidth: 140,
+                itemHeight: 40,
+                dropdownMaxHeight: 160,
+                onMenuStateChange: (isOpen) {
+                  // if (!isOpen) {
+                  //   _PresetController.clear();
+                  // }
+                },
+              ),
+            ),
+          ),
+          DropdownButtonHideUnderline(
+            child: DropdownButton2(
+              hint: const Text(
+                'Select Drive Train',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+              items: drivePresets.keys
+                  .map(
+                    (p) => DropdownMenuItem<String>(
+                      value: p,
+                      child: Container(
+                        width: 120,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                overflow: TextOverflow.ellipsis,
+                                p.trim(),
+                                strutStyle: StrutStyle(fontSize: 15.0),
+                                textDirection: TextDirection.ltr,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Container(
+                              child: drivePresetIcons[drivePresets[p]],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              value: drivePreset,
+              onChanged: (value) {
+                setState(() {
+                  drivePreset = value!;
+                });
+              },
+              buttonHeight: 40,
+              dropdownWidth: 140,
+              itemHeight: 40,
+              dropdownMaxHeight: 160,
+              onMenuStateChange: (isOpen) {
+                // if (!isOpen) {
+                //   _PresetController.clear();
+                // }
+              },
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              if (_image == null || typePreset == null || drivePreset == null) {
+                showDialog(
+                  context: context,
+                  builder: (context) => Util.buildPopupDialog(
+                    context,
+                    "Fields missing",
+                    <Widget>[Container(child: Text("Some fields are missing"))],
+                  ),
+                );
+              } else {
+                painter();
+              }
+            },
+            child: Container(
+              child: Text("Auto Path"),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              if (_image == null ||
+                  typePreset == null ||
+                  drivePreset == null ||
+                  autoPath == null) {
+                showDialog(
+                  context: context,
+                  builder: (context) => Util.buildPopupDialog(
+                    context,
+                    "Fields missing",
+                    <Widget>[
+                      Container(child: Text(" Some fields are missing "))
+                    ],
+                  ),
+                );
+              } else {
+                save(_image, typePreset!, drivePreset!);
+              }
+            },
+            child: Container(
+              child: Text("Save"),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-// Imma add camera functionlity 
-// added dependencies already
-// oki Doki(doki), doki doki literature  club 😈
-// LMAO
-// I'll help when I finsih my world notes 
-// tell me when to test alr

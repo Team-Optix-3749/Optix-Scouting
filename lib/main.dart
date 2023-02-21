@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -9,7 +8,7 @@ import 'pages/history.dart';
 import 'pages/match.dart';
 import 'pages/pit.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // final cameras = await availableCameras(); // just had to input
@@ -44,6 +43,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   PageController pageController = PageController();
+  late List<Widget> _widgetOptions;
+
   MatchInfo matchInfo = MatchInfo(
       teamNumber: "3749",
       teamName: "Team Optix",
@@ -69,16 +70,18 @@ class _MainScreenState extends State<MainScreen> {
   MatchInfo getMatchInfo() {
     return matchInfo;
   }
+  
 
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _widgetOptions = [
+    _widgetOptions = [
       HomePage(
         changeIndex: pageController.jumpToPage,
         getMatchInfo: getMatchInfo,
@@ -87,7 +90,10 @@ class _MainScreenState extends State<MainScreen> {
         getScoreChanges: getScoreChanges,
         getMatchInfo: getMatchInfo,
       ),
-      Pit(),
+      Pit(
+        teamName: matchInfo.teamName,
+        competition: matchInfo.comp,
+      ),
       History(),
       Field(),
     ];
