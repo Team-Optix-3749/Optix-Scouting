@@ -192,7 +192,7 @@ class _MatchState extends State<Match> {
       );
     } else if (label == "Tele Start") {
       return Container(
-        width: 57,
+        width: 70,
         height: 50,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -511,15 +511,14 @@ class _MatchState extends State<Match> {
       }
     }
     ScoutData data = ScoutData(
-      matchInfo: widget.getMatchInfo(),
-      events: events,
-      teleBalanced: balancedTele,
-      autoBalanced: balancedAuto,
-      notes: comments,
-      didBreak: broken,
-      offense: offense,
-      defense: defense
-    );
+        matchInfo: widget.getMatchInfo(),
+        events: events,
+        teleBalanced: balancedTele,
+        autoBalanced: balancedAuto,
+        notes: comments,
+        didBreak: broken,
+        offense: offense,
+        defense: defense);
 
     file.writeAsString(jsonEncode(data.toJSON()));
 
