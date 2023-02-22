@@ -111,7 +111,7 @@ class _MatchState extends State<Match> {
     Color color = Color.fromARGB(255, 78, 118, 247);
     return Container(
       width: 50,
-      height: 50,
+      height: 60,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
