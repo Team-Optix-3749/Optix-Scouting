@@ -582,7 +582,7 @@ class _MatchState extends State<Match> {
               //           getTapPosition(details, currentSelected)),
               // ),
               child: Container(
-                padding: EdgeInsets.only(top: 32),
+                padding: EdgeInsets.only(top: 25),
                 child: Center(
                   child: GridView.builder(
                     itemCount: 27,
@@ -645,7 +645,7 @@ class _MatchState extends State<Match> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 8, bottom: 32),
+              padding: EdgeInsets.only(top: 8, bottom: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: scoreChanges.keys
