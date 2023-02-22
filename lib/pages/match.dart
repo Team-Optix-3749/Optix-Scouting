@@ -112,36 +112,34 @@ class _MatchState extends State<Match> {
     return Container(
       width: 60,
       height: 60,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Stack(
-            children: [
-              Positioned.fill(
-                top: -30,
-                child: Align(
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    label,
-                    style: TextStyle(fontSize: 13, color: color),
-                  ),
+          Positioned.fill(
+            top: -30,
+            child: Container(
+              width: 100,
+              child: Align(
+                child: Text(
+                  textAlign: TextAlign.center,
+                  label,
+                  style: TextStyle(fontSize: 12, color: color),
                 ),
               ),
-              Container(
-                child:
-                    new Icon(Icons.expand_less_sharp, size: 40, color: color),
+            ),
+          ),
+          Container(
+            child: new Icon(Icons.expand_less_sharp, size: 40, color: color),
+          ),
+          Positioned.fill(
+            top: 30,
+            child: Align(
+              child: Text(
+                textAlign: TextAlign.center,
+                "${val.toString()} Pts.",
+                style: TextStyle(fontSize: 8, color: color),
               ),
-              Positioned.fill(
-                top: 30,
-                child: Align(
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    "${val.toString()} Pts.",
-                    style: TextStyle(fontSize: 8, color: color),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
