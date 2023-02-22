@@ -110,7 +110,7 @@ class _MatchState extends State<Match> {
   Widget getStaticDefaults(int val, String label) {
     Color color = Color.fromARGB(255, 78, 118, 247);
     return Container(
-      width: 50,
+      width: 60,
       height: 60,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
