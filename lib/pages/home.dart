@@ -192,6 +192,7 @@ class _HomePageState extends State<HomePage>
               controller: textEditingController,
               focusNode: focusNode,
               keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.go,
               // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (value) async {
                 var teamName = await getTeamName(value);

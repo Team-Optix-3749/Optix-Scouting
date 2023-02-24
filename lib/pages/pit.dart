@@ -14,10 +14,16 @@ import 'package:uuid/uuid.dart';
 import 'dart:io' as io;
 
 class Pit extends StatefulWidget {
-  const Pit({Key? key, required this.teamName, required this.competition})
+  const Pit(
+      {Key? key,
+      required this.teamName,
+      required this.competition,
+      required this.changeIndex})
       : super(key: key);
   final String teamName;
   final String competition;
+  final Function changeIndex;
+
   static const String routeName = "/PitPage";
   @override
   _PitState createState() => _PitState();
@@ -199,7 +205,9 @@ class _PitState extends State<Pit> {
         print('Image is saved');
       });
     });
-    File other = await robotFile.copy(autoPath + '_robot.png');
+    await robotFile.copy(autoPath + '_robot.png');
+    widget.changeIndex(0);
+    setState(() {});
   }
 
   @override

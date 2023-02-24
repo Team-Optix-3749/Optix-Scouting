@@ -70,7 +70,6 @@ class _MainScreenState extends State<MainScreen> {
   MatchInfo getMatchInfo() {
     return matchInfo;
   }
-  
 
   @override
   void initState() {
@@ -93,6 +92,7 @@ class _MainScreenState extends State<MainScreen> {
       Pit(
         teamName: matchInfo.teamName,
         competition: matchInfo.comp,
+        changeIndex: pageController.jumpToPage,
       ),
       History(),
       Field(),
@@ -172,20 +172,27 @@ class _MainScreenState extends State<MainScreen> {
 
     return MaterialApp(
       title: 'Optix Scouting',
-      home: Scaffold(
-        // body: Center(
-        //   child: _widgetOptions.elementAt(_currentIndex),
-        // ),
-        body: PageView(
-            children: _widgetOptions,
-            controller: pageController,
-            onPageChanged: (value) {
-              setState(() {
-                _currentIndex = value;
-              });
-            },
-            physics: NeverScrollableScrollPhysics()),
-        bottomNavigationBar: bottomNavBar,
+      home: GestureDetector(
+        onTap: (() {
+          FocusManager.instance.primaryFocus?.unfocus();
+          setState(() {});
+        }),
+        child: Scaffold(
+          // body: Center(
+          //   child: _widgetOptions.elementAt(_currentIndex),
+          // ),
+          body: PageView(
+              children: _widgetOptions,
+              controller: pageController,
+              onPageChanged: (value) {
+                setState(() {
+                  _currentIndex = value;
+                  print(value);
+                });
+              },
+              physics: NeverScrollableScrollPhysics()),
+          bottomNavigationBar: bottomNavBar,
+        ),
       ),
     );
   }
