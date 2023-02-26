@@ -148,12 +148,15 @@ class _MatchState extends State<Match> {
 
   Widget getDefaults(String label) {
     Color color = Colors.black;
+    String text = "Balance";
     if (defaults[label]! == BtnState.TRUE || defaults[label]! == BtnState.TWO) {
       color = Color.fromARGB(255, 78, 118, 247);
       print(label);
+      text = "Docked";
     }
     if (defaults[label]! == BtnState.THREE) {
       color = Color.fromARGB(255, 243, 57, 82);
+      text = "Engaged";
     }
     if (label == "Balance") {
       return Container(
@@ -166,7 +169,7 @@ class _MatchState extends State<Match> {
               child: Align(
                 child: Text(
                   textAlign: TextAlign.center,
-                  label,
+                  text,
                   style: TextStyle(fontSize: 13, color: color),
                 ),
               ),
@@ -471,6 +474,8 @@ class _MatchState extends State<Match> {
                   Navigator.pop(context);
                   saveFile(commentsController.value.text, checkedValue,
                       offense.toInt(), defense.toInt());
+                } else {
+                  saveFile("", checkedValue, offense.toInt(), defense.toInt());
                 }
               },
               child: const Text("Save"),

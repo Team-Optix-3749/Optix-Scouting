@@ -653,6 +653,7 @@ class _HomePageState extends State<HomePage>
     return MaterialApp(
       title: 'Optix Scouting',
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           centerTitle: true,
           title: Text('HOME'),
