@@ -70,19 +70,12 @@ class _PitState extends State<Pit> {
   Map<String, int> drivePresets = {
     "West Coast": 0,
     "Swerve": 1,
-    "Other": 2,
+    "Mecanum": 2,
+    "Other": 3,
     // "Add preset": 2,
   };
   Map<int, Stack> drivePresetIcons = {
     0: Stack(
-      children: const [
-        Icon(
-          Icons.open_with,
-          color: Colors.black54,
-        ),
-      ],
-    ),
-    1: Stack(
       children: const [
         Icon(
           Icons.south,
@@ -94,7 +87,23 @@ class _PitState extends State<Pit> {
         ),
       ],
     ),
+    1: Stack(
+      children: const [
+        Icon(
+          Icons.open_with,
+          color: Colors.black54,
+        ),
+      ],
+    ),
     2: Stack(
+      children: const [
+        Icon(
+          Icons.open_with_rounded,
+          color: Colors.black54,
+        ),
+      ],
+    ),
+    3: Stack(
       alignment: Alignment.bottomLeft,
       children: const [],
     ),
