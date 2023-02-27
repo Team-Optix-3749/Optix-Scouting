@@ -127,13 +127,14 @@ class _HomePageState extends State<HomePage>
     if (tempFiles != null) {
       for (io.FileSystemEntity entity in tempFiles) {
         print(entity.path);
+        entity.delete();
         if (path.basename(entity.path).split("_")[0] == teamName) {
           if (firstFoundID == "") {
             firstFoundID = path.basename(entity.path).split("_")[5];
           }
           found = true;
-          if (path.basename(entity.path).split("_")[5] == firstFoundID) {
-            if (path.basename(entity.path).split("_")[6] == "auto.png") {
+          if (path.basename(entity.path).split("_")[6] == firstFoundID) {
+            if (path.basename(entity.path).split("_")[7] == "auto.png") {
               bottom[4] = Container(
                 padding: EdgeInsets.all(8),
                 child: Image.file(
@@ -164,6 +165,12 @@ class _HomePageState extends State<HomePage>
                 padding: EdgeInsets.all(8),
                 child: Text(
                   "Arm Type: " + path.basename(entity.path).split("_")[4],
+                ),
+              );
+              bottom[4] = Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "Comments: " + path.basename(entity.path).split("_")[5],
                 ),
               );
             }

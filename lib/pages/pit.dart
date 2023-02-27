@@ -112,7 +112,8 @@ class _PitState extends State<Pit> {
   Map<String, int> armPresets = {
     "Elevator": 0,
     "Telescope": 1,
-    "None": 2,
+    "Jointed": 2,
+    "None": 3,
     // "Add preset": 2,
   };
   Map<int, Stack> armPresetIcons = {
@@ -136,6 +137,16 @@ class _PitState extends State<Pit> {
       alignment: Alignment.bottomLeft,
       children: const [
         Icon(
+          Icons.timeline,
+          color: Colors.black54,
+          size: 25,
+        ),
+      ],
+    ),
+    3: Stack(
+      alignment: Alignment.bottomLeft,
+      children: const [
+        Icon(
           Icons.hide_source,
           color: Colors.black54,
           size: 25,
@@ -143,6 +154,7 @@ class _PitState extends State<Pit> {
       ],
     ),
   };
+  TextEditingController commentsController = TextEditingController();
 
   void imagePopup(File image) {
     if (image != null) {
@@ -203,12 +215,12 @@ class _PitState extends State<Pit> {
   }
 
   void save(File robotFile, String robotType, String driveTrain,
-      String clawType) async {
+      String clawType, String comments) async {
     // print(path.basename(robotFile.path.split("/").last));
     GallerySaver.saveImage(
       robotFile.path,
       albumName:
-          '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}-${clawType}',
+          '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}-${clawType}-${comments}',
     ).then((bool? success) {
       setState(() {
         print('Image is saved');
@@ -487,7 +499,42 @@ class _PitState extends State<Pit> {
                   ),
                 );
               } else {
-                save(_image, typePreset!, drivePreset!, armPreset!);
+                showDialog(
+                  context: context,
+                  builder: (context) => Util.buildPopupDialog(
+                    context,
+                    "Save",
+                    <Widget>[
+                      TextField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter Comments',
+                        ),
+                        controller: commentsController,
+                        maxLines: 3,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (commentsController.value.text.isNotEmpty) {
+                            Navigator.pop(context);
+                            save(_image, typePreset!, drivePreset!, armPreset!,
+                                commentsController.value.text);
+                          } else {
+                            save(_image, typePreset!, drivePreset!, armPreset!,
+                                "");
+                          }
+                        },
+                        child: const Text("Save"),
+                      ),
+                    ],
+                  ),
+                );
               }
             },
             child: Container(
