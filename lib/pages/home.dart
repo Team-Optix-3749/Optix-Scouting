@@ -127,7 +127,6 @@ class _HomePageState extends State<HomePage>
     if (tempFiles != null) {
       for (io.FileSystemEntity entity in tempFiles) {
         print(entity.path);
-        entity.delete();
         if (path.basename(entity.path).split("_")[0] == teamName) {
           if (firstFoundID == "") {
             firstFoundID = path.basename(entity.path).split("_")[5];
