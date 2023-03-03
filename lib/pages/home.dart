@@ -663,15 +663,6 @@ class _HomePageState extends State<HomePage>
         appBar: AppBar(
           centerTitle: true,
           title: Text('HOME'),
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: (() {}),
-                child: Icon(Icons.settings),
-              ),
-            ),
-          ],
         ),
         body: ListView(
           children: <Widget>[
