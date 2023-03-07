@@ -110,6 +110,22 @@ class _HomePageState extends State<HomePage>
     return await funcs.getCompetitionTeams(name);
   }
 
+  Future<String> getFilePath(String fileName) async {
+    io.Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory(); // 1
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String filePath = '$appDocumentsPath/$fileName'; // 3
+    return filePath;
+  }
+
+  readFile(String fileName) async {
+    io.File file = io.File(fileName);
+    print("a     " + fileName); // 1
+    String fileContent = await file.readAsString(); // 2
+
+    return fileContent;
+  }
+
   void getFiles(var teamName) async {
     found = false;
     bottom = <Widget>[
@@ -132,8 +148,8 @@ class _HomePageState extends State<HomePage>
             firstFoundID = path.basename(entity.path).split("_")[5];
           }
           found = true;
-          if (path.basename(entity.path).split("_")[6] == firstFoundID) {
-            if (path.basename(entity.path).split("_")[7] == "auto.png") {
+          if (path.basename(entity.path).split("_")[5] == firstFoundID) {
+            if (path.basename(entity.path).split("_")[6] == "auto.png") {
               bottom[4] = Container(
                 padding: EdgeInsets.all(8),
                 child: Image.file(
@@ -166,10 +182,16 @@ class _HomePageState extends State<HomePage>
                   "Arm Type: " + path.basename(entity.path).split("_")[4],
                 ),
               );
+              print(entity.path.substring(0, entity.path.lastIndexOf("_")) +
+                  "_comments.txt");
+              String comments = await readFile(
+                  entity.path.substring(0, entity.path.lastIndexOf("_")) +
+                      "_comments.txt");
+
               bottom[4] = Container(
                 padding: EdgeInsets.all(8),
                 child: Text(
-                  "Comments: " + path.basename(entity.path).split("_")[5],
+                  "Comments: " + comments,
                 ),
               );
             }

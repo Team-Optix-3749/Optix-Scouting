@@ -217,18 +217,24 @@ class _PitState extends State<Pit> {
   void save(File robotFile, String robotType, String driveTrain,
       String clawType, String comments) async {
     // print(path.basename(robotFile.path.split("/").last));
-    GallerySaver.saveImage(
-      robotFile.path,
-      albumName:
-          '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}-${clawType}-${comments}',
-    ).then((bool? success) {
-      setState(() {
-        print('Image is saved');
+    var path = robotFile.path;
+    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
+    var newPath = path.substring(0, lastSeparator + 1) +
+        '${widget.teamName}-${widget.competition}-${robotType}-${driveTrain}-${clawType}-${comments}' +
+        path.substring(path.lastIndexOf('.'));
+    final commentsFile = File(autoPath + '_comments.txt');
+
+    commentsFile.writeAsString(comments);
+    await robotFile.rename(robotFile.path).then((success) async {
+      GallerySaver.saveImage(
+        robotFile.path,
+        albumName: 'FRC Pit robots',
+      ).then((bool? success) {}).then((value) async {
+        print(autoPath);
+        await robotFile.copy(autoPath + '_robot.png');
       });
+      widget.changeIndex(0);
     });
-    await robotFile.copy(autoPath + '_robot.png');
-    widget.changeIndex(0);
-    setState(() {});
   }
 
   @override
