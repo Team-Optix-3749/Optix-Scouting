@@ -152,13 +152,14 @@ class _HistoryState extends State<History> {
               String data = await readFile(fileNames[index]);
               JsonCodec codec = const JsonCodec();
               Map<String, dynamic> parsed = codec.decode(data);
-              dynamic values = parsed["events"]; 
-              List<dynamic> lst = (json.decode(values).toList());
+              dynamic values = parsed["events"];
+              print(parsed);
+              List<dynamic> lst = values;
               Color color = Colors.black;
-              if (parsed["balanced"] == 1) {
+              if (parsed["balanced"].toString().split('').contains('1')) {
                 color = const Color.fromARGB(255, 78, 118, 247);
               }
-              if (parsed["balanced"] == 2) {
+              if (parsed["balanced"].toString().split('').contains('2')) {
                 color = const Color.fromARGB(255, 243, 57, 82);
               }
               showDialog(
@@ -242,9 +243,6 @@ class _HistoryState extends State<History> {
                                       // child: Text('$index'),
 
                                       child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                        ),
                                         onPressed: (() {}),
                                         child: Container(
                                             // child: Text("${initialData[index]}"),
@@ -259,9 +257,6 @@ class _HistoryState extends State<History> {
                                       // child: Text('$index'),
 
                                       child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue.shade900,
-                                        ),
                                         onPressed: (() {}),
                                         child: Container(
                                             // child: Text("${initialData[index]}"),

@@ -142,13 +142,14 @@ class _HomePageState extends State<HomePage>
     tempFiles = io.Directory('$appDocumentsPath/pits/').listSync();
     if (tempFiles != null) {
       for (io.FileSystemEntity entity in tempFiles) {
-        print(entity.path);
         if (path.basename(entity.path).split("_")[0] == teamName) {
           if (firstFoundID == "") {
             firstFoundID = path.basename(entity.path).split("_")[5];
           }
           found = true;
           if (path.basename(entity.path).split("_")[5] == firstFoundID) {
+            print(entity.path);
+
             if (path.basename(entity.path).split("_")[6] == "auto.png") {
               bottom[4] = Container(
                 padding: EdgeInsets.all(8),
@@ -156,45 +157,44 @@ class _HomePageState extends State<HomePage>
                   File(entity.path),
                 ),
               );
-            } else {
+            }
+            if (path.basename(entity.path).split("_")[6] == "robot.png") {
               bottom[0] = Container(
                 padding: EdgeInsets.all(8),
                 child: Image.file(
                   File(entity.path),
                 ),
               );
-              bottom[1] = Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "Bot type: " + path.basename(entity.path).split("_")[2],
-                ),
-              );
-              bottom[2] = Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "Drivetrain Type: " +
-                      path.basename(entity.path).split("_")[3],
-                ),
-              );
-              bottom[3] = Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "Arm Type: " + path.basename(entity.path).split("_")[4],
-                ),
-              );
-              print(entity.path.substring(0, entity.path.lastIndexOf("_")) +
-                  "_comments.txt");
-              String comments = await readFile(
-                  entity.path.substring(0, entity.path.lastIndexOf("_")) +
-                      "_comments.txt");
-
-              bottom[4] = Container(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "Comments: " + comments,
-                ),
-              );
             }
+
+            bottom[1] = Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                "Bot type: " + path.basename(entity.path).split("_")[2],
+              ),
+            );
+            bottom[2] = Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                "Drivetrain Type: " + path.basename(entity.path).split("_")[3],
+              ),
+            );
+            bottom[3] = Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                "Arm Type: " + path.basename(entity.path).split("_")[4],
+              ),
+            );
+            String comments = await readFile(
+                entity.path.substring(0, entity.path.lastIndexOf("_")) +
+                    "_comments.txt");
+
+            bottom[4] = Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                "Comments: " + comments,
+              ),
+            );
           }
         }
       }

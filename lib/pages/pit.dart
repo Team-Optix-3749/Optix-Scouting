@@ -211,6 +211,8 @@ class _PitState extends State<Pit> {
         '$directory/pits/${widget.teamName}_${widget.competition}_${typePreset!}_${drivePreset!}_${armPreset!}_${id}';
     autoPath = fullPath;
     final imageFile = File(fullPath + '_auto.png');
+    print(imageFile.path);
+
     imageFile.writeAsBytesSync(image);
   }
 
