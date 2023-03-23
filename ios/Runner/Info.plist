@@ -7,14 +7,14 @@
     <string>UIInterfaceOrientationLandscapeLeft</string>
     <string>UIInterfaceOrientationPortrait</string>
     <string>UIInterfaceOrientationLandscapeRight</string>
-    <string>UIInterfaceOrientationUpsideDown</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~iphone</key>
 	<array>
     <string>UIInterfaceOrientationLandscapeLeft</string>
     <string>UIInterfaceOrientationPortrait</string>
     <string>UIInterfaceOrientationLandscapeRight</string>
-    <string>UIInterfaceOrientationUpsideDown</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
