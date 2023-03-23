@@ -258,6 +258,8 @@ class _PitState extends State<Pit> {
         title: Text('PIT'),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: 255),
@@ -313,12 +315,78 @@ class _PitState extends State<Pit> {
             ),
           ),
           Container(
+            padding: EdgeInsets.all(19),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Does your robot: ",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 112, 112, 112),
+                  ),
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.center,
+                ),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2(
+                    hint: const Text(
+                      'Beep or Whirl',
+                      strutStyle: StrutStyle(fontSize: 15.0),
+                    ),
+                    items: beepWhirlPresets.keys
+                        .map(
+                          (p) => DropdownMenuItem<String>(
+                            value: p,
+                            child: Container(
+                              width: 70,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      p.trim(),
+                                      strutStyle: StrutStyle(fontSize: 15.0),
+                                      textDirection: TextDirection.ltr,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    value: beepWhirlPreset,
+                    onChanged: (value) {
+                      setState(() {
+                        beepWhirlPreset = value!;
+                      });
+                    },
+                    buttonHeight: 40,
+                    dropdownWidth: 80,
+                    itemHeight: 40,
+                    dropdownMaxHeight: 160,
+                    onMenuStateChange: (isOpen) {
+                      // if (!isOpen) {
+                      //   _PresetController.clear();
+                      // }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
             padding: EdgeInsets.all(10),
             child: DropdownButtonHideUnderline(
               child: DropdownButton2(
                 hint: const Text(
                   'Select Robot Type',
-                  style: TextStyle(
+                  strutStyle: StrutStyle(
                     fontSize: 15,
                   ),
                 ),
@@ -373,7 +441,7 @@ class _PitState extends State<Pit> {
               child: DropdownButton2(
                 hint: const Text(
                   'Select Drive Train',
-                  style: TextStyle(
+                  strutStyle: StrutStyle(
                     fontSize: 15,
                   ),
                 ),
@@ -428,7 +496,7 @@ class _PitState extends State<Pit> {
               child: DropdownButton2(
                 hint: const Text(
                   'Select Arm Type',
-                  style: TextStyle(
+                  strutStyle: StrutStyle(
                     fontSize: 15,
                   ),
                 ),
@@ -526,63 +594,6 @@ class _PitState extends State<Pit> {
                         ),
                         controller: commentsController,
                         maxLines: 3,
-                      ),
-                      Row(
-                        children: [
-                          Text("Does your robot: "),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton2(
-                              hint: const Text(
-                                'Beep or Whirl',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
-                              ),
-                              items: beepWhirlPresets.keys
-                                  .map(
-                                    (p) => DropdownMenuItem<String>(
-                                      value: p,
-                                      child: Container(
-                                        width: 120,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                overflow: TextOverflow.ellipsis,
-                                                p.trim(),
-                                                strutStyle:
-                                                    StrutStyle(fontSize: 15.0),
-                                                textDirection:
-                                                    TextDirection.ltr,
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              value: beepWhirlPreset,
-                              onChanged: (value) {
-                                setState(() {
-                                  beepWhirlPreset = value!;
-                                });
-                              },
-                              buttonHeight: 40,
-                              dropdownWidth: 140,
-                              itemHeight: 40,
-                              dropdownMaxHeight: 160,
-                              onMenuStateChange: (isOpen) {
-                                // if (!isOpen) {
-                                //   _PresetController.clear();
-                                // }
-                              },
-                            ),
-                          ),
-                        ],
                       ),
                       TextButton(
                         onPressed: () {

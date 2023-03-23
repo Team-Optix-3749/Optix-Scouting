@@ -56,6 +56,7 @@ class _MatchState extends State<Match> {
   int balancedAuto = 0;
   int balancedTele = 0;
   bool mobility = false;
+  bool park = false;
 
   final List<SvgPicture> images = [
     SvgPicture.asset(
@@ -158,8 +159,6 @@ class _MatchState extends State<Match> {
     } else if (defaults[label]! == BtnState.THREE) {
       color = Color.fromARGB(255, 243, 57, 82);
       text = "Engaged";
-    } else {
-      text = "Parked";
     }
     if (label == "Balance") {
       return Container(
@@ -195,38 +194,73 @@ class _MatchState extends State<Match> {
         ),
       );
     } else if (label == "Mobility") {
-      return Container(
-        width: 70,
-        height: 50,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              child: Align(
-                child: Text(
-                  textAlign: TextAlign.center,
-                  label,
-                  style: TextStyle(fontSize: 13, color: color),
+      if (isAuto) {
+        return Container(
+          width: 70,
+          height: 50,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: Align(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    label,
+                    style: TextStyle(fontSize: 13, color: color),
+                  ),
                 ),
               ),
-            ),
-            Container(
-              child: Icon(
-                Icons.bolt,
-                color: color,
-                size: 25,
+              Container(
+                child: Icon(
+                  Icons.bolt,
+                  color: color,
+                  size: 25,
+                ),
               ),
-            ),
-            Align(
-              child: Text(
-                textAlign: TextAlign.center,
-                "",
-                style: TextStyle(fontSize: 5, color: color),
+              Align(
+                child: Text(
+                  textAlign: TextAlign.center,
+                  "",
+                  style: TextStyle(fontSize: 5, color: color),
+                ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          width: 70,
+          height: 50,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: Align(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "Park",
+                    style: TextStyle(fontSize: 13, color: color),
+                  ),
+                ),
+              ),
+              Container(
+                child: Icon(
+                  Icons.bolt,
+                  color: color,
+                  size: 25,
+                ),
+              ),
+              Align(
+                child: Text(
+                  textAlign: TextAlign.center,
+                  "",
+                  style: TextStyle(fontSize: 5, color: color),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     } else if (label == "Tele Start") {
       return Container(
         width: 70,
@@ -558,7 +592,7 @@ class _MatchState extends State<Match> {
         didBreak: broken,
         offense: offense,
         defense: defense,
-        mobility: mobility);
+        mobility: mobility, park: park);
 
     file.writeAsString(jsonEncode(data.toJSON()));
 
@@ -731,6 +765,7 @@ class _MatchState extends State<Match> {
                                 setState(() {
                                   defaults[k] = defaults[k]!.not();
                                   mobility = !mobility;
+                                  park = !park;
                                 });
                               }
                             },

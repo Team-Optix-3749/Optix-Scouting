@@ -41,6 +41,7 @@ class ScoutData {
   int offense;
   int defense;
   bool mobility;
+  bool park;
 
   ScoutData(
       {required this.matchInfo,
@@ -51,7 +52,8 @@ class ScoutData {
       required this.didBreak,
       required this.offense,
       required this.defense,
-      required this.mobility});
+      required this.mobility,
+      required this.park});
 
   Map<String, dynamic> toJSON() {
     int balanced = autoBalanced * 10 + teleBalanced;
@@ -66,7 +68,9 @@ class ScoutData {
       "notes": notes,
       "break": didBreak,
       "offense": offense,
-      "defense": defense
+      "defense": defense,
+      "mobility": mobility,
+      "park": park,
     };
     return map;
   }
