@@ -173,7 +173,7 @@ class _MatchState extends State<Match> {
                 child: Text(
                   textAlign: TextAlign.center,
                   text,
-                  style: TextStyle(fontSize: 12, color: color),
+                  style: TextStyle(fontSize: 11.75, color: color),
                 ),
               ),
             ),

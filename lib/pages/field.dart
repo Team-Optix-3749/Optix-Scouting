@@ -38,7 +38,7 @@ class _FieldState extends State<Field> {
         alliance!,
         key: _imageKey,
         scalable: true,
-        initialStrokeWidth: 6.5,
+        initialStrokeWidth: 3.5,
         initialColor: Colors.green,
         initialPaintMode: PaintMode.freeStyle,
       ),

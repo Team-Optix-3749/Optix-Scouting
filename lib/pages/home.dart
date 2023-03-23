@@ -120,7 +120,6 @@ class _HomePageState extends State<HomePage>
 
   readFile(String fileName) async {
     io.File file = io.File(fileName);
-    print("a     " + fileName); // 1
     String fileContent = await file.readAsString(); // 2
 
     return fileContent;
@@ -129,6 +128,7 @@ class _HomePageState extends State<HomePage>
   void getFiles(var teamName) async {
     found = false;
     bottom = <Widget>[
+      Container(),
       Container(),
       Container(),
       Container(),
@@ -148,10 +148,10 @@ class _HomePageState extends State<HomePage>
           }
           found = true;
           if (path.basename(entity.path).split("_")[5] == firstFoundID) {
-            print(entity.path);
+            if (path.basename(entity.path).split("_")[6].contains("auto")) {
+              print(path.basename(entity.path).split("_")[6] + "aaaa");
 
-            if (path.basename(entity.path).split("_")[6] == "auto.png") {
-              bottom[4] = Container(
+              bottom[5] = Container(
                 padding: EdgeInsets.all(8),
                 child: Image.file(
                   File(entity.path),
