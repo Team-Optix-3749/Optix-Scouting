@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner : false,
       home: MainScreen(),
       // routes: routes,
     );
@@ -171,6 +172,7 @@ class _MainScreenState extends State<MainScreen> {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner : false,
       title: 'Optix Scouting',
       home: GestureDetector(
         onTap: (() {

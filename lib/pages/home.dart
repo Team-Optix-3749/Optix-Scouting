@@ -679,6 +679,7 @@ class _HomePageState extends State<HomePage>
     ;
 
     return MaterialApp(
+      debugShowCheckedModeBanner : false,
       title: 'Optix Scouting',
       home: Scaffold(
         resizeToAvoidBottomInset: false,
