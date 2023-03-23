@@ -40,6 +40,7 @@ class _MatchState extends State<Match> {
   Map<String, BtnState> defaults = {
     "Balance": BtnState.ONE,
     "Tele Start": BtnState.FALSE,
+    "Mobility": BtnState.FALSE,
     "Save": BtnState.FALSE
   };
   List<Point> initialData = [];
@@ -54,6 +55,7 @@ class _MatchState extends State<Match> {
   bool isAuto = true;
   int balancedAuto = 0;
   int balancedTele = 0;
+  bool mobility = false;
 
   final List<SvgPicture> images = [
     SvgPicture.asset(
@@ -149,14 +151,15 @@ class _MatchState extends State<Match> {
   Widget getDefaults(String label) {
     Color color = Colors.black;
     String text = "Balance";
-    if (defaults[label]! == BtnState.TRUE || defaults[label]! == BtnState.TWO) {
+    if (defaults[label]! == BtnState.TWO || defaults[label]! == BtnState.TRUE) {
       color = Color.fromARGB(255, 78, 118, 247);
       print(label);
       text = "Docked";
-    }
-    if (defaults[label]! == BtnState.THREE) {
+    } else if (defaults[label]! == BtnState.THREE) {
       color = Color.fromARGB(255, 243, 57, 82);
       text = "Engaged";
+    } else {
+      text = "Parked";
     }
     if (label == "Balance") {
       return Container(
@@ -177,6 +180,39 @@ class _MatchState extends State<Match> {
             Container(
               child: new Icon(
                 Icons.check_box,
+                color: color,
+                size: 25,
+              ),
+            ),
+            Align(
+              child: Text(
+                textAlign: TextAlign.center,
+                "Balance",
+                style: TextStyle(fontSize: 9, color: color),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (label == "Mobility") {
+      return Container(
+        width: 70,
+        height: 50,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child: Align(
+                child: Text(
+                  textAlign: TextAlign.center,
+                  label,
+                  style: TextStyle(fontSize: 13, color: color),
+                ),
+              ),
+            ),
+            Container(
+              child: Icon(
+                Icons.bolt,
                 color: color,
                 size: 25,
               ),
@@ -521,7 +557,8 @@ class _MatchState extends State<Match> {
         notes: comments,
         didBreak: broken,
         offense: offense,
-        defense: defense);
+        defense: defense,
+        mobility: mobility);
 
     file.writeAsString(jsonEncode(data.toJSON()));
 
@@ -688,6 +725,12 @@ class _MatchState extends State<Match> {
                                   defaults[k] = BtnState.TRUE;
                                   defaults["Balance"] = BtnState.ONE;
                                   isAuto = false;
+                                });
+                              }
+                              if (k == "Mobility") {
+                                setState(() {
+                                  defaults[k] = defaults[k]!.not();
+                                  mobility = !mobility;
                                 });
                               }
                             },

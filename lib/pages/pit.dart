@@ -44,6 +44,12 @@ class _PitState extends State<Pit> {
     "All rounder": 2,
     // "Add preset": 2,
   };
+  String? beepWhirlPreset;
+  Map<String, int> beepWhirlPresets = {
+    "Beep": 0,
+    "Whirl": 1,
+    // "Add preset": 2,
+  };
   Map<int, Stack> typePresetIcons = {
     0: Stack(
       children: const [
@@ -520,6 +526,63 @@ class _PitState extends State<Pit> {
                         ),
                         controller: commentsController,
                         maxLines: 3,
+                      ),
+                      Row(
+                        children: [
+                          Text("Does your robot: "),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2(
+                              hint: const Text(
+                                'Beep or Whirl',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                              items: beepWhirlPresets.keys
+                                  .map(
+                                    (p) => DropdownMenuItem<String>(
+                                      value: p,
+                                      child: Container(
+                                        width: 120,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                overflow: TextOverflow.ellipsis,
+                                                p.trim(),
+                                                strutStyle:
+                                                    StrutStyle(fontSize: 15.0),
+                                                textDirection:
+                                                    TextDirection.ltr,
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              value: beepWhirlPreset,
+                              onChanged: (value) {
+                                setState(() {
+                                  beepWhirlPreset = value!;
+                                });
+                              },
+                              buttonHeight: 40,
+                              dropdownWidth: 140,
+                              itemHeight: 40,
+                              dropdownMaxHeight: 160,
+                              onMenuStateChange: (isOpen) {
+                                // if (!isOpen) {
+                                //   _PresetController.clear();
+                                // }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       TextButton(
                         onPressed: () {

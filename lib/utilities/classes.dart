@@ -40,6 +40,7 @@ class ScoutData {
   bool didBreak;
   int offense;
   int defense;
+  bool mobility;
 
   ScoutData(
       {required this.matchInfo,
@@ -49,7 +50,8 @@ class ScoutData {
       required this.notes,
       required this.didBreak,
       required this.offense,
-      required this.defense});
+      required this.defense,
+      required this.mobility});
 
   Map<String, dynamic> toJSON() {
     int balanced = autoBalanced * 10 + teleBalanced;
@@ -58,7 +60,7 @@ class ScoutData {
       "teamName": matchInfo.teamName,
       "matchNumber": matchInfo.matchNumber,
       "comp": matchInfo.comp,
-      "alliance":  matchInfo.alliance,
+      "alliance": matchInfo.alliance,
       "events": Event.eventsToJSON(events),
       "balanced": balanced,
       "notes": notes,
