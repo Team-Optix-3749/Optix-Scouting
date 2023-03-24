@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage>
   Map<String, int> presets = {
     "Red": 0,
     "Blue": 1,
+    "Pit": 2,
     // "Add preset": 2,
   };
   List<String> teams = [];
@@ -43,6 +44,10 @@ class _HomePageState extends State<HomePage>
       color: Colors.black54,
     ),
     2: Icon(
+      Icons.content_paste,
+      color: Colors.black54,
+    ),
+    3: Icon(
       Icons.add,
       color: Colors.black54,
     )
@@ -669,7 +674,13 @@ class _HomePageState extends State<HomePage>
                 );
               } else {
                 widget.getMatchInfo().alliance = preset!;
-                widget.changeIndex(1); // go to scout screen
+                if (preset! == "Pit") {
+                  widget.changeIndex(2); // go to scout screen
+
+                } else {
+                  widget.changeIndex(1); // go to scout screen
+
+                }
               }
             },
           ),

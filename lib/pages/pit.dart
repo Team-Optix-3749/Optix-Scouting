@@ -257,373 +257,379 @@ class _PitState extends State<Pit> {
       appBar: AppBar(
         title: Text('PIT'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 255),
-            child: Center(
-              child: Container(
-                child: Stack(
-                  children: [
-                    _image != null
-                        ? Stack(
-                            children: [
-                              Image.file(
-                                _image,
-                                width: double.infinity,
-                                fit: BoxFit.fitWidth,
-                              ),
-                              Positioned(
-                                right: 5.0,
-                                bottom: 5.0,
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    if (_image != null) {
-                                      imagePopup(_image);
-                                    }
-                                  },
-                                  child: Icon(
-                                    Icons.fullscreen,
-                                    size: 40,
-                                  ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 255),
+              child: Center(
+                child: Container(
+                  child: Stack(
+                    children: [
+                      _image != null
+                          ? Stack(
+                              children: [
+                                Image.file(
+                                  _image,
+                                  width: double.infinity,
+                                  fit: BoxFit.fitWidth,
                                 ),
-                              ),
-                            ],
-                          )
-                        : GestureDetector(
-                            onTap: () async {
-                              var source = ImageSource.camera;
-                              XFile? image = await imagePicker.pickImage(
-                                  source: source,
-                                  preferredCameraDevice: CameraDevice.rear);
-                              setState(() {
-                                _image = File(image!.path);
-                              });
-                            },
-                            child: Container(
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(19),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Does your robot: ",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 112, 112, 112),
-                  ),
-                  textDirection: TextDirection.ltr,
-                  textAlign: TextAlign.center,
-                ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2(
-                    hint: const Text(
-                      'Beep or Whirl',
-                      strutStyle: StrutStyle(fontSize: 15.0),
-                    ),
-                    items: beepWhirlPresets.keys
-                        .map(
-                          (p) => DropdownMenuItem<String>(
-                            value: p,
-                            child: Container(
-                              width: 70,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      p.trim(),
-                                      strutStyle: StrutStyle(fontSize: 15.0),
-                                      textDirection: TextDirection.ltr,
-                                      textAlign: TextAlign.center,
+                                Positioned(
+                                  right: 5.0,
+                                  bottom: 5.0,
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      if (_image != null) {
+                                        imagePopup(_image);
+                                      }
+                                    },
+                                    child: Icon(
+                                      Icons.fullscreen,
+                                      size: 40,
                                     ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            )
+                          : GestureDetector(
+                              onTap: () async {
+                                var source = ImageSource.camera;
+                                XFile? image = await imagePicker.pickImage(
+                                    source: source,
+                                    preferredCameraDevice: CameraDevice.rear);
+                                setState(() {
+                                  _image = File(image!.path);
+                                });
+                              },
+                              child: Container(
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.grey[800],
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                    value: beepWhirlPreset,
-                    onChanged: (value) {
-                      setState(() {
-                        beepWhirlPreset = value!;
-                      });
-                    },
-                    buttonHeight: 40,
-                    dropdownWidth: 80,
-                    itemHeight: 40,
-                    dropdownMaxHeight: 160,
-                    onMenuStateChange: (isOpen) {
-                      // if (!isOpen) {
-                      //   _PresetController.clear();
-                      // }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton2(
-                hint: const Text(
-                  'Select Robot Type',
-                  strutStyle: StrutStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                items: typePresets.keys
-                    .map(
-                      (p) => DropdownMenuItem<String>(
-                        value: p,
-                        child: Container(
-                          width: 120,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  overflow: TextOverflow.ellipsis,
-                                  p.trim(),
-                                  strutStyle: StrutStyle(fontSize: 15.0),
-                                  textDirection: TextDirection.ltr,
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
-                              Container(
-                                child: typePresetIcons[typePresets[p]],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-                value: typePreset,
-                onChanged: (value) {
-                  setState(() {
-                    typePreset = value!;
-                  });
-                },
-                buttonHeight: 40,
-                dropdownWidth: 140,
-                itemHeight: 40,
-                dropdownMaxHeight: 160,
-                onMenuStateChange: (isOpen) {
-                  // if (!isOpen) {
-                  //   _PresetController.clear();
-                  // }
-                },
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton2(
-                hint: const Text(
-                  'Select Drive Train',
-                  strutStyle: StrutStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                items: drivePresets.keys
-                    .map(
-                      (p) => DropdownMenuItem<String>(
-                        value: p,
-                        child: Container(
-                          width: 120,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  overflow: TextOverflow.ellipsis,
-                                  p.trim(),
-                                  strutStyle: StrutStyle(fontSize: 15.0),
-                                  textDirection: TextDirection.ltr,
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
-                              Container(
-                                child: drivePresetIcons[drivePresets[p]],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-                value: drivePreset,
-                onChanged: (value) {
-                  setState(() {
-                    drivePreset = value!;
-                  });
-                },
-                buttonHeight: 40,
-                dropdownWidth: 140,
-                itemHeight: 40,
-                dropdownMaxHeight: 160,
-                onMenuStateChange: (isOpen) {
-                  // if (!isOpen) {
-                  //   _PresetController.clear();
-                  // }
-                },
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton2(
-                hint: const Text(
-                  'Select Arm Type',
-                  strutStyle: StrutStyle(
-                    fontSize: 15,
-                  ),
-                ),
-                items: armPresets.keys
-                    .map(
-                      (p) => DropdownMenuItem<String>(
-                        value: p,
-                        child: Container(
-                          width: 120,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  overflow: TextOverflow.ellipsis,
-                                  p.trim(),
-                                  strutStyle: StrutStyle(fontSize: 15.0),
-                                  textDirection: TextDirection.ltr,
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
-                              Container(
-                                child: armPresetIcons[armPresets[p]],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-                value: armPreset,
-                onChanged: (value) {
-                  setState(() {
-                    armPreset = value!;
-                  });
-                },
-                buttonHeight: 40,
-                dropdownWidth: 140,
-                itemHeight: 40,
-                dropdownMaxHeight: 160,
-                onMenuStateChange: (isOpen) {
-                  // if (!isOpen) {
-                  //   _PresetController.clear();
-                  // }
-                },
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              if (_image == null || typePreset == null || drivePreset == null) {
-                showDialog(
-                  context: context,
-                  builder: (context) => Util.buildPopupDialog(
-                    context,
-                    "Fields missing",
-                    <Widget>[Container(child: Text("Some fields are missing"))],
-                  ),
-                );
-              } else {
-                painter();
-              }
-            },
-            child: Container(
-              child: Text("Auto Path"),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              if (_image == null ||
-                  typePreset == null ||
-                  drivePreset == null ||
-                  autoPath == null) {
-                showDialog(
-                  context: context,
-                  builder: (context) => Util.buildPopupDialog(
-                    context,
-                    "Fields missing",
-                    <Widget>[
-                      Container(child: Text(" Some fields are missing "))
                     ],
                   ),
-                );
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) => Util.buildPopupDialog(
-                    context,
-                    "Save",
-                    <Widget>[
-                      TextField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter Comments',
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(19),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Does your robot: ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 112, 112, 112),
+                    ),
+                    textDirection: TextDirection.ltr,
+                    textAlign: TextAlign.center,
+                  ),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2(
+                      hint: const Text(
+                        'Beep or Whirl',
+                        strutStyle: StrutStyle(fontSize: 15.0),
+                      ),
+                      items: beepWhirlPresets.keys
+                          .map(
+                            (p) => DropdownMenuItem<String>(
+                              value: p,
+                              child: Container(
+                                width: 70,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        overflow: TextOverflow.ellipsis,
+                                        p.trim(),
+                                        strutStyle: StrutStyle(fontSize: 15.0),
+                                        textDirection: TextDirection.ltr,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      value: beepWhirlPreset,
+                      onChanged: (value) {
+                        setState(() {
+                          beepWhirlPreset = value!;
+                        });
+                      },
+                      buttonHeight: 40,
+                      dropdownWidth: 80,
+                      itemHeight: 40,
+                      dropdownMaxHeight: 160,
+                      onMenuStateChange: (isOpen) {
+                        // if (!isOpen) {
+                        //   _PresetController.clear();
+                        // }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2(
+                  hint: const Text(
+                    'Select Robot Type',
+                    strutStyle: StrutStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                  items: typePresets.keys
+                      .map(
+                        (p) => DropdownMenuItem<String>(
+                          value: p,
+                          child: Container(
+                            width: 120,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    overflow: TextOverflow.ellipsis,
+                                    p.trim(),
+                                    strutStyle: StrutStyle(fontSize: 15.0),
+                                    textDirection: TextDirection.ltr,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  child: typePresetIcons[typePresets[p]],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        controller: commentsController,
-                        maxLines: 3,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Cancel"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          if (commentsController.value.text.isNotEmpty) {
+                      )
+                      .toList(),
+                  value: typePreset,
+                  onChanged: (value) {
+                    setState(() {
+                      typePreset = value!;
+                    });
+                  },
+                  buttonHeight: 40,
+                  dropdownWidth: 140,
+                  itemHeight: 40,
+                  dropdownMaxHeight: 160,
+                  onMenuStateChange: (isOpen) {
+                    // if (!isOpen) {
+                    //   _PresetController.clear();
+                    // }
+                  },
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2(
+                  hint: const Text(
+                    'Select Drive Train',
+                    strutStyle: StrutStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                  items: drivePresets.keys
+                      .map(
+                        (p) => DropdownMenuItem<String>(
+                          value: p,
+                          child: Container(
+                            width: 120,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    overflow: TextOverflow.ellipsis,
+                                    p.trim(),
+                                    strutStyle: StrutStyle(fontSize: 15.0),
+                                    textDirection: TextDirection.ltr,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  child: drivePresetIcons[drivePresets[p]],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  value: drivePreset,
+                  onChanged: (value) {
+                    setState(() {
+                      drivePreset = value!;
+                    });
+                  },
+                  buttonHeight: 40,
+                  dropdownWidth: 140,
+                  itemHeight: 40,
+                  dropdownMaxHeight: 160,
+                  onMenuStateChange: (isOpen) {
+                    // if (!isOpen) {
+                    //   _PresetController.clear();
+                    // }
+                  },
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2(
+                  hint: const Text(
+                    'Select Arm Type',
+                    strutStyle: StrutStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                  items: armPresets.keys
+                      .map(
+                        (p) => DropdownMenuItem<String>(
+                          value: p,
+                          child: Container(
+                            width: 120,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    overflow: TextOverflow.ellipsis,
+                                    p.trim(),
+                                    strutStyle: StrutStyle(fontSize: 15.0),
+                                    textDirection: TextDirection.ltr,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  child: armPresetIcons[armPresets[p]],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  value: armPreset,
+                  onChanged: (value) {
+                    setState(() {
+                      armPreset = value!;
+                    });
+                  },
+                  buttonHeight: 40,
+                  dropdownWidth: 140,
+                  itemHeight: 40,
+                  dropdownMaxHeight: 160,
+                  onMenuStateChange: (isOpen) {
+                    // if (!isOpen) {
+                    //   _PresetController.clear();
+                    // }
+                  },
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_image == null ||
+                    typePreset == null ||
+                    drivePreset == null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Util.buildPopupDialog(
+                      context,
+                      "Fields missing",
+                      <Widget>[
+                        Container(child: Text("Some fields are missing"))
+                      ],
+                    ),
+                  );
+                } else {
+                  painter();
+                }
+              },
+              child: Container(
+                child: Text("Auto Path"),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_image == null ||
+                    typePreset == null ||
+                    drivePreset == null ||
+                    autoPath == null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Util.buildPopupDialog(
+                      context,
+                      "Fields missing",
+                      <Widget>[
+                        Container(child: Text(" Some fields are missing "))
+                      ],
+                    ),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Util.buildPopupDialog(
+                      context,
+                      "Save",
+                      <Widget>[
+                        TextField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter Comments',
+                          ),
+                          controller: commentsController,
+                          maxLines: 3,
+                        ),
+                        TextButton(
+                          onPressed: () {
                             Navigator.pop(context);
-                            save(_image, typePreset!, drivePreset!, armPreset!,
-                                commentsController.value.text);
-                          } else {
-                            save(_image, typePreset!, drivePreset!, armPreset!,
-                                "");
-                          }
-                        },
-                        child: const Text("Save"),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-            child: Container(
-              child: Text("Save"),
+                          },
+                          child: const Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            if (commentsController.value.text.isNotEmpty) {
+                              Navigator.pop(context);
+                              save(_image, typePreset!, drivePreset!,
+                                  armPreset!, commentsController.value.text);
+                            } else {
+                              save(_image, typePreset!, drivePreset!,
+                                  armPreset!, "");
+                            }
+                          },
+                          child: const Text("Save"),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                child: Text("Save"),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
