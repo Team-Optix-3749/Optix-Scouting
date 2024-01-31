@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io' as io;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_grid_button/flutter_grid_button.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:optix_scouting/utilities/classes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:optix_scouting/util.dart';
 import 'package:csv/csv.dart';
@@ -18,8 +15,7 @@ class Match extends StatefulWidget {
   final Function getScoreChanges;
   final MatchInfo Function() getMatchInfo;
 
-  const Match(
-      {Key? key, required this.getScoreChanges, required this.getMatchInfo})
+  const Match({Key? key, required this.getScoreChanges, required this.getMatchInfo})
       : super(key: key);
 
   static const String routeName = "/MatchPage";
@@ -38,10 +34,9 @@ class _MatchState extends State<Match> {
     "val",
   ];
 
-  // Map to store button states
   Map<String, BtnState> defaults = {
     "Balance": BtnState.ONE,
-    "Start Match": BtnState.FALSE, // Updated label for Tele-Op start button
+    "Start Match": BtnState.FALSE,
     "Mobility": BtnState.FALSE,
     "Save": BtnState.FALSE
   };
@@ -62,31 +57,44 @@ class _MatchState extends State<Match> {
 
   Timer? _autoTimer;
   Timer? _teleOpTimer;
-  int _autoDuration = 17; // Auto duration in seconds
-  int _teleOpDuration = 135; // Tele-Op duration in seconds
+  int _autoDuration = 15;
+  int _teleOpDuration = 135;
+  bool isCountdownRunning = false;
+
+  int autospeakerCount = 0;
+  int autoampCount = 0;
+  int telespeakerCount = 0;
+  int teleampCount = 0;
+  int trapCount = 0;
+  int harmonyCount = 0;
 
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    _startAutoTimer(); // Start the Auto timer
     super.initState();
   }
 
-  // Method to start the Auto timer
   void _startAutoTimer() {
+    setState(() {
+      isAuto = true;
+    });
     _autoTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        if (_autoDuration > 0) {
+        if (_autoDuration > 1) {
           _autoDuration--;
         } else {
+          _autoDuration = 0;
+          isAuto = false;
+
           _autoTimer!.cancel();
-          _startTeleOpTimer(); 
+          if (isCountdownRunning) {
+            _startTeleOpTimer();
+          }
         }
       });
     });
   }
 
-  // Method to start the Tele-Op timer
   void _startTeleOpTimer() {
     _teleOpTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
@@ -99,14 +107,22 @@ class _MatchState extends State<Match> {
     });
   }
 
+  void _resetTimer() {
+    setState(() {
+      _autoDuration = 15;
+      _teleOpDuration = 135;
+      isCountdownRunning = false;
+    });
+    _autoTimer?.cancel();
+    _teleOpTimer?.cancel();
+  }
+
   @override
   dispose() {
     _autoTimer?.cancel();
     _teleOpTimer?.cancel();
     super.dispose();
   }
-
-  // ... (rest of the existing code remains unchanged)
 
   @override
   Widget build(BuildContext context) {
@@ -124,62 +140,132 @@ class _MatchState extends State<Match> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 0,
-              child: Container(
-                padding: EdgeInsets.only(top: 25),
-                child: Center(
-                  child: GridView.builder(
-                    itemCount: 27,
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 2.5,
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      if (initialData[index].clicked) {
-                        return Container(
-                          padding: EdgeInsets.all(4),
-                          child: Center(
-                            child: ElevatedButton(
-                              child: Container(),
-                              onPressed: () {
-                                setState(() {
-                                  initialData[index].clicked =
-                                      !initialData[index].clicked;
-                                  initialData[index].isAuto = isAuto;
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Container(
-                          padding: EdgeInsets.all(4),
-                          child: Center(
-                            child: OutlinedButton(
-                              child: Container(),
-                              onPressed: () {
-                                setState(() {
-                                  initialData[index].clicked =
-                                      !initialData[index].clicked;
-                                  initialData[index].isAuto = isAuto;
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (isAuto) _buildCounter("Speaker", autospeakerCount)
+                else _buildCounter("Speaker", telespeakerCount),
+                if (isAuto) _buildCounter("Amp", autoampCount)
+                else _buildCounter("Amp", teleampCount),
+              ],
             ),
-            // ... (rest of the existing code remains unchanged)
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildCounter("Trap", trapCount),
+                _buildCounter("Harmony", harmonyCount),
+              ],
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTimer("Auto", _autoDuration),
+                _buildTimer("Tele-Op", _teleOpDuration),
+              ],
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                _resetTimer();
+                isCountdownRunning = true;
+                _startAutoTimer();
+              },
+              child: Text('Start Countdown'),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                _resetTimer();
+                isCountdownRunning = false;
+              },
+              child: Text('Reset Timer'),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCounter(String label, int count) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  if (label == "Speaker") {
+                    if (isAuto) {
+                      autospeakerCount--;
+                    } else {
+                      telespeakerCount--;
+                    }
+                  } else if (label == "Amp") {
+                    if (isAuto) {
+                      autoampCount--;
+                    } else {
+                      teleampCount--;
+                    }
+                  } else if (label == "Trap") {
+                    trapCount--;
+                  } else if (label == "Harmony") {
+                    harmonyCount--;
+                  }
+                });
+              },
+              icon: Icon(Icons.remove),
+            ),
+            Text(
+              count.toString(),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  if (label == "Speaker") {
+                    if (isAuto) {
+                      autospeakerCount++;
+                    } else {
+                      telespeakerCount++;
+                    }
+                  } else if (label == "Amp") {
+                    if (isAuto) {
+                      autoampCount++;
+                    } else {
+                      teleampCount++;
+                    }
+                  } else if (label == "Trap") {
+                    trapCount++;
+                  } else if (label == "Harmony") {
+                    harmonyCount++;
+                  }
+                });
+              },
+              icon: Icon(Icons.add),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimer(String label, int duration) {
+    return Column(
+      children: [
+        Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(duration.toString(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+      ],
     );
   }
 }
