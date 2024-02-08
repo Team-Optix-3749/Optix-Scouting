@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io' as io; // Add this import for 'io.File'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:optix_scouting/utilities/classes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +16,8 @@ class Match extends StatefulWidget {
   final Function getScoreChanges;
   final MatchInfo Function() getMatchInfo;
 
-  const Match({Key? key, required this.getScoreChanges, required this.getMatchInfo})
+  const Match(
+      {Key? key, required this.getScoreChanges, required this.getMatchInfo})
       : super(key: key);
 
   static const String routeName = "/MatchPage";
@@ -60,7 +62,6 @@ class _MatchState extends State<Match> {
   int _autoDuration = 15;
   int _teleOpDuration = 135;
   bool isCountdownRunning = false;
-
   int autospeakerCount = 0;
   int autoampCount = 0;
   int telespeakerCount = 0;
@@ -143,13 +144,16 @@ class _MatchState extends State<Match> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (isAuto) _buildCounter("Speaker", autospeakerCount)
-                else _buildCounter("Speaker", telespeakerCount),
-                if (isAuto) _buildCounter("Amp", autoampCount)
-                else _buildCounter("Amp", teleampCount),
+                if (isAuto)
+                  _buildCounter("Speaker", autospeakerCount)
+                else
+                  _buildCounter("Speaker", telespeakerCount),
+                if (isAuto)
+                  _buildCounter("Amp", autoampCount)
+                else
+                  _buildCounter("Amp", teleampCount),
               ],
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -157,7 +161,6 @@ class _MatchState extends State<Match> {
                 _buildCounter("Harmony", harmonyCount),
               ],
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -165,27 +168,71 @@ class _MatchState extends State<Match> {
                 _buildTimer("Tele-Op", _teleOpDuration),
               ],
             ),
-
-            ElevatedButton(
-              onPressed: () {
-                _resetTimer();
-                isCountdownRunning = true;
-                _startAutoTimer();
-              },
-              child: Text('Start Countdown'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: CheckboxListTile(
+                    title: const Text("Park"),
+                    value: park,
+                    onChanged: (newValue) {
+                      setState(() {
+                        park = newValue!;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                )
+              ],
             ),
-
-            ElevatedButton(
-              onPressed: () {
-                _resetTimer();
-                isCountdownRunning = false;
-              },
-              child: Text('Reset Timer'),
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              ElevatedButton(
+                onPressed: () {
+                  _resetTimer();
+                  isCountdownRunning = true;
+                  _startAutoTimer();
+                },
+                child: Text('Start Countdown'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _resetTimer();
+                  isCountdownRunning = false;
+                },
+                child: Text('Reset Timer'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  enterFinalInfo();
+                },
+                child: Text('Save'),
+              ),
+            ])
           ],
         ),
       ),
     );
+  }
+
+  Future<String> getFilePath(String fileName) async {
+    io.Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory(); // 1
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String filePath = '$appDocumentsPath/$fileName'; // 3
+    return filePath;
+  }
+
+  void reset() {
+    setState(() {
+      autoampCount = 0;
+      autospeakerCount = 0;
+      telespeakerCount = 0;
+      teleampCount = 0;
+      harmonyCount = 0;
+      trapCount = 0;
+    });
+
+    _resetTimer();
   }
 
   Widget _buildCounter(String label, int count) {
@@ -263,9 +310,156 @@ class _MatchState extends State<Match> {
   Widget _buildTimer(String label, int duration) {
     return Column(
       children: [
-        Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        Text(duration.toString(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+        Text(label,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(duration.toString(),
+            style: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
       ],
     );
+  }
+
+  void enterFinalInfo() {
+    if (mounted) {
+      TextEditingController commentsController = TextEditingController();
+      bool checkedValue = false;
+      double defense = 0;
+      double offense = 0;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Final Data"),
+          content: StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter Comments',
+                    ),
+                    controller: commentsController,
+                    maxLines: 3,
+                  ),
+                  CheckboxListTile(
+                    title: const Text("Robot broke?"),
+                    value: checkedValue,
+                    onChanged: (newValue) {
+                      setState(() {
+                        checkedValue = newValue!;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                  const Text("Offense"),
+                  Slider(
+                    value: offense,
+                    max: 10,
+                    divisions: 10,
+                    label: offense.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        offense = value;
+                      });
+                    },
+                  ),
+                  const Text("Defense"),
+                  Slider(
+                    value: defense,
+                    max: 10,
+                    divisions: 10,
+                    label: defense.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        defense = value;
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (commentsController.value.text.isNotEmpty) {
+                  Navigator.pop(context);
+                  saveFile(commentsController.value.text, checkedValue,
+                      offense.toInt(), defense.toInt());
+                } else {
+                  saveFile("", checkedValue, offense.toInt(), defense.toInt());
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void saveFile(String comments, bool broken, int offense, int defense) async {
+    String id = uuid.v1();
+    String fileName =
+        'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
+    io.File file = io.File(await getFilePath(fileName));
+    List<Event> events = [];
+    for (int i = 0; i < initialData.length; i++) {
+      if (initialData[i].clicked) {
+        events.add(
+          Event(
+            x: (i % 3),
+            y: (i.toDouble() / 3).floor().toDouble(),
+            isAuto: initialData[i].isAuto,
+          ),
+        );
+      }
+    }
+    ScoutData data = ScoutData(
+      matchInfo: widget.getMatchInfo(),
+      notes: comments,
+      didBreak: broken,
+      offense: offense,
+      defense: defense,
+      park: park,
+      autospeakerCount: autospeakerCount,
+      autoampCount: autoampCount,
+      teleampCount: teleampCount,
+      telespeakerCount: telespeakerCount,
+      trapCount: trapCount,
+      harmonyCount: harmonyCount,
+    );
+
+    file.writeAsString(jsonEncode(data.toJSON()));
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => Util.buildPopupDialog(
+          context,
+          "QR Code",
+          <Widget>[
+            Container(
+              height: 295,
+              width: 295,
+              child: QrImage(
+                data: jsonEncode(data.toJSON()),
+                version: QrVersions.auto,
+                size: 295,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    reset();
   }
 }

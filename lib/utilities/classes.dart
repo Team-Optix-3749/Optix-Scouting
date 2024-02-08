@@ -33,44 +33,51 @@ class ScoutData {
       matchNumber: 42,
       comp: "San Diego Regional",
       alliance: "Red");
-  List<Event> events = [];
-  int autoBalanced; // 0 = none, 1 = docked, 2 = engaged
-  int teleBalanced; // 0 = none, 1 = docked, 2 = engaged
+
+	int teleampCount;
+	int telespeakerCount;
+	int autoampCount;
+	int autospeakerCount; 
+	int trapCount;
   String notes;
   bool didBreak;
   int offense;
   int defense;
-  bool mobility;
   bool park;
+  int harmonyCount;
 
   ScoutData(
       {required this.matchInfo,
-      required this.events,
-      required this.autoBalanced,
-      required this.teleBalanced,
+	  required this.autoampCount,
+	  required this.autospeakerCount,
+	  required this.teleampCount,
+	  required this.telespeakerCount,
+	  required this.trapCount,
       required this.notes,
       required this.didBreak,
       required this.offense,
       required this.defense,
-      required this.mobility,
+	  required this.harmonyCount,
       required this.park});
 
   Map<String, dynamic> toJSON() {
-    int balanced = autoBalanced * 10 + teleBalanced;
     Map<String, dynamic> map = {
       "teamNumber": matchInfo.teamNumber,
       "teamName": matchInfo.teamName,
       "matchNumber": matchInfo.matchNumber,
       "comp": matchInfo.comp,
       "alliance": matchInfo.alliance,
-      "events": Event.eventsToJSON(events),
-      "balanced": balanced,
       "notes": notes,
       "break": didBreak,
       "offense": offense,
       "defense": defense,
-      "mobility": mobility,
+	  "telespeakerCount": telespeakerCount,
+	  "teleampCount": teleampCount,
+	  "autoampCount": autoampCount,
+	  "autospeakerCount": autospeakerCount,
       "park": park,
+	  "harmonyCount": harmonyCount,
+	  "trapCount": trapCount,
     };
     return map;
   }
