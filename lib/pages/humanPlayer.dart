@@ -7,6 +7,7 @@ class HumanPlayer extends StatefulWidget {
 
 class _HumanPlayerState extends State<HumanPlayer> {
   
+  List<int> humanPlayerLocation = [];
   int humanPlayerScore = 0;
 
   @override
@@ -56,14 +57,15 @@ class _HumanPlayerState extends State<HumanPlayer> {
 
   void onButtonPressed(int buttonNumber) {
     setState(() {
-      humanPlayerScore = buttonNumber;
+      humanPlayerLocation.add(buttonNumber);
+      humanPlayerScore += 432;
     });
 
     // Delay to see the updated score before buttons disappear (optional)
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
-        // Reset the humanPlayerScore and hide the buttons
-        humanPlayerScore = 0;
+        // Reset the humanPlayerLocation and hide the buttons
+        humanPlayerLocation.clear();
       });
     });
   }
