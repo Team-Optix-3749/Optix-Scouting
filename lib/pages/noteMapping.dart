@@ -1,70 +1,87 @@
 import 'package:flutter/material.dart';
 
-class _NoteMapping extends StatefulWidget {
+class NoteMapping extends StatefulWidget {
   @override
   _NoteMappingState createState() => _NoteMappingState();
 }
 
-class _NoteMappingState extends State<_NoteMapping> {
+class _NoteMappingState extends State<NoteMapping> {
+  List<int> leftNotes = [];
+  List<int> rightNotes = [];
+  bool isRightSide = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Note Mapping'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Display your image here
-            Image.asset(
-              'assets/note-mapping.png',  // Replace with the path to your image
-              height: 200, // Adjust the height as needed
+    return Column(
+      
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
+          child: Text(
+            'Note Scoring',
+            style: TextStyle(
+              fontSize: 24, // You can adjust the font size as needed
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildNotePoint(1),
-                _buildNotePoint(2),
-                _buildNotePoint(3),
+                const Text('Left side'),
+                buildButtons([1], leftNotes),
+                buildButtons([2], leftNotes),
+                buildButtons([3], leftNotes),
+                buildButtons([if (!isRightSide) 4], leftNotes),
+                buildButtons([if (!isRightSide) 5], leftNotes)
+              ],
+            ),
+            Switch(
+              value: isRightSide,
+              onChanged: (value) {
+                setState(() {
+                  isRightSide = value;
+                });
+              },
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('Right side'),
+                buildButtons([1], rightNotes),
+                buildButtons([2], rightNotes),
+                buildButtons([3], rightNotes),
+                buildButtons([if (isRightSide) 4], rightNotes),
+                buildButtons([if (isRightSide) 5], rightNotes)
               ],
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildNotePoint(int value) {
-    return InkWell(
-      onTap: () {
-        _handleNotePointClick(value);
-      },
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.blue,
-        ),
-        child: Center(
-          child: Text(
-            '$value',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-      ),
+  Widget buildButtons(List<int> numbers, List<int> notesList) {
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: numbers.map((number) {
+        return ElevatedButton(
+          onPressed: () {
+            setState(() {
+              if (isRightSide) {
+                rightNotes.add(number);
+              } else {
+                leftNotes.add(number);
+              }
+            });
+          },
+          child: Text('$number'),
+        );
+      }).toList(),
     );
-  }
-
-  void _handleNotePointClick(int value) {
-    // You can perform any action based on the clicked value
-    print('Clicked on point $value');
-    // Modify this function to suit your needs
   }
 }

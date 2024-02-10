@@ -11,6 +11,8 @@ import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'noteMapping.dart';
+import 'humanPlayer.dart';
 
 class Match extends StatefulWidget {
   final Function getScoreChanges;
@@ -69,11 +71,16 @@ class _MatchState extends State<Match> {
   int trapCount = 0;
   int harmonyCount = 0;
 
+  List<int> leftNotes = [];
+  List<int> rightNotes = [];
+
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     super.initState();
   }
+
+
 
   void _startAutoTimer() {
     setState(() {
@@ -207,7 +214,9 @@ class _MatchState extends State<Match> {
                 },
                 child: Text('Save'),
               ),
-            ])
+            ]),
+            NoteMapping(),
+            HumanPlayer(),
           ],
         ),
       ),
