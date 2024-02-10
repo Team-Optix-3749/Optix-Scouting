@@ -21,7 +21,7 @@ class _NoteMappingState extends State<NoteMapping> {
           child: Text(
             'Note Scoring',
             style: TextStyle(
-              fontSize: 24, // You can adjust the font size as needed
+              fontSize: 18, // You can adjust the font size as needed
             ),
           ),
         ),

@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 
 class HumanPlayer extends StatefulWidget {
@@ -18,11 +16,11 @@ class _HumanPlayerState extends State<HumanPlayer> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Padding(
-            padding: EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
+            padding: EdgeInsets.only(top: 1.0), // Adjust the top padding as needed
             child: Text(
               'Human Player',
               style: TextStyle(
-                fontSize: 24, // You can adjust the font size as needed
+                fontSize: 18, // You can adjust the font size as needed
               ),
             ),
           ),
