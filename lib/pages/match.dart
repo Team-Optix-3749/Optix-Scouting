@@ -80,8 +80,6 @@ class _MatchState extends State<Match> {
     super.initState();
   }
 
-
-
   void _startAutoTimer() {
     setState(() {
       isAuto = true;
@@ -148,6 +146,7 @@ class _MatchState extends State<Match> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -215,7 +214,7 @@ class _MatchState extends State<Match> {
                 child: Text('Save'),
               ),
             ]),
-            NoteMapping(), HumanPlayer(),
+            NoteMapping(),
           ],
         ),
       ),
@@ -244,74 +243,78 @@ class _MatchState extends State<Match> {
   }
 
   Widget _buildCounter(String label, int count) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  if (label == "Speaker") {
-                    if (isAuto) {
-                      autospeakerCount--;
-                    } else {
-                      telespeakerCount--;
+    return SizedBox(
+      width: 200,
+      height: 100,
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (label == "Speaker") {
+                      if (isAuto) {
+                        if (autospeakerCount > 0) autospeakerCount--;
+                      } else {
+                        if (telespeakerCount > 0) telespeakerCount--;
+                      }
+                    } else if (label == "Amp") {
+                      if (isAuto) {
+                        if (autoampCount > 0) autoampCount--;
+                      } else {
+                        if (teleampCount > 0) teleampCount--;
+                      }
+                    } else if (label == "Trap") {
+                      if (trapCount > 0) trapCount--;
+                    } else if (label == "Harmony") {
+                      if (harmonyCount > 0) harmonyCount--;
                     }
-                  } else if (label == "Amp") {
-                    if (isAuto) {
-                      autoampCount--;
-                    } else {
-                      teleampCount--;
-                    }
-                  } else if (label == "Trap") {
-                    trapCount--;
-                  } else if (label == "Harmony") {
-                    harmonyCount--;
-                  }
-                });
-              },
-              icon: Icon(Icons.remove),
-            ),
-            Text(
-              count.toString(),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                  });
+                },
+                icon: Icon(Icons.remove, size: 40),
               ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  if (label == "Speaker") {
-                    if (isAuto) {
-                      autospeakerCount++;
-                    } else {
-                      telespeakerCount++;
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (label == "Speaker") {
+                      if (isAuto) {
+                        autospeakerCount++;
+                      } else {
+                        telespeakerCount++;
+                      }
+                    } else if (label == "Amp") {
+                      if (isAuto) {
+                        autoampCount++;
+                      } else {
+                        teleampCount++;
+                      }
+                    } else if (label == "Trap") {
+                      trapCount++;
+                    } else if (label == "Harmony") {
+                      harmonyCount++;
                     }
-                  } else if (label == "Amp") {
-                    if (isAuto) {
-                      autoampCount++;
-                    } else {
-                      teleampCount++;
-                    }
-                  } else if (label == "Trap") {
-                    trapCount++;
-                  } else if (label == "Harmony") {
-                    harmonyCount++;
-                  }
-                });
-              },
-              icon: Icon(Icons.add),
-            ),
-          ],
-        ),
-      ],
+                  });
+                },
+                icon: Icon(Icons.add, size: 40),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
