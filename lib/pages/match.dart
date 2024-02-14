@@ -168,13 +168,6 @@ class _MatchState extends State<Match> {
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTimer("Auto", _autoDuration),
-                _buildTimer("Tele-Op", _teleOpDuration),
-              ],
-            ),
-            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
@@ -189,6 +182,16 @@ class _MatchState extends State<Match> {
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 )
+              ],
+            ),
+            if (_teleOpDuration > 25) NoteMapping(),
+            if (_teleOpDuration <= 25) HumanPlayer(),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTimer("Auto", _autoDuration),
+                _buildTimer("Tele-Op", _teleOpDuration),
               ],
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -214,7 +217,6 @@ class _MatchState extends State<Match> {
                 child: Text('Save'),
               ),
             ]),
-            NoteMapping(),
           ],
         ),
       ),
@@ -305,7 +307,7 @@ class _MatchState extends State<Match> {
                     } else if (label == "Trap") {
                       trapCount++;
                     } else if (label == "Harmony") {
-                      harmonyCount++;
+                      if (harmonyCount < 2) harmonyCount++;
                     }
                   });
                 },
