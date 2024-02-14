@@ -6,12 +6,23 @@ class NoteMapping extends StatefulWidget {
 }
 
 class _NoteMappingState extends State<NoteMapping> {
-  List<int> leftNotes = [];
-  List<int> rightNotes = [];
+  List<int> threeNotes = [];
+  List<int> fiveNotes = [];
   bool isRightSide = false;
 
   @override
   Widget build(BuildContext context) {
+    List<int> leftNotes = [];
+    List<int> rightNotes = [];
+
+    if (isRightSide) {
+      rightNotes = threeNotes;
+      leftNotes = fiveNotes;
+    } else {
+      leftNotes = threeNotes;
+      rightNotes = fiveNotes;
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
