@@ -13,11 +13,11 @@ class _NoteMappingState extends State<NoteMapping> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Padding(
-          padding: EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
+          padding:
+              EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
           child: Text(
             'Note Scoring',
             style: TextStyle(
@@ -72,13 +72,16 @@ class _NoteMappingState extends State<NoteMapping> {
         return ElevatedButton(
           onPressed: () {
             setState(() {
-              if (isRightSide) {
-                rightNotes.add(number);
+              if (notesList.contains(number)) {
+                notesList.remove(number);
               } else {
-                leftNotes.add(number);
+                notesList.add(number);
               }
             });
           },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: notesList.contains(number) ? Colors.green : null,
+          ),
           child: Text('$number'),
         );
       }).toList(),
