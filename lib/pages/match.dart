@@ -73,13 +73,18 @@ class _MatchState extends State<Match> {
 
   int test = 0;
 
-  List<int> _leftNotes = [];
-  List<int> _rightNotes = [];
+  List<int> _threeNotes = [];
+  List<int> _fiveNotes = [];
 
-  void setNoteMapping(List<int> leftNotes, List<int> rightNotes) {
+  void setThreeNotes(List<int> threeNotes) {
     setState(() {
-      _leftNotes = leftNotes;
-      _rightNotes = rightNotes;
+      _threeNotes = threeNotes;
+    });
+  }
+
+  void setFiveNotes(List<int> fiveNotes) {
+    setState(() {
+      _fiveNotes = fiveNotes;
     });
   }
 
@@ -193,7 +198,14 @@ class _MatchState extends State<Match> {
                 )
               ],
             ),
-            if (_teleOpDuration > 25) NoteMapping(),
+            if (_teleOpDuration > 25)
+              NoteMapping(
+                threeNotes: _threeNotes,
+                fiveNotes: _fiveNotes,
+                setThreeNotes: setThreeNotes,
+                setFiveNotes: setFiveNotes,
+                isRightSide: widget.getMatchInfo().alliance == "Blue",
+              ),
             if (_teleOpDuration <= 25) HumanPlayer(),
             SizedBox(height: 20),
             Row(
@@ -226,15 +238,6 @@ class _MatchState extends State<Match> {
                 child: Text('Save'),
               ),
             ]),
-<<<<<<< HEAD
-            Text('testVariable: $test'),
-            NoteMapping(
-              leftNotes: _leftNotes,
-              rightNotes: _rightNotes,
-              setNoteMapping: setNoteMapping,
-            ), HumanPlayer(),
-=======
->>>>>>> e6104a926e6dd7c98e6808e801336a4b1067d09f
           ],
         ),
       ),
