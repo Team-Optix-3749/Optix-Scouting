@@ -71,8 +71,17 @@ class _MatchState extends State<Match> {
   int trapCount = 0;
   int harmonyCount = 0;
 
-  List<int> leftNotes = [];
-  List<int> rightNotes = [];
+  int test = 0;
+
+  List<int> _leftNotes = [];
+  List<int> _rightNotes = [];
+
+  void setNoteMapping(List<int> leftNotes, List<int> rightNotes) {
+    setState(() {
+      _leftNotes = leftNotes;
+      _rightNotes = rightNotes;
+    });
+  }
 
   @override
   void initState() {
@@ -215,7 +224,12 @@ class _MatchState extends State<Match> {
                 child: Text('Save'),
               ),
             ]),
-            NoteMapping(), HumanPlayer(),
+            Text('testVariable: $test'),
+            NoteMapping(
+              leftNotes: _leftNotes,
+              rightNotes: _rightNotes,
+              setNoteMapping: setNoteMapping,
+            ), HumanPlayer(),
           ],
         ),
       ),

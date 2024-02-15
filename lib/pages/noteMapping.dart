@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 class NoteMapping extends StatefulWidget {
   @override
   _NoteMappingState createState() => _NoteMappingState();
+
+  final List<int> leftNotes;
+  final List<int> rightNotes;
+  final Function setNoteMapping;
+
+  const NoteMapping({super.key, required this.leftNotes, required this.rightNotes, required this.setNoteMapping});
 }
 
 class _NoteMappingState extends State<NoteMapping> {
-  List<int> leftNotes = [];
-  List<int> rightNotes = [];
+  List<int> _leftNotes = [];
+  List<int> _rightNotes = [];
   bool isRightSide = false;
 
   @override
@@ -19,7 +25,7 @@ class _NoteMappingState extends State<NoteMapping> {
         const Padding(
           padding: EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
           child: Text(
-            'Note Scoring',
+            'Note Scoring ',
             style: TextStyle(
               fontSize: 18, // You can adjust the font size as needed
             ),
@@ -32,11 +38,11 @@ class _NoteMappingState extends State<NoteMapping> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text('Left side'),
-                buildButtons([1], leftNotes),
-                buildButtons([2], leftNotes),
-                buildButtons([3], leftNotes),
-                buildButtons([if (!isRightSide) 4], leftNotes),
-                buildButtons([if (!isRightSide) 5], leftNotes)
+                buildButtons([1], _leftNotes),
+                buildButtons([2], _leftNotes),
+                buildButtons([3], _leftNotes),
+                buildButtons([if (!isRightSide) 4], _leftNotes),
+                buildButtons([if (!isRightSide) 5], _leftNotes)
               ],
             ),
             Switch(
@@ -44,6 +50,7 @@ class _NoteMappingState extends State<NoteMapping> {
               onChanged: (value) {
                 setState(() {
                   isRightSide = value;
+
                 });
               },
             ),
@@ -51,11 +58,11 @@ class _NoteMappingState extends State<NoteMapping> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text('Right side'),
-                buildButtons([1], rightNotes),
-                buildButtons([2], rightNotes),
-                buildButtons([3], rightNotes),
-                buildButtons([if (isRightSide) 4], rightNotes),
-                buildButtons([if (isRightSide) 5], rightNotes)
+                buildButtons([1], _rightNotes),
+                buildButtons([2], _rightNotes),
+                buildButtons([3], _rightNotes),
+                buildButtons([if (isRightSide) 4], _rightNotes),
+                buildButtons([if (isRightSide) 5], _rightNotes)
               ],
             ),
           ],
@@ -73,9 +80,11 @@ class _NoteMappingState extends State<NoteMapping> {
           onPressed: () {
             setState(() {
               if (isRightSide) {
-                rightNotes.add(number);
+                _rightNotes.add(number);
+                widget.setNoteMapping(_leftNotes, _rightNotes);
               } else {
-                leftNotes.add(number);
+                _leftNotes.add(number);
+                widget.setNoteMapping(_leftNotes, _rightNotes);
               }
             });
           },
