@@ -12,18 +12,34 @@ class NoteMapping extends StatefulWidget {
 }
 
 class _NoteMappingState extends State<NoteMapping> {
+<<<<<<< HEAD
   List<int> _leftNotes = [];
   List<int> _rightNotes = [];
+=======
+  List<int> threeNotes = [];
+  List<int> fiveNotes = [];
+>>>>>>> e6104a926e6dd7c98e6808e801336a4b1067d09f
   bool isRightSide = false;
 
   @override
   Widget build(BuildContext context) {
+    List<int> leftNotes = [];
+    List<int> rightNotes = [];
+
+    if (isRightSide) {
+      rightNotes = threeNotes;
+      leftNotes = fiveNotes;
+    } else {
+      leftNotes = threeNotes;
+      rightNotes = fiveNotes;
+    }
+
     return Column(
-      
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Padding(
-          padding: EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
+          padding:
+              EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
           child: Text(
             'Note Scoring ',
             style: TextStyle(
@@ -79,15 +95,25 @@ class _NoteMappingState extends State<NoteMapping> {
         return ElevatedButton(
           onPressed: () {
             setState(() {
+<<<<<<< HEAD
               if (isRightSide) {
                 _rightNotes.add(number);
                 widget.setNoteMapping(_leftNotes, _rightNotes);
               } else {
                 _leftNotes.add(number);
                 widget.setNoteMapping(_leftNotes, _rightNotes);
+=======
+              if (notesList.contains(number)) {
+                notesList.remove(number);
+              } else {
+                notesList.add(number);
+>>>>>>> e6104a926e6dd7c98e6808e801336a4b1067d09f
               }
             });
           },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: notesList.contains(number) ? Colors.green : null,
+          ),
           child: Text('$number'),
         );
       }).toList(),
