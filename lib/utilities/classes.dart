@@ -45,6 +45,8 @@ class ScoutData {
   int defense;
   bool park;
   int harmonyCount;
+  List<int> threeCount;
+  List<int> fiveCount;
 
   ScoutData(
       {required this.matchInfo,
@@ -58,7 +60,9 @@ class ScoutData {
       required this.offense,
       required this.defense,
 	  required this.harmonyCount,
-      required this.park});
+      required this.park,
+      required this.threeCount,
+      required this.fiveCount});
 
   Map<String, dynamic> toJSON() {
     Map<String, dynamic> map = {
@@ -78,6 +82,8 @@ class ScoutData {
       "park": park,
 	  "harmonyCount": harmonyCount,
 	  "trapCount": trapCount,
+    "threeCount": threeCount,
+    "fiveCount": fiveCount,
     };
     return map;
   }
