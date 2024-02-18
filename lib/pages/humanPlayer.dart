@@ -3,70 +3,81 @@ import 'package:flutter/material.dart';
 class HumanPlayer extends StatefulWidget {
   @override
   _HumanPlayerState createState() => _HumanPlayerState();
+
+  final List<int> threeNotes;
+  final List<int> fiveNotes;
+  final Function setThreeNotes;
+  final Function setFiveNotes;
+  final bool isRightSide;
+
+  const HumanPlayer({super.key, required this.threeNotes, required this.fiveNotes, required this.setThreeNotes, required this.setFiveNotes, required this.isRightSide});
 }
 
 class _HumanPlayerState extends State<HumanPlayer> {
-  
-  List<int> humanPlayerLocation = [];
-  int humanPlayerScore = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 1.0), // Adjust the top padding as needed
-            child: Text(
-              'Human Player',
-              style: TextStyle(
-                fontSize: 18, // You can adjust the font size as needed
-              ),
+    bool isRightSide = widget.isRightSide;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding:
+              EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
+          child: Text(
+            'Note Scoring ',
+            style: TextStyle(
+              fontSize: 18, // You can adjust the font size as needed
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  onButtonPressed(1);
-                },
-                child: const Text('1'),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  onButtonPressed(2);
-                },
-                child: const Text('2'),
-              ),
-            ],
-          ),
-          const SizedBox(height:5),
-          ElevatedButton(
-            onPressed: () {
-              onButtonPressed(3);
-            },
-            child: const Text('3'),
-          ),
-        ],
-      ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('Left side'),
+                for (int i=1; i<=((!isRightSide)?5:3); i++) 
+                  buildButtons([i], (!isRightSide) ? widget.fiveNotes : widget.threeNotes,  (!isRightSide) ? widget.setFiveNotes : widget.setThreeNotes),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('Right side'),
+                for (int i=1; i<=((isRightSide)?5:3); i++) buildButtons([i], (isRightSide) ? widget.fiveNotes : widget.threeNotes,  (isRightSide) ? widget.setFiveNotes : widget.setThreeNotes),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  void onButtonPressed(int buttonNumber) {
-    setState(() {
-      humanPlayerLocation.add(buttonNumber);
-      humanPlayerScore += 432;
-    });
-
-    // Delay to see the updated score before buttons disappear (optional)
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        // Reset the humanPlayerLocation and hide the buttons
-        humanPlayerLocation.clear();
-      });
-    });
+  Widget buildButtons(List<int> numbers, List<int> notesList, Function setNotesList) {
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: numbers.map((number) {
+        return ElevatedButton(
+          onPressed: () {
+            setState(() {
+              if (notesList.contains(number)) {
+                notesList.remove(number);
+                setNotesList(notesList);
+              } else {
+                notesList.add(number);
+                setNotesList(notesList);
+              }
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: notesList.contains(number) ? Colors.green : null,
+          ),
+          child: Text('$number'),
+        );
+      }).toList(),
+    );
   }
 }

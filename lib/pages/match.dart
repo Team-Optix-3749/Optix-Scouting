@@ -198,7 +198,6 @@ class _MatchState extends State<Match> {
                 )
               ],
             ),
-            /*
             if (_teleOpDuration > 25)
               NoteMapping(
                 threeNotes: _threeNotes,
@@ -207,8 +206,7 @@ class _MatchState extends State<Match> {
                 setFiveNotes: setFiveNotes,
                 isRightSide: widget.getMatchInfo().alliance == "Blue",
               ), 
-            */
-            /* if (_teleOpDuration <= 25) */HumanPlayer(),
+            /* if (_teleOpDuration <= 25) HumanPlayer(), */
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -471,6 +469,8 @@ class _MatchState extends State<Match> {
       telespeakerCount: telespeakerCount,
       trapCount: trapCount,
       harmonyCount: harmonyCount,
+      threeCount: _threeNotes,
+      fiveCount: _fiveNotes
     );
 
     file.writeAsString(jsonEncode(data.toJSON()));
