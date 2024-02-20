@@ -37,7 +37,7 @@ class _NoteMappingState extends State<NoteMapping> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Left side'),
+                const Text('Scoring Table'),
                 for (int i=1; i<=((!isRightSide)?5:3); i++) 
                   buildButtons([i], (!isRightSide) ? widget.fiveNotes : widget.threeNotes,  (!isRightSide) ? widget.setFiveNotes : widget.setThreeNotes),
               ],
@@ -45,7 +45,7 @@ class _NoteMappingState extends State<NoteMapping> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Right side'),
+                const Text('Scoring Table'),
                 for (int i=1; i<=((isRightSide)?5:3); i++) buildButtons([i], (isRightSide) ? widget.fiveNotes : widget.threeNotes,  (isRightSide) ? widget.setFiveNotes : widget.setThreeNotes),
               ],
             ),

@@ -339,7 +339,7 @@ class _MatchState extends State<Match> {
                     } else if (label == "Trap") {
                       trapCount++;
                     } else if (label == "Harmony") {
-                      if (harmonyCount < 2) harmonyCount++;
+                      if (harmonyCount < 3) harmonyCount++;
                     }
                   });
                 },
