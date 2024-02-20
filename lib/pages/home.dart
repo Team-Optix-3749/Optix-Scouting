@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage>
     // "Add preset": 2,
   };
   List<String> teams = [];
-  String match = "Rocket City Regional"; // weird err msg here
   Map<String, int> matches = {};
   Map<int, Icon> presetIcons = {
     0: Icon(
@@ -212,7 +211,7 @@ class _HomePageState extends State<HomePage>
         height: 30,
         child: Autocomplete<String>(
           optionsBuilder: ((TextEditingValue textEditingValue) async {
-            teams = await getCompetitionTeams(match);
+            teams = await getCompetitionTeams(widget.getMatchInfo().comp);
 
             return (teams.where(
                     (String team) => team.startsWith(textEditingValue.text)))
@@ -302,7 +301,7 @@ class _HomePageState extends State<HomePage>
     }
     return InkWell(
       onTap: () async {
-        teams = await getCompetitionTeams(match);
+        teams = await getCompetitionTeams(widget.getMatchInfo().comp);
 
         setState(() {
           _isEditingTeamNumber = true;
@@ -348,7 +347,7 @@ class _HomePageState extends State<HomePage>
 
     return InkWell(
       onTap: () async {
-        teams = await getCompetitionTeams(match);
+        teams = await getCompetitionTeams(widget.getMatchInfo().comp);
 
         setState(() {
           _isEditingMatchNumber = true;
@@ -392,7 +391,7 @@ class _HomePageState extends State<HomePage>
       widget.getMatchInfo().teamNumber = _teamNumber;
       widget.getMatchInfo().matchNumber = _matchNumber;
       widget.getMatchInfo().teamName = _teamName;
-      widget.getMatchInfo().comp = match;
+      widget.getMatchInfo().comp = "Rocket City Regional";
     });
     setCompMap();
     super.initState();
@@ -496,13 +495,13 @@ class _HomePageState extends State<HomePage>
                           ),
                         )
                         .toList(),
-                    value: match,
+                    value: widget.getMatchInfo().comp,
                     onChanged: (value) async {
-                      teams = await getCompetitionTeams(match);
+                      teams = await getCompetitionTeams(value!);
 
                       setState(() {
-                        match = value! as String;
-                        switch (matches[match]) {
+                        widget.getMatchInfo().comp = value! as String;
+                        switch (matches[widget.getMatchInfo().comp]) {
                           case -1:
                             matchIndex = 0;
                             break;

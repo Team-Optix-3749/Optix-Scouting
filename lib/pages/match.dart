@@ -75,6 +75,7 @@ class _MatchState extends State<Match> {
 
   List<int> _threeNotes = [];
   List<int> _fiveNotes = [];
+  List<int> _humanPlayer = [];
 
   void setThreeNotes(List<int> threeNotes) {
     setState(() {
@@ -85,6 +86,12 @@ class _MatchState extends State<Match> {
   void setFiveNotes(List<int> fiveNotes) {
     setState(() {
       _fiveNotes = fiveNotes;
+    });
+  }
+
+  void setHumanPlayer(List<int> humanPlayer) {
+    setState(() {
+      _humanPlayer = humanPlayer;
     });
   }
 
@@ -205,8 +212,12 @@ class _MatchState extends State<Match> {
                 setThreeNotes: setThreeNotes,
                 setFiveNotes: setFiveNotes,
                 isRightSide: widget.getMatchInfo().alliance == "Blue",
-              ), 
-            /* if (_teleOpDuration <= 25) HumanPlayer(), */
+              ),
+            if (_teleOpDuration <= 25)
+              HumanPlayer(
+                  isBlue: widget.getMatchInfo().alliance == "Blue",
+                  setHumanPlayerList: setHumanPlayer,
+                  humanPlayerList: _humanPlayer),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -457,21 +468,21 @@ class _MatchState extends State<Match> {
       }
     }
     ScoutData data = ScoutData(
-      matchInfo: widget.getMatchInfo(),
-      notes: comments,
-      didBreak: broken,
-      offense: offense,
-      defense: defense,
-      park: park,
-      autospeakerCount: autospeakerCount,
-      autoampCount: autoampCount,
-      teleampCount: teleampCount,
-      telespeakerCount: telespeakerCount,
-      trapCount: trapCount,
-      harmonyCount: harmonyCount,
-      threeCount: _threeNotes,
-      fiveCount: _fiveNotes
-    );
+        matchInfo: widget.getMatchInfo(),
+        notes: comments,
+        didBreak: broken,
+        offense: offense,
+        defense: defense,
+        park: park,
+        autospeakerCount: autospeakerCount,
+        autoampCount: autoampCount,
+        teleampCount: teleampCount,
+        telespeakerCount: telespeakerCount,
+        trapCount: trapCount,
+        harmonyCount: harmonyCount,
+        threeCount: _threeNotes,
+        fiveCount: _fiveNotes,
+        humanPlayer: _humanPlayer);
 
     file.writeAsString(jsonEncode(data.toJSON()));
 
