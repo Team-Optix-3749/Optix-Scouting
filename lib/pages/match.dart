@@ -61,7 +61,7 @@ class _MatchState extends State<Match> {
 
   Timer? _autoTimer;
   Timer? _teleOpTimer;
-  int _autoDuration = 15;
+  int _autoDuration = 17;
   int _teleOpDuration = 135;
   bool isCountdownRunning = false;
   int autospeakerCount = 0;
@@ -136,7 +136,7 @@ class _MatchState extends State<Match> {
 
   void _resetTimer() {
     setState(() {
-      _autoDuration = 15;
+      _autoDuration = 17;
       _teleOpDuration = 135;
       isCountdownRunning = false;
     });
