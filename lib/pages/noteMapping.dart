@@ -25,12 +25,13 @@ class _NoteMappingState extends State<NoteMapping> {
           padding:
               EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
           child: Text(
-            'Note Scoring ',
+            'Note Scoring (Auto)',
             style: TextStyle(
               fontSize: 18, // You can adjust the font size as needed
             ),
           ),
         ),
+        const SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

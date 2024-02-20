@@ -192,8 +192,10 @@ class _MatchState extends State<Match> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
+                  fit: FlexFit.loose,
                   child: CheckboxListTile(
-                    title: const Text("Park"),
+                    
+                    title: const Text("Park (Auto)"),
                     value: park,
                     onChanged: (newValue) {
                       setState(() {
@@ -211,7 +213,7 @@ class _MatchState extends State<Match> {
                 fiveNotes: _fiveNotes,
                 setThreeNotes: setThreeNotes,
                 setFiveNotes: setFiveNotes,
-                isRightSide: widget.getMatchInfo().alliance == "Blue",
+                isRightSide: widget.getMatchInfo().alliance != "Blue",
               ),
             if (_teleOpDuration <= 25)
               HumanPlayer(
