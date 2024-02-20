@@ -84,8 +84,8 @@ class ScoutData {
       "park": park,
       "harmony": harmonyCount,
       "trap": trapCount,
-      "a5c": threeCount,
-      "a3c": fiveCount,
+      "a3c": threeCount,
+      "a5c": fiveCount,
       "hp": humanPlayer,
     };
     return map;
