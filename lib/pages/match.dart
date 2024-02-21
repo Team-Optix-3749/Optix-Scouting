@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:optix_scouting/utilities/classes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:optix_scouting/util.dart';
-import 'package:csv/csv.dart';
+// import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'noteMapping.dart';
+import 'humanPlayer.dart';
 
 class Match extends StatefulWidget {
   final Function getScoreChanges;
@@ -59,7 +61,7 @@ class _MatchState extends State<Match> {
 
   Timer? _autoTimer;
   Timer? _teleOpTimer;
-  int _autoDuration = 15;
+  int _autoDuration = 17;
   int _teleOpDuration = 135;
   bool isCountdownRunning = false;
   int autospeakerCount = 0;
@@ -68,6 +70,30 @@ class _MatchState extends State<Match> {
   int teleampCount = 0;
   int trapCount = 0;
   int harmonyCount = 0;
+
+  int test = 0;
+
+  List<int> _threeNotes = [];
+  List<int> _fiveNotes = [];
+  List<int> _humanPlayer = [];
+
+  void setThreeNotes(List<int> threeNotes) {
+    setState(() {
+      _threeNotes = threeNotes;
+    });
+  }
+
+  void setFiveNotes(List<int> fiveNotes) {
+    setState(() {
+      _fiveNotes = fiveNotes;
+    });
+  }
+
+  void setHumanPlayer(List<int> humanPlayer) {
+    setState(() {
+      _humanPlayer = humanPlayer;
+    });
+  }
 
   @override
   void initState() {
@@ -110,7 +136,7 @@ class _MatchState extends State<Match> {
 
   void _resetTimer() {
     setState(() {
-      _autoDuration = 15;
+      _autoDuration = 17;
       _teleOpDuration = 135;
       isCountdownRunning = false;
     });
@@ -127,7 +153,7 @@ class _MatchState extends State<Match> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, int> scoreChanges = widget.getScoreChanges();
+    // Map<String, int> scoreChanges = widget.getScoreChanges();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -141,6 +167,7 @@ class _MatchState extends State<Match> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -162,18 +189,13 @@ class _MatchState extends State<Match> {
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTimer("Auto", _autoDuration),
-                _buildTimer("Tele-Op", _teleOpDuration),
-              ],
-            ),
-            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
+                  fit: FlexFit.loose,
                   child: CheckboxListTile(
-                    title: const Text("Park"),
+                    
+                    title: const Text("Park (Auto)"),
                     value: park,
                     onChanged: (newValue) {
                       setState(() {
@@ -183,6 +205,27 @@ class _MatchState extends State<Match> {
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 )
+              ],
+            ),
+            if (_teleOpDuration > 25)
+              NoteMapping(
+                threeNotes: _threeNotes,
+                fiveNotes: _fiveNotes,
+                setThreeNotes: setThreeNotes,
+                setFiveNotes: setFiveNotes,
+                isRightSide: widget.getMatchInfo().alliance != "Blue",
+              ),
+            if (_teleOpDuration <= 25)
+              HumanPlayer(
+                  isBlue: widget.getMatchInfo().alliance == "Blue",
+                  setHumanPlayerList: setHumanPlayer,
+                  humanPlayerList: _humanPlayer),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTimer("Auto", _autoDuration),
+                _buildTimer("Tele-Op", _teleOpDuration),
               ],
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -207,7 +250,7 @@ class _MatchState extends State<Match> {
                 },
                 child: Text('Save'),
               ),
-            ])
+            ]),
           ],
         ),
       ),
@@ -236,74 +279,78 @@ class _MatchState extends State<Match> {
   }
 
   Widget _buildCounter(String label, int count) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  if (label == "Speaker") {
-                    if (isAuto) {
-                      autospeakerCount--;
-                    } else {
-                      telespeakerCount--;
+    return SizedBox(
+      width: 200,
+      height: 100,
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (label == "Speaker") {
+                      if (isAuto) {
+                        if (autospeakerCount > 0) autospeakerCount--;
+                      } else {
+                        if (telespeakerCount > 0) telespeakerCount--;
+                      }
+                    } else if (label == "Amp") {
+                      if (isAuto) {
+                        if (autoampCount > 0) autoampCount--;
+                      } else {
+                        if (teleampCount > 0) teleampCount--;
+                      }
+                    } else if (label == "Trap") {
+                      if (trapCount > 0) trapCount--;
+                    } else if (label == "Harmony") {
+                      if (harmonyCount > 0) harmonyCount--;
                     }
-                  } else if (label == "Amp") {
-                    if (isAuto) {
-                      autoampCount--;
-                    } else {
-                      teleampCount--;
-                    }
-                  } else if (label == "Trap") {
-                    trapCount--;
-                  } else if (label == "Harmony") {
-                    harmonyCount--;
-                  }
-                });
-              },
-              icon: Icon(Icons.remove),
-            ),
-            Text(
-              count.toString(),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                  });
+                },
+                icon: Icon(Icons.remove, size: 40),
               ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  if (label == "Speaker") {
-                    if (isAuto) {
-                      autospeakerCount++;
-                    } else {
-                      telespeakerCount++;
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (label == "Speaker") {
+                      if (isAuto) {
+                        autospeakerCount++;
+                      } else {
+                        telespeakerCount++;
+                      }
+                    } else if (label == "Amp") {
+                      if (isAuto) {
+                        autoampCount++;
+                      } else {
+                        teleampCount++;
+                      }
+                    } else if (label == "Trap") {
+                      trapCount++;
+                    } else if (label == "Harmony") {
+                      if (harmonyCount < 3) harmonyCount++;
                     }
-                  } else if (label == "Amp") {
-                    if (isAuto) {
-                      autoampCount++;
-                    } else {
-                      teleampCount++;
-                    }
-                  } else if (label == "Trap") {
-                    trapCount++;
-                  } else if (label == "Harmony") {
-                    harmonyCount++;
-                  }
-                });
-              },
-              icon: Icon(Icons.add),
-            ),
-          ],
-        ),
-      ],
+                  });
+                },
+                icon: Icon(Icons.add, size: 40),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -423,19 +470,21 @@ class _MatchState extends State<Match> {
       }
     }
     ScoutData data = ScoutData(
-      matchInfo: widget.getMatchInfo(),
-      notes: comments,
-      didBreak: broken,
-      offense: offense,
-      defense: defense,
-      park: park,
-      autospeakerCount: autospeakerCount,
-      autoampCount: autoampCount,
-      teleampCount: teleampCount,
-      telespeakerCount: telespeakerCount,
-      trapCount: trapCount,
-      harmonyCount: harmonyCount,
-    );
+        matchInfo: widget.getMatchInfo(),
+        notes: comments,
+        didBreak: broken,
+        offense: offense,
+        defense: defense,
+        park: park,
+        autospeakerCount: autospeakerCount,
+        autoampCount: autoampCount,
+        teleampCount: teleampCount,
+        telespeakerCount: telespeakerCount,
+        trapCount: trapCount,
+        harmonyCount: harmonyCount,
+        threeCount: _threeNotes,
+        fiveCount: _fiveNotes,
+        humanPlayer: _humanPlayer);
 
     file.writeAsString(jsonEncode(data.toJSON()));
 
