@@ -47,7 +47,7 @@ class ScoutData {
   int harmonyCount;
   List<int> threeCount;
   List<int> fiveCount;
-  List<int> humanPlayer;
+  List<int>? humanPlayer;
 
   ScoutData(
       {required this.matchInfo,

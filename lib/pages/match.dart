@@ -389,6 +389,7 @@ class _MatchState extends State<Match> {
     if (mounted) {
       TextEditingController commentsController = TextEditingController();
       bool checkedValue = false;
+      bool isHp = false;
       double defense = 0;
       double offense = 0;
       showDialog(
@@ -414,6 +415,16 @@ class _MatchState extends State<Match> {
                     onChanged: (newValue) {
                       setState(() {
                         checkedValue = newValue!;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                  CheckboxListTile(
+                    title: const Text("Is Human Player?"),
+                    value: isHp,
+                    onChanged: (newValue) {
+                      setState(() {
+                        isHp = newValue!;
                       });
                     },
                     controlAffinity: ListTileControlAffinity.leading,
@@ -458,9 +469,9 @@ class _MatchState extends State<Match> {
                 if (commentsController.value.text.isNotEmpty) {
                   Navigator.pop(context);
                   saveFile(commentsController.value.text, checkedValue,
-                      offense.toInt(), defense.toInt());
+                      offense.toInt(), defense.toInt(), isHp);
                 } else {
-                  saveFile("", checkedValue, offense.toInt(), defense.toInt());
+                  saveFile("", checkedValue, offense.toInt(), defense.toInt(), isHp);
                 }
               },
               child: const Text("Save"),
@@ -471,7 +482,7 @@ class _MatchState extends State<Match> {
     }
   }
 
-  void saveFile(String comments, bool broken, int offense, int defense) async {
+  void saveFile(String comments, bool broken, int offense, int defense, bool isHp) async {
     String id = uuid.v1();
     String fileName =
         'MATCH_${DateFormat('yyyy-MM-dd').format(DateTime.now())}_${widget.getMatchInfo().teamNumber}_${widget.getMatchInfo().matchNumber}_${widget.getMatchInfo().teamName}_${widget.getMatchInfo().comp}_$id.json';
@@ -503,7 +514,7 @@ class _MatchState extends State<Match> {
         harmonyCount: harmonyCount,
         threeCount: _threeNotes,
         fiveCount: _fiveNotes,
-        humanPlayer: _humanPlayer);
+        humanPlayer: isHp ? _humanPlayer : null);
 
     file.writeAsString(jsonEncode(data.toJSON()));
 
