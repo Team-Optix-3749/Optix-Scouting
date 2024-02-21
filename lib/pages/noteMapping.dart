@@ -10,11 +10,16 @@ class NoteMapping extends StatefulWidget {
   final Function setFiveNotes;
   final bool isRightSide;
 
-  const NoteMapping({super.key, required this.threeNotes, required this.fiveNotes, required this.setThreeNotes, required this.setFiveNotes, required this.isRightSide});
+  const NoteMapping(
+      {super.key,
+      required this.threeNotes,
+      required this.fiveNotes,
+      required this.setThreeNotes,
+      required this.setFiveNotes,
+      required this.isRightSide});
 }
 
 class _NoteMappingState extends State<NoteMapping> {
-
   @override
   Widget build(BuildContext context) {
     bool isRightSide = widget.isRightSide;
@@ -25,12 +30,15 @@ class _NoteMappingState extends State<NoteMapping> {
           padding:
               EdgeInsets.only(top: 16.0), // Adjust the top padding as needed
           child: Text(
-            'Note Scoring (Auto)',
+            'Notes Used (Auto)',
             style: TextStyle(
+              fontWeight: FontWeight.bold,
               fontSize: 18, // You can adjust the font size as needed
             ),
           ),
         ),
+        const SizedBox(height: 10),
+        const Text("Judges Table"),
         const SizedBox(height: 5),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -38,16 +46,25 @@ class _NoteMappingState extends State<NoteMapping> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Scoring Table'),
-                for (int i=1; i<=((!isRightSide)?5:3); i++) 
-                  buildButtons([i], (!isRightSide) ? widget.fiveNotes : widget.threeNotes,  (!isRightSide) ? widget.setFiveNotes : widget.setThreeNotes),
+                for (int i = 1; i <= ((!isRightSide) ? 5 : 3); i++)
+                  buildButtons(
+                      [i],
+                      (!isRightSide) ? widget.fiveNotes : widget.threeNotes,
+                      (!isRightSide)
+                          ? widget.setFiveNotes
+                          : widget.setThreeNotes),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Scoring Table'),
-                for (int i=1; i<=((isRightSide)?5:3); i++) buildButtons([i], (isRightSide) ? widget.fiveNotes : widget.threeNotes,  (isRightSide) ? widget.setFiveNotes : widget.setThreeNotes),
+                for (int i = 1; i <= ((isRightSide) ? 5 : 3); i++)
+                  buildButtons(
+                      [i],
+                      (isRightSide) ? widget.fiveNotes : widget.threeNotes,
+                      (isRightSide)
+                          ? widget.setFiveNotes
+                          : widget.setThreeNotes),
               ],
             ),
           ],
@@ -56,7 +73,8 @@ class _NoteMappingState extends State<NoteMapping> {
     );
   }
 
-  Widget buildButtons(List<int> numbers, List<int> notesList, Function setNotesList) {
+  Widget buildButtons(
+      List<int> numbers, List<int> notesList, Function setNotesList) {
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,

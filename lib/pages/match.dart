@@ -167,7 +167,7 @@ class _MatchState extends State<Match> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 30),
+            SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -188,25 +188,6 @@ class _MatchState extends State<Match> {
                 _buildCounter("Harmony", harmonyCount),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: CheckboxListTile(
-                    
-                    title: const Text("Park (Auto)"),
-                    value: park,
-                    onChanged: (newValue) {
-                      setState(() {
-                        park = newValue!;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ),
-                )
-              ],
-            ),
             if (_teleOpDuration > 25)
               NoteMapping(
                 threeNotes: _threeNotes,
@@ -224,8 +205,47 @@ class _MatchState extends State<Match> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildTimer("Auto", _autoDuration),
-                _buildTimer("Tele-Op", _teleOpDuration),
+                if (isAuto)
+                  _buildTimer("Auto", _autoDuration)
+                else
+                  _buildTimer("Tele-Op", _teleOpDuration),
+                if (isAuto)
+                  Container(
+                    width: 40,
+                    height: 60,
+                    child: Stack(
+                      children: [
+                        const Positioned.fill(
+                          top: -30,
+                          child: Align(
+                            child: Text(
+                              "Park",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          top: 12,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.local_parking,
+                              color: (park) ? Colors.blue : Colors.black,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                park = !park;
+                              });
+                            },
+
+                            // controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -280,7 +300,7 @@ class _MatchState extends State<Match> {
 
   Widget _buildCounter(String label, int count) {
     return SizedBox(
-      width: 200,
+      width: 150,
       height: 100,
       child: Column(
         children: [
@@ -313,12 +333,12 @@ class _MatchState extends State<Match> {
                     }
                   });
                 },
-                icon: Icon(Icons.remove, size: 40),
+                icon: Icon(Icons.remove, size: 20),
               ),
               Text(
                 count.toString(),
                 style: TextStyle(
-                  fontSize: 40,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue,
                 ),
@@ -345,7 +365,7 @@ class _MatchState extends State<Match> {
                     }
                   });
                 },
-                icon: Icon(Icons.add, size: 40),
+                icon: Icon(Icons.add, size: 30),
               ),
             ],
           ),
@@ -360,8 +380,7 @@ class _MatchState extends State<Match> {
         Text(label,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         Text(duration.toString(),
-            style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ],
     );
   }
