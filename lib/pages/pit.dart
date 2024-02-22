@@ -87,28 +87,59 @@ class _PitState extends State<Pit> {
                   }
                 }
 
-                print(mounted);
+                var teams = data.keys.toList();
 
                 // Save the data
                 if (mounted) {
                   showDialog(
-                    context: context,
-                    builder: (context) => Util.buildPopupDialog(
-                      context,
-                      "QR Code",
-                      <Widget>[
-                        Container(
-                          height: 295,
-                          width: 295,
-                          child: QrImage(
-                            data: jsonEncode(data),
-                            version: QrVersions.auto,
-                            size: 295,
+                      context: context,
+                      builder: (context) {
+                        var curTeamNum = 0;
+                        return StatefulBuilder(
+                          builder: (context, setState) => Util.buildPopupDialog(
+                            context,
+                            "QR Code (${teams[curTeamNum]})",
+                            <Widget>[
+                              Container(
+                                height: 295,
+                                width: 295,
+                                child: QrImage(
+                                  data: jsonEncode({
+                                    teams[curTeamNum]: data[teams[curTeamNum]]
+                                  }),
+                                  version: QrVersions.auto,
+                                  size: 295,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (curTeamNum > 0) {
+                                        setState(() {
+                                          curTeamNum--;
+                                        });
+                                      }
+                                    },
+                                    child: Text("Back"),
+                                  ),
+                                  SizedBox(width: 10),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (curTeamNum < teams.length - 1) {
+                                        setState(() {
+                                          curTeamNum++;
+                                        });
+                                      }
+                                    },
+                                    child: Text("Next"),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                        );
+                      });
                 }
               },
               child: Text('Generate QR Code'),
