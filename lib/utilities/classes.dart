@@ -34,31 +34,37 @@ class ScoutData {
       comp: "San Diego Regional",
       alliance: "Red");
 
-	int teleampCount;
-	int telespeakerCount;
-	int autoampCount;
-	int autospeakerCount; 
-	int trapCount;
+  int teleampCount;
+  int telespeakerCount;
+  int autoampCount;
+  int autospeakerCount;
+  int trapCount;
   String notes;
   bool didBreak;
   int offense;
   int defense;
   bool park;
   int harmonyCount;
+  List<int> threeCount;
+  List<int> fiveCount;
+  List<int>? humanPlayer;
 
   ScoutData(
       {required this.matchInfo,
-	  required this.autoampCount,
-	  required this.autospeakerCount,
-	  required this.teleampCount,
-	  required this.telespeakerCount,
-	  required this.trapCount,
+      required this.autoampCount,
+      required this.autospeakerCount,
+      required this.teleampCount,
+      required this.telespeakerCount,
+      required this.trapCount,
       required this.notes,
       required this.didBreak,
       required this.offense,
       required this.defense,
-	  required this.harmonyCount,
-      required this.park});
+      required this.harmonyCount,
+      required this.park,
+      required this.threeCount,
+      required this.fiveCount,
+      required this.humanPlayer});
 
   Map<String, dynamic> toJSON() {
     Map<String, dynamic> map = {
@@ -71,13 +77,16 @@ class ScoutData {
       "break": didBreak,
       "offense": offense,
       "defense": defense,
-	  "telespeakerCount": telespeakerCount,
-	  "teleampCount": teleampCount,
-	  "autoampCount": autoampCount,
-	  "autospeakerCount": autospeakerCount,
+      "tspeak": telespeakerCount,
+      "tamp": teleampCount,
+      "aamp": autoampCount,
+      "aspeak": autospeakerCount,
       "park": park,
-	  "harmonyCount": harmonyCount,
-	  "trapCount": trapCount,
+      "harmony": harmonyCount,
+      "trap": trapCount,
+      "a3c": threeCount,
+      "a5c": fiveCount,
+      "hp": humanPlayer,
     };
     return map;
   }
